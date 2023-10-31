@@ -1,5 +1,8 @@
 package com.plac.social_login;
 
+import com.plac.social_login.domain.GoogleUserInfo;
+import com.plac.social_login.domain.KakaoUserInfo;
+import com.plac.social_login.domain.NaverUserInfo;
 import com.plac.social_login.domain.Oauth2UserInfo;
 import com.plac.social_login.exception.WeakPasswordException;
 import com.plac.social_login.repository.EmailNotifier;
@@ -13,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
 import org.mockito.Mockito;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
@@ -52,6 +56,18 @@ public class SocialLoginTest {
         BDDMockito.then(mockPasswordChecker)
                 .should()
                 .checkWeakPassword(BDDMockito.anyString());
+    }
+
+    @DisplayName("소셜로그인 유저의 provider 값 확인")
+    @Test
+    void checkProvider(){
+        Oauth2UserInfo naverUser = new NaverUserInfo();
+        Oauth2UserInfo googleUser = new GoogleUserInfo();
+        Oauth2UserInfo kakaoUser = new KakaoUserInfo();
+
+        assertEquals("naver", naverUser.getProvider());
+        assertEquals("google", googleUser.getProvider());
+        assertEquals("kakao", kakaoUser.getProvider());
     }
 
 }
