@@ -1,4 +1,4 @@
-package com.plac.social_login.repository;
+package com.plac.user;
 
 public interface WeakPasswordChecker {
     boolean checkWeakPassword(String pw);
