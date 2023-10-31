@@ -1,6 +1,7 @@
 package com.plac.user;
 
 import com.plac.user.exception.DuplUsernameException;
+import com.plac.user.exception.UserNotFoundException;
 import com.plac.user.exception.WeakPasswordException;
 import com.plac.user.repository.MemoryUserRepository;
 import com.plac.user.repository.UserRepository;
@@ -61,6 +62,18 @@ public class UserRegisterTest {
                 "username1@email.com",
                 spyEmailNotifier.getEmail()
         );
+    }
+
+    @DisplayName("유저가 제대로 삭제되는지 테스트")
+    @Test
+    void deleteUser(){
+        Long userId = userService.register("username1@email.com", "pw1");
+        User findUser = fakeRepository.findByUserId(userId);
+
+        userService.delete(findUser);
+        assertThrows(UserNotFoundException.class, () -> {
+            fakeRepository.findByUserId(userId);
+        });
     }
 
 }
