@@ -1,6 +1,11 @@
-package com.plac.user;
+package com.plac.user.service;
 
+import com.plac.user.User;
+import com.plac.user.UserService;
+import com.plac.user.exception.DuplUsernameException;
 import com.plac.user.exception.WeakPasswordException;
+import com.plac.user.repository.MemoryUserRepository;
+import com.plac.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
