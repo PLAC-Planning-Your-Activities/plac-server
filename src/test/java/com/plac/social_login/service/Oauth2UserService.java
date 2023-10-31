@@ -5,13 +5,13 @@ import com.plac.social_login.repository.EmailNotifier;
 import com.plac.social_login.repository.WeakPasswordChecker;
 import com.plac.social_login.repository.UserRepository;
 
-public class SocialLoginService {
+public class Oauth2UserService {
 
     WeakPasswordChecker passwordChecker;
     UserRepository userRepository;
     EmailNotifier emailNotifier;
 
-    public SocialLoginService(WeakPasswordChecker passwordChecker, UserRepository userRepository, EmailNotifier emailNotifier) {
+    public Oauth2UserService(WeakPasswordChecker passwordChecker, UserRepository userRepository, EmailNotifier emailNotifier) {
         this.passwordChecker = passwordChecker;
         this.userRepository = userRepository;
         this.emailNotifier = emailNotifier;
