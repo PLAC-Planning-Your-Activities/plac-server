@@ -1,4 +1,4 @@
-package com.plac.social_login.exception;
+package com.plac.user.exception;
 
 public class WeakPasswordException extends RuntimeException{
 }

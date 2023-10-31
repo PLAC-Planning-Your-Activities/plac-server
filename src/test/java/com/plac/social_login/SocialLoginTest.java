@@ -4,7 +4,7 @@ import com.plac.social_login.domain.GoogleUserInfo;
 import com.plac.social_login.domain.KakaoUserInfo;
 import com.plac.social_login.domain.NaverUserInfo;
 import com.plac.social_login.domain.Oauth2UserInfo;
-import com.plac.social_login.exception.WeakPasswordException;
+import com.plac.user.exception.WeakPasswordException;
 import com.plac.user.EmailNotifier;
 import com.plac.user.MemoryUserRepository;
 import com.plac.user.UserRepository;
