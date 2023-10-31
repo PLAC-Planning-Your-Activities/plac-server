@@ -10,13 +10,16 @@ public class UserService {
     private WeakPasswordChecker passwordChecker;
     private UserRepository userRepository;
     private EmailNotifier emailNotifier;
+    private Long num;
+
     public UserService(WeakPasswordChecker passwordChecker, UserRepository userRepository, EmailNotifier emailNotifier) {
         this.passwordChecker = passwordChecker;
         this.userRepository = userRepository;
         this.emailNotifier = emailNotifier;
+        this.num = 1L;
     }
 
-    public void register(String username, String password) {
+    public Long register(String username, String password) {
         if (passwordChecker.checkWeakPassword(password)){
             throw new WeakPasswordException();
         }
@@ -24,7 +27,12 @@ public class UserService {
         if(user != null){
             throw new DuplUsernameException();
         }
-        userRepository.save(new User(username, password));
+        userRepository.save(new User(num++, username, password));
         emailNotifier.sendRegisterEmail(username);
+        return num-1;
+    }
+
+    public void delete(User findUser) {
+        userRepository.delete(findUser);
     }
 }
