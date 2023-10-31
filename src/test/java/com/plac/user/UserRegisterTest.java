@@ -1,7 +1,5 @@
 package com.plac.user;
 
-import com.plac.user.User;
-import com.plac.user.UserService;
 import com.plac.user.exception.DuplUsernameException;
 import com.plac.user.exception.WeakPasswordException;
 import com.plac.user.repository.MemoryUserRepository;
@@ -29,7 +27,7 @@ public class UserRegisterTest {
     @BeforeEach
     void setUp(){
         userService = new UserService(mockPasswordChecker,
-                fakeRepository);
+                fakeRepository, spyEmailNotifier);
     }
 
     @DisplayName("약한 암호면 가입 실패")
