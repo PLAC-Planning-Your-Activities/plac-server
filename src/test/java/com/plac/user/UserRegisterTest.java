@@ -1,4 +1,4 @@
-package com.plac.user.service;
+package com.plac.user;
 
 import com.plac.user.User;
 import com.plac.user.UserService;
@@ -6,13 +6,15 @@ import com.plac.user.exception.DuplUsernameException;
 import com.plac.user.exception.WeakPasswordException;
 import com.plac.user.repository.MemoryUserRepository;
 import com.plac.user.repository.UserRepository;
+import com.plac.user.service.SpyEmailNotifier;
+import com.plac.user.service.WeakPasswordChecker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
 import org.mockito.Mockito;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class UserRegisterTest {
 
@@ -20,6 +22,9 @@ public class UserRegisterTest {
 
     private WeakPasswordChecker mockPasswordChecker = Mockito.mock(WeakPasswordChecker.class);
     private UserRepository fakeRepository = new MemoryUserRepository();
+
+    private SpyEmailNotifier spyEmailNotifier = new SpyEmailNotifier();
+
 
     @BeforeEach
     void setUp(){
@@ -46,6 +51,18 @@ public class UserRegisterTest {
         assertThrows(DuplUsernameException.class, ()->{
             userService.register("username1@email.com", "pw334");
         });
+    }
+
+    @DisplayName("가입하면 해당 이메일로 메일 전송했는지, 확인")
+    @Test
+    void afterRegisterSendMail(){
+        userService.register("username1@email.com", "pw1");
+
+        assertTrue(spyEmailNotifier.isCalled());
+        assertEquals(
+                "username1@email.com",
+                spyEmailNotifier.getEmail()
+        );
     }
 
 }
