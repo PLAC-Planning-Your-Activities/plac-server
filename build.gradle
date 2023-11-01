@@ -26,6 +26,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.session:spring-session-core'
+
+	implementation 'io.springfox:springfox-boot-starter:3.0.0'
+
     testImplementation 'org.projectlombok:lombok:1.18.22'
 	testImplementation 'org.projectlombok:lombok:1.18.22'
 	compileOnly 'org.projectlombok:lombok'
