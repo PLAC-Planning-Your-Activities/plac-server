@@ -1,4 +1,4 @@
-package com.plac.user.service;
+package com.plac.service;
 
 public interface WeakPasswordChecker {
     boolean checkWeakPassword(String pw);

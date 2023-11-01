@@ -1,10 +1,11 @@
 package com.plac.user;
 
-import com.plac.user.exception.DuplUsernameException;
-import com.plac.user.exception.WeakPasswordException;
-import com.plac.user.repository.UserRepository;
+import com.plac.domain.User;
+import com.plac.exception.user.DuplUsernameException;
+import com.plac.exception.user.WeakPasswordException;
+import com.plac.repository.UserRepository;
 import com.plac.user.service.EmailNotifier;
-import com.plac.user.service.WeakPasswordChecker;
+import com.plac.service.WeakPasswordChecker;
 
 public class UserService {
     private WeakPasswordChecker passwordChecker;

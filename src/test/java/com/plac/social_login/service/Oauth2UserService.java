@@ -1,9 +1,9 @@
 package com.plac.social_login.service;
 
-import com.plac.user.exception.WeakPasswordException;
+import com.plac.exception.user.WeakPasswordException;
 import com.plac.user.service.EmailNotifier;
-import com.plac.user.service.WeakPasswordChecker;
-import com.plac.user.repository.UserRepository;
+import com.plac.service.WeakPasswordChecker;
+import com.plac.repository.UserRepository;
 
 public class Oauth2UserService {
 

@@ -1,12 +1,13 @@
 package com.plac.user;
 
-import com.plac.user.exception.DuplUsernameException;
-import com.plac.user.exception.UserNotFoundException;
-import com.plac.user.exception.WeakPasswordException;
+import com.plac.domain.User;
+import com.plac.exception.user.DuplUsernameException;
+import com.plac.exception.user.UserNotFoundException;
+import com.plac.exception.user.WeakPasswordException;
 import com.plac.user.repository.MemoryUserRepository;
-import com.plac.user.repository.UserRepository;
+import com.plac.repository.UserRepository;
 import com.plac.user.service.SpyEmailNotifier;
-import com.plac.user.service.WeakPasswordChecker;
+import com.plac.service.WeakPasswordChecker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
