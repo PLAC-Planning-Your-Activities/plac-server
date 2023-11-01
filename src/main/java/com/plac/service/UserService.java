@@ -22,16 +22,18 @@ public class UserService {
 
     public UserResDto register(UserReqDto.CreateUser reqDto) throws Exception{
 
-        if(userRepository.findByUsername(reqDto.getUsername()).isPresent())
-            throw new DuplUsernameException("이미 존재하는 이메일입니다.");
+        checkDuplUser(reqDto);
+        passwordChecker.checkWeakPassword(reqDto.getPassword());
 
-        String password = reqDto.getPassword();
-        passwordChecker.checkWeakPassword(password);
-
-        User user = createUserInfo(reqDto, password);
+        User user = createUserInfo(reqDto, reqDto.getPassword());
         userRepository.save(user);
 
         return UserResDto.of(user);
+    }
+
+    private void checkDuplUser(UserReqDto.CreateUser reqDto) {
+        if(userRepository.findByUsername(reqDto.getUsername()).isPresent())
+            throw new DuplUsernameException("이미 존재하는 이메일입니다.");
     }
 
     private User createUserInfo(UserReqDto.CreateUser reqDto, String password) {
@@ -47,5 +49,9 @@ public class UserService {
                 .createdAt(LocalDateTime.now())
                 .build();
         return user;
+    }
+
+    public void deleteUser() {
+
     }
 }

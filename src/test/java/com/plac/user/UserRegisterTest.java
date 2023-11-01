@@ -4,6 +4,7 @@ import com.plac.domain.User;
 import com.plac.exception.user.DuplUsernameException;
 import com.plac.exception.user.UserNotFoundException;
 import com.plac.exception.user.WeakPasswordException;
+import com.plac.service.UserService;
 import com.plac.user.repository.MemoryUserRepository;
 import com.plac.repository.UserRepository;
 import com.plac.user.service.SpyEmailNotifier;

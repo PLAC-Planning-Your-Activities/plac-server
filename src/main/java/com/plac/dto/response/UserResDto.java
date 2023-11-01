@@ -20,5 +20,6 @@ public class UserResDto {
                 .id(user.getId())
                 .username(user.getUsername())
                 .profileName(user.getProfileName())
+                .build();
     }
 }
