@@ -1,4 +1,4 @@
-package com.plac.dto.request;
+package com.plac.dto.request.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

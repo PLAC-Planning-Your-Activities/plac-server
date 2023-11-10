@@ -1,10 +1,9 @@
-package com.plac.dto.response;
+package com.plac.dto.response.user;
 
 import com.plac.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
 @AllArgsConstructor

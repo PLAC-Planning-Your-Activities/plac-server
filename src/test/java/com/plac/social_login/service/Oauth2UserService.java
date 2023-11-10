@@ -19,7 +19,7 @@ public class Oauth2UserService {
 
     public void register(String s, String pw) {
         if(passwordChecker.checkWeakPassword(pw)){
-            throw new WeakPasswordException();
+            throw new WeakPasswordException("비밀번호가 약합니다.");
         }
     }
 }
