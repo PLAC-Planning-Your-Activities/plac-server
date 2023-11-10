@@ -15,6 +15,10 @@ configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
+	developmentOnly
+	runtimeClasspath {
+		extendsFrom developmentOnly
+	}
 }
 
 repositories {
@@ -28,6 +32,22 @@ dependencies {
 	implementation 'org.springframework.session:spring-session-core'
 
 	implementation 'io.springfox:springfox-boot-starter:3.0.0'
+
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	implementation 'org.jsoup:jsoup:1.15.4'
+
+	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
+	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
+
+	implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
+
+	implementation 'org.springframework.boot:spring-boot-devtools'
+
+	//자바 역직렬화 문제 해결 패키지
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+	implementation 'com.fasterxml.jackson.core:jackson-databind'
 
     testImplementation 'org.projectlombok:lombok:1.18.22'
 	testImplementation 'org.projectlombok:lombok:1.18.22'
