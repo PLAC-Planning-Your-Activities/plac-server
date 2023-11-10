@@ -7,6 +7,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.NoArgsConstructor;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -38,6 +39,17 @@ public class JwtUtil {
                 .setExpiration(createTokenExpiration(REFRESH_TOKEN_VALIDITY_TIME))
                 .signWith(createSigningKey(AuthProperties.getRefreshSecret()), SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    public static ResponseCookie makeResponseCookie(String accessToken) {
+        ResponseCookie cookies = ResponseCookie.from("plac_token", accessToken)
+                .httpOnly(true)
+                .sameSite("Strict")
+                .domain("localhost")
+                .path("/")
+                .maxAge(ACCESS_TOKEN_VALIDITY_TIME)     // 15분
+                .build();
+        return cookies;
     }
 
     private static Date createTokenExpiration(long expirationTime) {

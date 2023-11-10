@@ -58,25 +58,17 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             filterChain.doFilter(request, response);//이 필터 스킵. 다음꺼 실행.
             return;
         }
-        Cookie cookie = null;
-        try {
-            cookie = Arrays.stream(request.getCookies())
-                    .filter(r -> r.getName().equals("plac_token"))
-                    .findAny()
-                    .orElse(null);
-        } catch (NullPointerException e) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
+        
+        Cookie cookie = checkAccessToken(request, response, filterChain);
         if(cookie == null) {
             filterChain.doFilter(request, response);
             return;
         }
-
+        
         String accessToken = cookie.getValue();
-        Claims claims = null;
+        
         boolean isAccessTokenExpired = false;
+        Claims claims = null;
 
         try {
             claims = Jwts.parserBuilder().setSigningKey(AuthProperties.getAccessSecret()).build().parseClaimsJws(accessToken).getBody();
@@ -97,52 +89,64 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
         // 액세스토큰이 만료된 경우
         if(isAccessTokenExpired) {
-            UUID refreshTokenId = UUID.fromString(claims.get("refreshTokenId").toString());
-            Optional<RefreshToken> refreshTokenOpt = refreshTokenRepository.findById(refreshTokenId);
-
-            // 액세스토큰과 매칭된 리프레시토큰을 DB에서 조회한다
-            if(refreshTokenOpt.isPresent()) {
-                Claims refreshTokenClaims = null;
-                String refreshToken = refreshTokenOpt.get().getRefreshToken();
-
-                try {
-                    refreshTokenClaims = Jwts.parserBuilder().setSigningKey(AuthProperties.getRefreshSecret()).build().parseClaimsJws(refreshToken).getBody();
-                } catch (ExpiredJwtException e) {
-                    // 리프레시 토큰이 만료된 경우
-                    // 만료된 리프레시 토큰을 제거 후 doFitler
-                    refreshTokenRepository.delete(refreshTokenOpt.get());
-                    filterChain.doFilter(request, response);
-                    return;
-                } catch (MalformedJwtException e) {
-                    filterChain.doFilter(request, response);
-                    return;
-                } catch (Exception e) {     // TODO :: 구체 예외 처리
-                    filterChain.doFilter(request, response);
-                    return;
-                }
-
-                // 리프레시 토큰이 존재한다면 액세스토큰 발급
-                String newAccessToken = JwtUtil.createAccessToken(savedUser, refreshTokenId);
-
-                if(refreshTokenClaims != null) {
-                    ResponseCookie cookies = ResponseCookie.from("plac_token", newAccessToken)
-                            .httpOnly(true)
-                            .sameSite("Strict")
-                            .domain("localhost")
-                            .path("/")
-                            .maxAge(3 * 24 * 60 * 60)     // 3일
-                            .build();
-
-                    response.addHeader(HttpHeaders.SET_COOKIE, cookies.toString());
-                }
-            }else {
-                filterChain.doFilter(request, response);
-                return;
-            }
+            if (issueNewAccessToken(request, response, filterChain, claims, savedUser)) return;
         }
 
         this.saveAuthenticationToSecurityContextHolder(savedUser);
         filterChain.doFilter(request, response);
+    }
+
+    private boolean issueNewAccessToken(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain, Claims claims, User savedUser) throws IOException, ServletException {
+        UUID refreshTokenId = UUID.fromString(claims.get("refreshTokenId").toString());
+        Optional<RefreshToken> refreshTokenOpt = refreshTokenRepository.findById(refreshTokenId);
+
+        // 액세스토큰과 매칭된 리프레시토큰을 DB에서 조회한다
+        if(refreshTokenOpt.isPresent()) {
+            Claims refreshTokenClaims = null;
+            String refreshToken = refreshTokenOpt.get().getRefreshToken();
+
+            try {
+                refreshTokenClaims = Jwts.parserBuilder().setSigningKey(AuthProperties.getRefreshSecret()).build().parseClaimsJws(refreshToken).getBody();
+            } catch (ExpiredJwtException e) {
+                // 리프레시 토큰이 만료된 경우
+                // 만료된 리프레시 토큰을 제거 후 doFitler
+                refreshTokenRepository.delete(refreshTokenOpt.get());
+                filterChain.doFilter(request, response);
+                return true;
+            } catch (MalformedJwtException e) {
+                filterChain.doFilter(request, response);
+                return true;
+            } catch (Exception e) {     // TODO :: 구체 예외 처리
+                filterChain.doFilter(request, response);
+                return true;
+            }
+
+            // 리프레시 토큰이 존재한다면 액세스토큰 발급
+            String newAccessToken = JwtUtil.createAccessToken(savedUser, refreshTokenId);
+
+            if(refreshTokenClaims != null) {
+                ResponseCookie resCookie = JwtUtil.makeResponseCookie(newAccessToken);
+                response.addHeader(HttpHeaders.SET_COOKIE, resCookie.toString());
+            }
+        }else {
+            filterChain.doFilter(request, response);
+            return true;
+        }
+        return false;
+    }
+
+    private static Cookie checkAccessToken(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+        Cookie cookie;
+        try {
+            cookie = Arrays.stream(request.getCookies())
+                    .filter(r -> r.getName().equals("plac_token"))
+                    .findAny()
+                    .orElse(null);
+        } catch (NullPointerException e) {
+            filterChain.doFilter(request, response);
+            return null;
+        }
+        return cookie;
     }
 
     private void saveAuthenticationToSecurityContextHolder(User user) {

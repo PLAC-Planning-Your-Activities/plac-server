@@ -63,6 +63,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
                                             Authentication authResult) throws IOException, ServletException {
         System.out.println("JwtAuthenticationFilter - successfulAuthentication()");
+
         // 1. 로그인 성공된 user 조회
         User user = ((CustomUserDetails) authResult.getPrincipal()).getUser();
 
@@ -72,38 +73,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String refreshToken = JwtUtil.createRefreshToken(user);
 
         // 3. Refresh Token DB 저장
-        // 이미 존재하는 refresh token이 있다면, 제거 후 생성
-        try{
-            Optional<RefreshToken> refreshTokenOpt = refreshTokenRepository.findByUserId(user.getId());
-
-            if(refreshTokenOpt.isPresent()) {
-                refreshTokenRepository.delete(refreshTokenOpt.get());
-            }
-
-            RefreshToken newRefreshToken = RefreshToken.builder()
-                    .id(refreshTokenId)
-                    .refreshToken(refreshToken)
-                    .createdAt(LocalDateTime.now())
-                    .userId(user.getId())
-                    .build();
-
-            refreshTokenRepository.save(newRefreshToken);
-        }catch(NullPointerException e) {
-            throw new AuthenticationServiceException("유효하지 않은 사용자입니다.");
-        }
+        saveRefreshToken(user, refreshTokenId, refreshToken);
 
         // 4. Cookie에 Access Token (access_token) 주입
-        ResponseCookie cookies = ResponseCookie.from("plac_token", accessToken)
-                .httpOnly(true)
-                .sameSite("Strict")
-                .domain("localhost")
-                .path("/")
-                .maxAge(3 * 24 * 60 * 60)     // 3일
-                .build();
-
+        ResponseCookie cookies = JwtUtil.makeResponseCookie(accessToken);
         response.addHeader(HttpHeaders.SET_COOKIE, cookies.toString());
 
-        // 로그인 성공 메세지
         Message message = new Message();
         message.setStatus(HttpStatus.OK);
         message.setData(UserResDto.of(user));
@@ -111,6 +86,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         this.createResponseMessage(response, message, HttpStatus.OK);
     }
+
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
@@ -134,6 +110,30 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
             this.createResponseMessage(response, message, HttpStatus.UNAUTHORIZED);
         }
+    }
+
+    private void saveRefreshToken(User user, UUID refreshTokenId, String refreshToken) {
+        try{
+            Optional<RefreshToken> refreshTokenOpt = refreshTokenRepository.findByUserId(user.getId());
+
+            if(refreshTokenOpt.isPresent())
+                refreshTokenRepository.delete(refreshTokenOpt.get());
+
+            RefreshToken newRefreshToken = buildRefreshToken(user, refreshTokenId, refreshToken);
+            refreshTokenRepository.save(newRefreshToken);
+        }catch(NullPointerException e) {
+            throw new AuthenticationServiceException("유효하지 않은 사용자입니다.");
+        }
+    }
+
+    private static RefreshToken buildRefreshToken(User user, UUID refreshTokenId, String refreshToken) {
+        RefreshToken newRefreshToken = RefreshToken.builder()
+                .id(refreshTokenId)
+                .refreshToken(refreshToken)
+                .createdAt(LocalDateTime.now())
+                .userId(user.getId())
+                .build();
+        return newRefreshToken;
     }
 
     // response message 설정
