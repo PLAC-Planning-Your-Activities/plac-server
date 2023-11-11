@@ -3,7 +3,7 @@ package com.plac.controller;
 import com.plac.domain.Message;
 import com.plac.dto.request.user.UserReqDto;
 import com.plac.dto.response.user.UserResDto;
-import com.plac.service.UserService;
+import com.plac.service.user.UserService;
 import com.plac.util.SecurityContextHolderUtil;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -22,7 +22,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @Operation(summary = "유저 생성 api", description = "유저 하나를 생성한다.")
+    @Operation(summary = "유저 회원가입 api", description = "유저 하나를 생성한다.")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "유저 생성 완료"),
@@ -32,12 +32,12 @@ public class UserController {
     )
     @PostMapping("/one")
     public ResponseEntity<?> createOne(@RequestBody UserReqDto.CreateUser req) throws Exception {
-        userService.register(req);
+        userService.signUp(req);
 
         return buildResponseEntity(HttpStatus.OK, "success");
     }
 
-    @Operation(summary = "유저 삭제 api", description = "유저 하나를 삭제한다.")
+    @Operation(summary = "유저 삭제 api", description = "현재 로그인 된 유저를 삭제한다.")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "유저 삭제 완료"),
@@ -61,7 +61,7 @@ public class UserController {
     @GetMapping("/test1")
     public ResponseEntity<?> TestApi() throws Exception {
         Long userId = SecurityContextHolderUtil.getUserId();
-        UserResDto userResDto = UserResDto.of(userService.findOne(userId));
+        UserResDto userResDto = UserResDto.of(userService.findUser(userId));
 
         return buildResponseEntity(userResDto, HttpStatus.OK, "success");
     }

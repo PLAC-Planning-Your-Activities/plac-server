@@ -5,15 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Getter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
+
 public class UserReqDto {
-
-    private String username;
-    private String password;
-
 
     @Getter
     @Builder

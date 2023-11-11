@@ -8,7 +8,7 @@
 //import com.plac.user.repository.MemoryUserRepository;
 //import com.plac.repository.UserRepository;
 //import com.plac.user.service.SpyEmailNotifier;
-//import com.plac.service.WeakPasswordChecker;
+//import com.plac.service.password_checker.WeakPasswordChecker;
 //import org.junit.jupiter.api.BeforeEach;
 //import org.junit.jupiter.api.DisplayName;
 //import org.junit.jupiter.api.Test;

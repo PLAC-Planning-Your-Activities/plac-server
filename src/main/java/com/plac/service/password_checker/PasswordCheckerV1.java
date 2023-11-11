@@ -1,10 +1,10 @@
-package com.plac.service;
+package com.plac.service.password_checker;
 
 import com.plac.exception.user.WeakPasswordException;
 import org.springframework.stereotype.Service;
 
 @Service
-public class WeakPasswordCheckerV1 implements WeakPasswordChecker{
+public class PasswordCheckerV1 implements PasswordChecker {
     @Override
     public boolean checkWeakPassword(String password) {
         if(password.length() < 5 || password.length() > 16)

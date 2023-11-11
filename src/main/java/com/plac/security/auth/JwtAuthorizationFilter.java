@@ -61,7 +61,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         
         Cookie cookie = checkAccessToken(request, response, filterChain);
         if(cookie == null) {
-            filterChain.doFilter(request, response);
+            //filterChain.doFilter(request, response);
             return;
         }
         
