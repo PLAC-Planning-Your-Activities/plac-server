@@ -31,13 +31,13 @@ public class UserController {
             }
     )
     @PostMapping("/one")
-    public ResponseEntity<?> createOne(@RequestBody UserReqDto.CreateUser req) throws Exception {
+    public ResponseEntity<?> signUp(@RequestBody UserReqDto.CreateUser req) throws Exception {
         userService.signUp(req);
 
         return buildResponseEntity(HttpStatus.OK, "success");
     }
 
-    @Operation(summary = "유저 삭제 api", description = "현재 로그인 된 유저를 삭제한다.")
+    @Operation(summary = "유저 회원 탈퇴(삭제) api", description = "현재 로그인 된 유저를 삭제한다.")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "유저 삭제 완료"),
@@ -47,7 +47,7 @@ public class UserController {
             }
     )
     @DeleteMapping("/one")
-    public ResponseEntity<?> deleteOne() throws Exception {
+    public ResponseEntity<?> deleteUser() throws Exception {
         userService.deleteUser();
 
         return buildResponseEntity(HttpStatus.OK, "success");
@@ -73,6 +73,10 @@ public class UserController {
 
         return buildResponseEntity(result, HttpStatus.OK, "success");
     }
+
+    /*
+    * */
+
 
     private ResponseEntity<Message> buildResponseEntity(HttpStatus status, String msg) {
         Message message = Message.builder()

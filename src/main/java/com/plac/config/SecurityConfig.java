@@ -43,7 +43,7 @@ public class SecurityConfig {
                 .formLogin().disable()
                 .httpBasic().disable()
                 .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);    // jwt사용으로 세션관리 해제
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);    // jwt 사용으로 세션관리 해제
 
         http
                 .headers().frameOptions().sameOrigin();
@@ -52,7 +52,6 @@ public class SecurityConfig {
                 .logout()
                 .logoutUrl("/api/logout")
                 .logoutSuccessHandler(new CustomLogoutHandler())
-
                 .deleteCookies("plac_token");
 
         http
@@ -77,13 +76,13 @@ public class SecurityConfig {
     }
 
     @Bean
-    public JwtAuthenticationProvider jwtAuthenticationProvider() throws Exception {
-        return new JwtAuthenticationProvider(customUserDetailsService, passwordEncoder());
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
+    public JwtAuthenticationProvider jwtAuthenticationProvider() throws Exception {
+        return new JwtAuthenticationProvider(customUserDetailsService, passwordEncoder());
     }
 
     @Bean

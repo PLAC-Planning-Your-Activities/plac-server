@@ -54,10 +54,10 @@ public class UserServiceImpl implements UserService{
                 () -> new UserPrincipalNotFoundException("유저를 찾을 수 없습니다.")
         );
 
-        userRepository.delete(user);
-
         refreshTokenRepository.findByUserId(user.getId())
                 .ifPresent(refreshTokenRepository::delete);
+
+        userRepository.delete(user);
     }
 
     @Override

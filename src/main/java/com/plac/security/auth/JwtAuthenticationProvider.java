@@ -19,7 +19,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
     // 실제 인증을 담당
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException, WrongLoginException {
-        System.out.println("JwtAuthenticationProvider - authenticate()");
+        System.out.println("=== JwtAuthenticationProvider - authenticate() ====");
         UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) authentication;
 
         String username = token.getName();

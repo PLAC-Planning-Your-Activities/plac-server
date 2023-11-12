@@ -37,7 +37,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     private RefreshTokenRepository refreshTokenRepository;
 
     public JwtAuthenticationFilter(RefreshTokenRepository refreshTokenRepository) {
-        // form 로그인이 아닌 커스텀 로그인에서 api 요청시 인증 필터를 진행할 url
+        // form 로그인이 아닌, 커스텀 로그인에서 api 요청시 인증 필터를 진행할 url
         this.refreshTokenRepository = refreshTokenRepository;
         setFilterProcessesUrl("/api/login");
     }
@@ -45,7 +45,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws WrongLoginException {
-        System.out.println("JwtAuthenticationFilter - attemptAuthentication()");
+        System.out.println("=== JwtAuthenticationFilter - attemptAuthentication() ====");
         try {
             // form으로 넘어온 값으로 user 객체를 생성
             User user = new ObjectMapper().readValue(request.getReader(), User.class);
@@ -62,7 +62,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
                                             Authentication authResult) throws IOException, ServletException {
-        System.out.println("JwtAuthenticationFilter - successfulAuthentication()");
+        System.out.println("=== JwtAuthenticationFilter - successfulAuthentication() ====");
 
         // 1. 로그인 성공된 user 조회
         User user = ((CustomUserDetails) authResult.getPrincipal()).getUser();
@@ -72,7 +72,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String accessToken = JwtUtil.createAccessToken(user, refreshTokenId);
         String refreshToken = JwtUtil.createRefreshToken(user);
 
-        // 3. Refresh Token DB 저장
+        // 3. Refresh Token DB 저장 (해당 유저의 리프레시 토큰이 이미 존재한다면, 삭제 후 저장)
         saveRefreshToken(user, refreshTokenId, refreshToken);
 
         // 4. Cookie에 Access Token (access_token) 주입
@@ -92,7 +92,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
                                               AuthenticationException failed) throws IOException, ServletException {
 
-        System.out.println("JwtAuthenticationFilter - unsuccessfulAuthentication");
+        System.out.println("=== JwtAuthenticationFilter - unsuccessfulAuthentication() ====");
         // 1. Http Response Message 세팅 후 반환
         Object failedType = failed.getClass();
 
