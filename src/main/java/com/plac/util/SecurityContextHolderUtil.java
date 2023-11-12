@@ -2,7 +2,9 @@ package com.plac.util;
 
 import com.plac.security.auth.CustomUserDetails;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 
+@Component
 public class SecurityContextHolderUtil {
 
     public static Long getUserId(){

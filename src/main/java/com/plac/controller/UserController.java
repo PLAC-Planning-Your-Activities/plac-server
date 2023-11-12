@@ -1,9 +1,9 @@
 package com.plac.controller;
 
-import com.plac.domain.Message;
 import com.plac.dto.request.user.UserReqDto;
 import com.plac.dto.response.user.UserResDto;
 import com.plac.service.user.UserService;
+import com.plac.util.MessageUtil;
 import com.plac.util.SecurityContextHolderUtil;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -34,7 +34,7 @@ public class UserController {
     public ResponseEntity<?> signUp(@RequestBody UserReqDto.CreateUser req) throws Exception {
         userService.signUp(req);
 
-        return buildResponseEntity(HttpStatus.OK, "success");
+        return MessageUtil.buildResponseEntity(HttpStatus.OK, "success");
     }
 
     @Operation(summary = "유저 회원 탈퇴(삭제) api", description = "현재 로그인 된 유저를 삭제한다.")
@@ -50,7 +50,7 @@ public class UserController {
     public ResponseEntity<?> deleteUser() throws Exception {
         userService.deleteUser();
 
-        return buildResponseEntity(HttpStatus.OK, "success");
+        return MessageUtil.buildResponseEntity(HttpStatus.OK, "success");
     }
 
 
@@ -63,7 +63,7 @@ public class UserController {
         Long userId = SecurityContextHolderUtil.getUserId();
         UserResDto userResDto = UserResDto.of(userService.findUser(userId));
 
-        return buildResponseEntity(userResDto, HttpStatus.OK, "success");
+        return MessageUtil.buildResponseEntity(userResDto, HttpStatus.OK, "success");
     }
 
     @Operation(summary = "로그인 테스트 api", description = "로그인 상태에서, 등록된 모든 유저정보 출력")
@@ -71,27 +71,9 @@ public class UserController {
     public ResponseEntity<?> searchAll(){
         List<UserResDto> result = userService.findAll();
 
-        return buildResponseEntity(result, HttpStatus.OK, "success");
+        return MessageUtil.buildResponseEntity(result, HttpStatus.OK, "success");
     }
 
     /*
     * */
-
-
-    private ResponseEntity<Message> buildResponseEntity(HttpStatus status, String msg) {
-        Message message = Message.builder()
-                .status(status)
-                .message(msg)
-                .build();
-        return new ResponseEntity<>(message, message.getStatus());
-    }
-
-    private ResponseEntity<Message> buildResponseEntity(Object data, HttpStatus status, String msg) {
-        Message message = Message.builder()
-                .data(data)
-                .status(status)
-                .message(msg)
-                .build();
-        return new ResponseEntity<>(message, message.getStatus());
-    }
 }
