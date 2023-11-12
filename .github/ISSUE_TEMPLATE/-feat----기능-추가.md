@@ -8,6 +8,6 @@ assignees: Jungsu-lilly
 ---
 
 ## FEAT
-### new feature
+### New Feature
 
-### detail
+### Detail
