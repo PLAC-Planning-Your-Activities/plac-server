@@ -25,4 +25,18 @@ public class MessageUtil {
         return new ResponseEntity<>(message, message.getStatus());
     }
 
+    public static Message buildMessage(HttpStatus status, String msg) {
+        return Message.builder()
+                .status(status)
+                .message(msg)
+                .build();
+    }
+
+    public static Message buildMessage(Object data, HttpStatus status, String msg) {
+        return Message.builder()
+                .status(status)
+                .message(msg)
+                .build();
+    }
+
 }

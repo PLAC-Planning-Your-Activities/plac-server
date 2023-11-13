@@ -1,6 +1,7 @@
 package com.plac.exception;
 
 import com.plac.domain.Message;
+import com.plac.exception.social_login.ProviderNotSupportedException;
 import com.plac.exception.user.DuplUsernameException;
 import com.plac.exception.user.UserPrincipalNotFoundException;
 import com.plac.exception.user.WeakPasswordException;
@@ -41,6 +42,12 @@ public class CustomExceptionHandler {
     @ExceptionHandler(WrongLoginException.class)
     public ResponseEntity<?> handleException(WrongLoginException e){
         Message message = new Message(e.getMessage(), -104, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(message, message.getStatus());
+    }
+
+    @ExceptionHandler(ProviderNotSupportedException.class)
+    public ResponseEntity<?> handleException(ProviderNotSupportedException e){
+        Message message = new Message(e.getMessage(), -201, HttpStatus.BAD_REQUEST);
         return new ResponseEntity<>(message, message.getStatus());
     }
 

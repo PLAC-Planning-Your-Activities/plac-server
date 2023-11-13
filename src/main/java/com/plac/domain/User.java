@@ -34,11 +34,26 @@ public class User {
     @Type(type = "uuid-char")
     private UUID salt;
 
-    @Column(name = "roles", nullable = true, columnDefinition = "varchar(36)")
+    @Column(name = "roles", nullable = false, columnDefinition = "varchar(36)")
     private String roles;
 
     @Column(name = "profile_name", nullable = true, columnDefinition = "varchar(36)")
     private String profileName;
+
+    @Column(name = "profile_image_path", nullable = true, columnDefinition = "varchar(255)")
+    private String profileImagePath;
+
+    @Column(name = "profile_birth", nullable = true, columnDefinition = "varchar(255)")
+    private String profileBirth;
+
+    @Column(name = "age", nullable = true, columnDefinition = "varchar(255)")
+    private int age;
+
+    @Column(name = "gender", nullable = true, columnDefinition = "varchar(16)")
+    private String gender;
+
+    @Column(name = "phone_number", nullable = true, columnDefinition = "varchar(36)")
+    private String phoneNumber;
 
     @Column(name = "created_at", nullable = false, columnDefinition = "datetime")
     private LocalDateTime createdAt;
@@ -65,4 +80,22 @@ public class User {
         return this.username;
     }
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", salt=" + salt +
+                ", roles='" + roles + '\'' +
+                ", profileName='" + profileName + '\'' +
+                ", profileImagePath='" + profileImagePath + '\'' +
+                ", profileBirth='" + profileBirth + '\'' +
+                ", age=" + age +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", provider='" + provider + '\'' +
+                '}';
+    }
 }
