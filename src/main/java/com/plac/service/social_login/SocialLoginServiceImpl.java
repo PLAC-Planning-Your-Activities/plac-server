@@ -43,7 +43,7 @@ public class SocialLoginServiceImpl implements SocialLoginService{
         String provider = req.getProvider();
 
         // Oauth2 Auth 서버에서 인증 토큰을 받아온다.
-        Oauth2TokenResDto tokenResponse = getOauth2Token(req, clientRegistration, provider);
+        Oauth2TokenResDto tokenResponse = getOauth2UserToken(req, clientRegistration, provider);
         log.info("access_token = {}", tokenResponse.getAccess_token());
 
         // 받아온 토큰을 바탕으로, 해당 Oauth2 Auth 서버에서 유저 정보를 불러옴
@@ -94,11 +94,13 @@ public class SocialLoginServiceImpl implements SocialLoginService{
         refreshTokenRepository.save(newRefreshToken);
     }
 
-    private Oauth2TokenResDto getOauth2Token(SocialLoginReqDto.Login req, ClientRegistration provider, String providerName) {
+    private Oauth2TokenResDto getOauth2UserToken(SocialLoginReqDto.Login req, ClientRegistration provider, String providerName) {
         if (providerName.equals("naver")){
             return oauth2TokenProvider.getTokenFromNaver(req, provider);
         } else if (providerName.equals("google")){
             return oauth2TokenProvider.getTokenFromGoogle(req, provider);
+        } else if (providerName.equals("kakao")){
+            return oauth2TokenProvider.getTokenFromKakao(req, provider);
         }
         throw new ProviderNotSupportedException("해당 소셜로그인은 지원하지 않습니다. 다시 입력하세요.");
     }

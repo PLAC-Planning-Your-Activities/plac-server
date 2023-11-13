@@ -59,6 +59,25 @@ public class Oauth2TokenProviderImpl implements Oauth2TokenProvider{
                 .block();
     }
 
+    @Override
+    public Oauth2TokenResDto getTokenFromKakao(SocialLoginReqDto.Login req, ClientRegistration provider) {
+        // FormData 설정
+        MultiValueMap<String, String> formData = createKakaoFormData(req, provider);
+
+        // WebClient 요청 구성 및 실행
+        return WebClient.create()
+                .post()
+                .uri(provider.getProviderDetails().getTokenUri())
+                .headers(header -> {
+                    header.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+                    header.setAcceptCharset(Collections.singletonList(StandardCharsets.UTF_8));
+                })
+                .bodyValue(formData)
+                .retrieve()
+                .bodyToMono(Oauth2TokenResDto.class)
+                .block();
+    }
+
     private static MultiValueMap<String, String> createNaverFormData(SocialLoginReqDto.Login req, ClientRegistration provider) {
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
 
@@ -80,5 +99,18 @@ public class Oauth2TokenProviderImpl implements Oauth2TokenProvider{
         formData.add("redirect_uri", provider.getRedirectUri());
         return formData;
     }
+
+    private static MultiValueMap<String, String> createKakaoFormData(SocialLoginReqDto.Login req, ClientRegistration provider) {
+        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+
+        formData.add("grant_type", "authorization_code");
+        formData.add("client_id", provider.getClientId());
+        formData.add("client_secret", provider.getClientSecret());
+        formData.add("redirect_uri", provider.getRedirectUri());
+        formData.add("code", req.getCode());
+        return formData;
+    }
+
+
 
 }

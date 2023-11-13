@@ -1,6 +1,7 @@
 package com.plac.service.social_login.oauth2;
 
 import com.plac.domain.social_login.GoogleUserInfo;
+import com.plac.domain.social_login.KakaoUserInfo;
 import com.plac.domain.social_login.NaverUserInfo;
 import com.plac.domain.social_login.Oauth2UserInfo;
 import com.plac.dto.response.social_login.Oauth2TokenResDto;
@@ -21,6 +22,8 @@ public class Oauth2UserInfoProviderImpl implements Oauth2UserInfoProvider{
             return getNaverUserInfo(provider, tokenResponse);
         } else if (providerName.equals("google")){
             return getGoogleUserInfo(provider, tokenResponse);
+        } else if (providerName.equals("kakao")){
+            return getKakaoUserInfo(provider, tokenResponse);
         }
         throw new ProviderNotSupportedException("해당 회사의 소셜 로그인을 지원하지 않습니다. 다른 값을 입력해주세요");
     }
@@ -31,6 +34,8 @@ public class Oauth2UserInfoProviderImpl implements Oauth2UserInfoProvider{
             return new NaverUserInfo(userAttributes);
         }else if(providerName.equals("google")){
             return new GoogleUserInfo(userAttributes);
+        }else if(providerName.equals("kakao")){
+            return new KakaoUserInfo(userAttributes);
         }
         throw new ProviderNotSupportedException("해당 회사의 소셜 로그인을 지원하지 않습니다. 다른 값을 입력해주세요");
     }
@@ -48,6 +53,17 @@ public class Oauth2UserInfoProviderImpl implements Oauth2UserInfoProvider{
     }
 
     private Map<String, Object> getNaverUserInfo(ClientRegistration provider, Oauth2TokenResDto tokenResponse) {
+        Map<String, Object> userAttributes = WebClient.create()
+                .get()
+                .uri(provider.getProviderDetails().getUserInfoEndpoint().getUri())
+                .headers(header-> header.setBearerAuth(tokenResponse.getAccess_token()))
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
+                .block();
+        return userAttributes;
+    }
+
+    private Map<String, Object> getKakaoUserInfo(ClientRegistration provider, Oauth2TokenResDto tokenResponse) {
         Map<String, Object> userAttributes = WebClient.create()
                 .get()
                 .uri(provider.getProviderDetails().getUserInfoEndpoint().getUri())

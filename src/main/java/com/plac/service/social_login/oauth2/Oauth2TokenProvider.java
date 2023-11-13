@@ -7,7 +7,7 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 public interface Oauth2TokenProvider {
 
     Oauth2TokenResDto getTokenFromNaver(SocialLoginReqDto.Login req, ClientRegistration provider);
-
     Oauth2TokenResDto getTokenFromGoogle(SocialLoginReqDto.Login req, ClientRegistration provider);
+    Oauth2TokenResDto getTokenFromKakao(SocialLoginReqDto.Login req, ClientRegistration provider);
 
 }
