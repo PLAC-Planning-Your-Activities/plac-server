@@ -58,7 +58,7 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .antMatchers("/api/test/**")
                 .access("hasRole('ROLE_USER')")
-                .antMatchers("/api/user/one", "/api/login/**", "/api/social-login")
+                .antMatchers("/api/user/one", "/api/login/**", "/api/social-login", "/api/social-login/**")
                 .permitAll()
                 .antMatchers("/api/**")
                 .access("hasRole('ROLE_USER')")

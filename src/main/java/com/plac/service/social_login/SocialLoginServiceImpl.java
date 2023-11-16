@@ -46,6 +46,7 @@ public class SocialLoginServiceImpl implements SocialLoginService{
         Oauth2TokenResDto tokenResponse = getOauth2UserToken(req, clientRegistration, provider);
         log.info("access_token = {}", tokenResponse.getAccess_token());
 
+
         // 받아온 토큰을 바탕으로, 해당 Oauth2 Auth 서버에서 유저 정보를 불러옴
         Map<String, Object> userAttributes = oauth2UserInfoProvider.getUserInfoFromAuthServer(clientRegistration, provider, tokenResponse);
         log.info("user_attributes = {}", userAttributes);
@@ -57,7 +58,7 @@ public class SocialLoginServiceImpl implements SocialLoginService{
         String password = UUID.randomUUID().toString();
         String encodedPassword = passwordEncoder.encode(password);
 
-        Optional<User> findUser = userRepository.findByUsername(oauth2UserInfo.getUsername());
+        Optional<User> findUser = userRepository.findByUsernameAndProvider(oauth2UserInfo.getUsername(), oauth2UserInfo.getProvider());
 
         User userEntity = findUser.orElseGet(() -> createUser(oauth2UserInfo));
         log.info("userEntity = {}", userEntity);

@@ -2,6 +2,7 @@ package com.plac.service.social_login.oauth2;
 
 import com.plac.dto.request.social_login.SocialLoginReqDto;
 import com.plac.dto.response.social_login.Oauth2TokenResDto;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
@@ -15,7 +16,10 @@ import java.util.Collections;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class Oauth2TokenProviderImpl implements Oauth2TokenProvider{
+
+    private final GoogleOAuth2Properties googleOAuth2Properties;
 
     @Override
     public Oauth2TokenResDto getTokenFromNaver(SocialLoginReqDto.Login req, ClientRegistration provider) {
@@ -38,21 +42,20 @@ public class Oauth2TokenProviderImpl implements Oauth2TokenProvider{
     }
 
     @Override
-    public Oauth2TokenResDto getTokenFromGoogle(SocialLoginReqDto.Login req, ClientRegistration provider) {
-        MultiValueMap<String, String> formData = createGoogleFormData(req, provider);
+    public Oauth2TokenResDto getTokenFromGoogle(SocialLoginReqDto.Login req, ClientRegistration clientRegistration) {
 
-        log.info("client_id={}", provider.getClientId());
-        log.info("client_secret={}", provider.getClientSecret());
-        log.info("code={}", req.getCode());
-        log.info("redirect_uri={}", provider.getRedirectUri());
+        // 요청 매개변수 설정
+        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+        formData.add("code", req.getCode());
+        formData.add("client_id", googleOAuth2Properties.getClientId());
+        formData.add("client_secret", googleOAuth2Properties.getClientSecret());
+        formData.add("redirect_uri", googleOAuth2Properties.getRedirectUri());
+        formData.add("grant_type", googleOAuth2Properties.getGrantType());
 
-        return WebClient.create()
-                .post()
-                .uri(provider.getProviderDetails().getTokenUri())
-                .headers(header -> {
-                    header.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-                    header.setAcceptCharset(Collections.singletonList(StandardCharsets.UTF_8));
-                })
+        // POST 요청 보내기
+        return WebClient.create().
+                post()
+                .uri(googleOAuth2Properties.getTokenUri())
                 .bodyValue(formData)
                 .retrieve()
                 .bodyToMono(Oauth2TokenResDto.class)
@@ -76,6 +79,7 @@ public class Oauth2TokenProviderImpl implements Oauth2TokenProvider{
                 .retrieve()
                 .bodyToMono(Oauth2TokenResDto.class)
                 .block();
+
     }
 
     private static MultiValueMap<String, String> createNaverFormData(SocialLoginReqDto.Login req, ClientRegistration provider) {

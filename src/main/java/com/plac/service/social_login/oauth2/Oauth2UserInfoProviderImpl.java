@@ -6,6 +6,7 @@ import com.plac.domain.social_login.NaverUserInfo;
 import com.plac.domain.social_login.Oauth2UserInfo;
 import com.plac.dto.response.social_login.Oauth2TokenResDto;
 import com.plac.exception.social_login.ProviderNotSupportedException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.stereotype.Service;
@@ -14,14 +15,17 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class Oauth2UserInfoProviderImpl implements Oauth2UserInfoProvider{
+
+    private final GoogleOAuth2Properties googleOAuth2Properties;
 
     @Override
     public Map<String, Object> getUserInfoFromAuthServer(ClientRegistration provider, String providerName, Oauth2TokenResDto tokenResponse) {
         if (providerName.equals("naver")){
             return getNaverUserInfo(provider, tokenResponse);
         } else if (providerName.equals("google")){
-            return getGoogleUserInfo(provider, tokenResponse);
+            return getGoogleUserInfo(tokenResponse);
         } else if (providerName.equals("kakao")){
             return getKakaoUserInfo(provider, tokenResponse);
         }
@@ -41,10 +45,10 @@ public class Oauth2UserInfoProviderImpl implements Oauth2UserInfoProvider{
     }
 
 
-    private Map<String, Object> getGoogleUserInfo(ClientRegistration provider, Oauth2TokenResDto tokenResponse) {
+    private Map<String, Object> getGoogleUserInfo(Oauth2TokenResDto tokenResponse) {
         Map<String, Object> userAttributes = WebClient.create()
                 .get()
-                .uri(provider.getProviderDetails().getUserInfoEndpoint().getUri())
+                .uri("https://www.googleapis.com/oauth2/v3/userinfo")
                 .headers(header-> header.setBearerAuth(tokenResponse.getAccess_token()))
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
