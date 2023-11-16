@@ -28,6 +28,10 @@ public class CustomUserDetails implements UserDetails {
         return authorities;
     }
 
+    public String getProvider(){
+        return user.getProvider();
+    }
+
     @Override
     public String getPassword() {
         return user.getPassword();

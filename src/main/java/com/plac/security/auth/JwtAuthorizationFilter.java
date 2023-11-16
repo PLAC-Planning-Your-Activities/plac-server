@@ -84,15 +84,15 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         }
 
         // 토큰에 저장된 유저정보가 존재하지 않는 경우 예외처리
-        User savedUser = userRepository.findByUsername(claims.get("username").toString())
-                .orElseThrow(() -> new UserPrincipalNotFoundException("엑세스 토큰에 저장된 유저 정보가 존재하지 않습니다."));
+        Optional<User> savedUser = userRepository.findByUsernameAndProvider(claims.get("username").toString(), claims.get("provider").toString());
+        savedUser.orElseThrow(() -> new UserPrincipalNotFoundException("엑세스 토큰에 저장된 유저 정보가 존재하지 않습니다."));
 
         // 액세스토큰이 만료된 경우
         if(isAccessTokenExpired) {
-            if (issueNewAccessToken(request, response, filterChain, claims, savedUser)) return;
+            if (issueNewAccessToken(request, response, filterChain, claims, savedUser.get())) return;
         }
 
-        this.saveAuthenticationToSecurityContextHolder(savedUser);
+        this.saveAuthenticationToSecurityContextHolder(savedUser.get());
         filterChain.doFilter(request, response);
     }
 

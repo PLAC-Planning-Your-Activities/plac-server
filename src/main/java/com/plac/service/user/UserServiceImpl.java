@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService{
         checkDuplUser(reqDto);
         passwordChecker.checkWeakPassword(reqDto.getPassword());
 
-        User user = createUserInfo(reqDto, reqDto.getPassword());
+        User user = createNormalUserInfo(reqDto, reqDto.getPassword());
         userRepository.save(user);
 
         return UserResDto.of(user);
@@ -86,7 +86,7 @@ public class UserServiceImpl implements UserService{
         }
     }
 
-    private User createUserInfo(UserReqDto.CreateUser reqDto, String password) {
+    private User createNormalUserInfo(UserReqDto.CreateUser reqDto, String password) {
         UUID salt = UUID.randomUUID();
         String encodedPassword = encoder.encode(password + salt.toString());
 
@@ -94,6 +94,7 @@ public class UserServiceImpl implements UserService{
                 .username(reqDto.getUsername())
                 .password(encodedPassword)
                 .salt(salt)
+                .provider("normal")
                 .roles("ROLE_USER")
                 .profileName(reqDto.getProfileName())
                 .createdAt(LocalDateTime.now())

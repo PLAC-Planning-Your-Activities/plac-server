@@ -20,7 +20,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class JwtUtil {
     private static long TOKEN_VALIDITY_IN_SECOND = 1000;
-    private static long ACCESS_TOKEN_VALIDITY_TIME = TOKEN_VALIDITY_IN_SECOND * 60 * 15;    // 15분
+    private static long ACCESS_TOKEN_VALIDITY_TIME = TOKEN_VALIDITY_IN_SECOND * 6;   // 6초
     private static long REFRESH_TOKEN_VALIDITY_TIME = TOKEN_VALIDITY_IN_SECOND * 60 * 60 * 24 * 3;  // 3일
 
     public static String createAccessToken(User user, UUID refreshTokenId) {
@@ -67,6 +67,7 @@ public class JwtUtil {
     private static Map<String, Object> createAccessTokenClaims(User user, UUID refreshTokenId) {
         Map<String, Object> map = new HashMap<>();
         map.put("username", user.getUsername());
+        map.put("provider", user.getProvider());
         map.put("refreshTokenId", refreshTokenId);
         return map;
     }
