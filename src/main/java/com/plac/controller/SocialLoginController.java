@@ -29,7 +29,7 @@ public class SocialLoginController {
 
     private final SocialLoginService socialLoginService;
 
-    @Operation(summary = "소셜 로그인 api", description = "소셜 로그인 수행")
+    @Operation(summary = "소셜 로그인 api", description = "소셜 로그인 (네이버, 구글, 카카오)")
     @PostMapping("")
     public void signIn(HttpServletResponse response, @RequestBody SocialLoginReqDto.Login req) throws Exception {
         ObjectMapper om = settingObjectMapper();

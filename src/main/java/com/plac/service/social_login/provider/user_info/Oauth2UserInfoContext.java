@@ -1,4 +1,4 @@
-package com.plac.service.social_login.oauth2.provider.user_info;
+package com.plac.service.social_login.provider.user_info;
 
 import com.plac.domain.social_login.GoogleUserInfo;
 import com.plac.domain.social_login.KakaoUserInfo;
@@ -6,10 +6,6 @@ import com.plac.domain.social_login.NaverUserInfo;
 import com.plac.domain.social_login.Oauth2UserInfo;
 import com.plac.dto.response.social_login.Oauth2TokenResDto;
 import com.plac.exception.social_login.ProviderNotSupportedException;
-import com.plac.service.social_login.oauth2.GoogleOauth2Properties;
-import com.plac.service.social_login.oauth2.provider.token.GoogleTokenProvider;
-import com.plac.service.social_login.oauth2.provider.token.KakaoTokenProvider;
-import com.plac.service.social_login.oauth2.provider.token.NaverTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

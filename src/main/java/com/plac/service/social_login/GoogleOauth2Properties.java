@@ -1,4 +1,4 @@
-package com.plac.service.social_login.oauth2;
+package com.plac.service.social_login;
 
 
 import lombok.Getter;

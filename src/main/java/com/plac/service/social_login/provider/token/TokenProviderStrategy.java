@@ -1,4 +1,4 @@
-package com.plac.service.social_login.oauth2.provider.token;
+package com.plac.service.social_login.provider.token;
 
 import com.plac.dto.request.social_login.SocialLoginReqDto;
 import com.plac.dto.response.social_login.Oauth2TokenResDto;

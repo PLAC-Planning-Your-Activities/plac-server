@@ -1,7 +1,7 @@
-package com.plac.service.social_login.oauth2.provider.user_info;
+package com.plac.service.social_login.provider.user_info;
 
 import com.plac.dto.response.social_login.Oauth2TokenResDto;
-import com.plac.service.social_login.oauth2.GoogleOauth2Properties;
+import com.plac.service.social_login.GoogleOauth2Properties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
