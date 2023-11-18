@@ -18,7 +18,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class Oauth2UserInfoProviderImpl implements Oauth2UserInfoProvider{
 
-    private final GoogleOAuth2Properties googleOAuth2Properties;
+    private final GoogleOauth2Properties googleOAuth2Properties;
 
     @Override
     public Map<String, Object> getUserInfoFromAuthServer(ClientRegistration provider, String providerName, Oauth2TokenResDto tokenResponse) {

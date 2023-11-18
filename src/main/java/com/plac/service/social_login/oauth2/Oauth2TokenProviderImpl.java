@@ -19,7 +19,7 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class Oauth2TokenProviderImpl implements Oauth2TokenProvider{
 
-    private final GoogleOAuth2Properties googleOAuth2Properties;
+    private final GoogleOauth2Properties googleOAuth2Properties;
 
     @Override
     public Oauth2TokenResDto getTokenFromNaver(SocialLoginReqDto.Login req, ClientRegistration provider) {
