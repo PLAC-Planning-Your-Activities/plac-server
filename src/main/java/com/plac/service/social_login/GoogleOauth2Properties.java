@@ -4,9 +4,9 @@ package com.plac.service.social_login;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
 
-@Component
+@Configuration
 @ConfigurationProperties(prefix = "spring.security.oauth2.google")
 @Getter
 @Setter
@@ -17,4 +17,5 @@ public class GoogleOauth2Properties{
     private String redirectUri;
     private String grantType;
     private String userInfoEndpoint;
+
 }
