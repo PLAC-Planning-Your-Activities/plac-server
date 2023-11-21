@@ -24,45 +24,45 @@ public class User {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "username", nullable = false, columnDefinition = "varchar(255)")
+    @Column(name = "username", nullable = false)
     private String username;
 
-    @Column(name = "password", nullable = false, columnDefinition = "text")
+    @Column(name = "password", nullable = false)
     String password;
 
     @Column(name = "salt", nullable = true)
     @Type(type = "uuid-char")
     private UUID salt;
 
-    @Column(name = "roles", nullable = false, columnDefinition = "varchar(36)")
+    @Column(name = "roles", nullable = false)
     private String roles;
 
-    @Column(name = "profile_name", nullable = true, columnDefinition = "varchar(36)")
+    @Column(nullable = true)
     private String profileName;
 
-    @Column(name = "profile_image_path", nullable = true, columnDefinition = "varchar(255)")
+    @Column(nullable = true)
     private String profileImagePath;
 
-    @Column(name = "profile_birth", nullable = true, columnDefinition = "varchar(255)")
+    @Column(nullable = true)
     private String profileBirth;
 
-    @Column(name = "age", nullable = true, columnDefinition = "varchar(255)")
+    @Column(nullable = true)
     private int age;
 
-    @Column(name = "gender", nullable = true, columnDefinition = "varchar(16)")
+    @Column(nullable = true)
     private String gender;
 
-    @Column(name = "phone_number", nullable = true, columnDefinition = "varchar(36)")
+    @Column(nullable = true)
     private String phoneNumber;
 
-    @Column(name = "created_at", nullable = false, columnDefinition = "datetime")
+    @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at", nullable = true, columnDefinition = "datetime")
+    @Column(nullable = true)
     private LocalDateTime updatedAt;
 
     @Comment("소셜 로그인시 갱신됨 (네이버, 카카오, 구글 중 하나)")
-    @Column(name = "provider", nullable = true, columnDefinition = "varchar(36)")
+    @Column(name = "provider", nullable = true)
     private String provider;
 
     public User(String username, String password) {
