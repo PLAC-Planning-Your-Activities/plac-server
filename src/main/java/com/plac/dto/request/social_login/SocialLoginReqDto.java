@@ -6,6 +6,7 @@ import lombok.*;
 public class SocialLoginReqDto {
 
     @Getter
+    @Setter
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor

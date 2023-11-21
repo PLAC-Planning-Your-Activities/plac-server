@@ -34,22 +34,7 @@ class RefreshTokenRepositoryTest {
 
     @BeforeEach
     void setUp(){
-        buildUser = User.builder()
-                .provider("normal")
-                .username("test33@email.com")
-                .password("password1234")
-                .roles("ROLE_USER")
-                .createdAt(LocalDateTime.now())
-                .build();
-        userRepository.save(buildUser);
-
-        RefreshToken refreshToken = RefreshToken.builder()
-                .id(UUID.randomUUID())
-                .refreshToken("refreshTokenValue1234")
-                .userId(buildUser.getId())
-                .createdAt(LocalDateTime.now())
-                .build();
-        refreshTokenRepository.save(refreshToken);
+        settings("test33@email.com", "normal");
     }
 
     @Test
