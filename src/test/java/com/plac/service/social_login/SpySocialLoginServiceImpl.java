@@ -16,15 +16,12 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class SpySocialLoginServiceImpl implements SocialLoginService{
     private final String BEARER_TYPE = "Bearer";
-    private final RefreshTokenRepository refreshTokenRepository;
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
     private final TokenProviderContext tokenProviderContext;
     private final Oauth2UserInfoContext oauth2UserInfoContext;
 
