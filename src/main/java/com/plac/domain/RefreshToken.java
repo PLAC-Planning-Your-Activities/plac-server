@@ -25,10 +25,10 @@ public class RefreshToken {
 
     private String refreshToken;
 
-    @Column(name = "created_at", nullable = false, columnDefinition = "datetime")
+    @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "user_id", nullable = false, columnDefinition = "bigint")
+    @Column(nullable = false)
     private Long userId;
 
 }
