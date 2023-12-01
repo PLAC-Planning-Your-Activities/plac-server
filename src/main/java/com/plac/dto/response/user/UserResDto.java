@@ -4,6 +4,7 @@ import com.plac.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+
 import java.time.LocalDateTime;
 
 @Getter
@@ -27,8 +28,8 @@ public class UserResDto {
                 .id(user.getId())
                 .username(user.getUsername())
                 .profile_name(user.getProfileName())
-                .profile_image_path(user.getProfileImagePath())
-                .profile_birth(user.getProfileBirth())
+                .profile_image_path(user.getProfileImageUrl())
+                .profile_birth(user.getProfileBirthday())
                 .age(user.getAge())
                 .gender(user.getGender())
                 .phoneNumber(user.getPhoneNumber())

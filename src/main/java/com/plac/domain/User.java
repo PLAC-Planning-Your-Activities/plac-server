@@ -1,5 +1,6 @@
 package com.plac.domain;
 
+import com.plac.domain.mappedenum.UserStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,7 +9,6 @@ import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
@@ -16,20 +16,17 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "users")
-public class User {
+@Table(name = "user")
+public class User extends AbstractTimeEntity {
 
+    @Column(name = "password", nullable = false)
+    String password;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-
     @Column(name = "username", nullable = false)
     private String username;
-
-    @Column(name = "password", nullable = false)
-    String password;
-
     @Column(name = "salt", nullable = true)
     @Type(type = "uuid-char")
     private UUID salt;
@@ -41,10 +38,10 @@ public class User {
     private String profileName;
 
     @Column(nullable = true)
-    private String profileImagePath;
+    private String profileImageUrl;
 
     @Column(nullable = true)
-    private String profileBirth;
+    private String profileBirthday;
 
     @Column(nullable = true)
     private int age;
@@ -55,11 +52,10 @@ public class User {
     @Column(nullable = true)
     private String phoneNumber;
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(nullable = true)
-    private LocalDateTime updatedAt;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    @Builder.Default
+    private UserStatus status = UserStatus.ACTIVE;
 
     @Comment("소셜 로그인시 갱신됨 (네이버, 카카오, 구글 중 하나)")
     @Column(name = "provider", nullable = true)
@@ -76,7 +72,7 @@ public class User {
         this.password = password;
     }
 
-    public String getUsername(){
+    public String getUsername() {
         return this.username;
     }
 
@@ -89,12 +85,12 @@ public class User {
                 ", salt=" + salt +
                 ", roles='" + roles + '\'' +
                 ", profileName='" + profileName + '\'' +
-                ", profileImagePath='" + profileImagePath + '\'' +
-                ", profileBirth='" + profileBirth + '\'' +
+                ", profileImagePath='" + profileImageUrl + '\'' +
+                ", profileBirth='" + profileBirthday + '\'' +
                 ", age=" + age +
                 ", phoneNumber='" + phoneNumber + '\'' +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
+                ", createdAt=" + super.getCreatedAt() +
+                ", updatedAt=" + super.getUpdatedAt() +
                 ", provider='" + provider + '\'' +
                 '}';
     }
