@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -22,14 +21,14 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordChecker passwordChecker;
     private final RefreshTokenRepository refreshTokenRepository;
     private final BCryptPasswordEncoder encoder;
 
     @Override
-    public UserResDto signUp(UserReqDto.CreateUser reqDto){
+    public UserResDto signUp(UserReqDto.CreateUser reqDto) {
         checkDuplUser(reqDto);
         passwordChecker.checkWeakPassword(reqDto.getPassword());
 
@@ -81,14 +80,14 @@ public class UserServiceImpl implements UserService{
     private void checkDuplUser(UserReqDto.CreateUser reqDto) {
         final Optional<User> user = userRepository.findByUsername(reqDto.getUsername());
 
-        if(user.isPresent()){
+        if (user.isPresent()) {
             throw new DuplUsernameException("이미 존재하는 username(이메일)입니다.");
         }
     }
 
     private User createNormalUserInfo(UserReqDto.CreateUser reqDto, String password) {
         UUID salt = UUID.randomUUID();
-        String encodedPassword = encoder.encode(password + salt.toString());
+        String encodedPassword = encoder.encode(password + salt);
 
         User user = User.builder()
                 .username(reqDto.getUsername())
@@ -97,10 +96,15 @@ public class UserServiceImpl implements UserService{
                 .provider("normal")
                 .roles("ROLE_USER")
                 .profileName(reqDto.getProfileName())
-                .createdAt(LocalDateTime.now())
                 .build();
         return user;
     }
 
+    public void checkEmailAvailability(String email) {
+        Optional<User> optionalUser = userRepository.findByUsername(email);
 
+        if (optionalUser.isPresent()) {
+            throw new RuntimeException("이미 존재하는 이메일입니다.");
+        }
+    }
 }

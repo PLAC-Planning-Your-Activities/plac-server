@@ -1,5 +1,6 @@
 package com.plac.config;
 
+import com.plac.common.Constant;
 import com.plac.repository.RefreshTokenRepository;
 import com.plac.repository.UserRepository;
 import com.plac.security.auth.CustomUserDetailsService;
@@ -56,13 +57,9 @@ public class SecurityConfig {
 
         http
                 .authorizeRequests()
-                .antMatchers("/api/test/**")
-                .access("hasRole('ROLE_USER')")
-                .antMatchers("/api/user/one", "/api/login/**", "/api/social-login", "/api/social-login/**")
-                .permitAll()
-                .antMatchers("/api/**")
-                .access("hasRole('ROLE_USER')")
-                .anyRequest().permitAll();
+                .antMatchers(Constant.ALL_PERMIT_PATHS).permitAll()
+                .antMatchers(Constant.USER_ROLE_PERMIT_PATHS).hasRole(Constant.USER_ROLE)
+                .anyRequest().denyAll();
 
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         http.addFilterAfter(jwtAuthorizationFilter, JwtAuthenticationFilter.class);

@@ -1,23 +1,22 @@
 package com.plac.controller;
 
+import com.plac.dto.request.email.EmailReqDto;
 import com.plac.dto.request.user.UserReqDto;
-import com.plac.dto.response.user.UserResDto;
 import com.plac.service.user.UserService;
 import com.plac.util.MessageUtil;
-import com.plac.util.SecurityContextHolderUtil;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/user")
+@RequestMapping("/api/users")
 public class UserController {
 
     private final UserService userService;
@@ -53,27 +52,14 @@ public class UserController {
         return MessageUtil.buildResponseEntity(HttpStatus.OK, "success");
     }
 
+    @GetMapping("/emails/availability")
+    public ResponseEntity<Void> checkEmailAvailability(
+            @Valid @RequestBody EmailReqDto dto
+    ) {
+        String inputEmail = dto.getEmail();
 
-    /**
-     * TEST URL : 테스트가 끝나면 필수적으로 지워야 함.
-     * */
-    @Operation(summary = "로그인 테스트 api", description = "로그인 상태에서, 해당 유저의 정보를 출력.")
-    @GetMapping("/test1")
-    public ResponseEntity<?> TestApi() throws Exception {
-        Long userId = SecurityContextHolderUtil.getUserId();
-        UserResDto userResDto = UserResDto.of(userService.findUser(userId));
+        userService.checkEmailAvailability(inputEmail);
 
-        return MessageUtil.buildResponseEntity(userResDto, HttpStatus.OK, "success");
+        return new ResponseEntity<>(HttpStatus.OK);
     }
-
-    @Operation(summary = "로그인 테스트 api", description = "로그인 상태에서, 등록된 모든 유저정보 출력")
-    @GetMapping("/test2")
-    public ResponseEntity<?> searchAll(){
-        List<UserResDto> result = userService.findAll();
-
-        return MessageUtil.buildResponseEntity(result, HttpStatus.OK, "success");
-    }
-
-    /*
-    * */
 }

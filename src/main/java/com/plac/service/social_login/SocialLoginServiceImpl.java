@@ -91,12 +91,11 @@ public class SocialLoginServiceImpl implements SocialLoginService{
                 .password(encodedPassword)
                 .roles("ROLE_USER")
                 .provider(oauth2UserInfo.getProvider())
-                .profileImagePath(oauth2UserInfo.getProfileImagePath())
+                .profileImageUrl(oauth2UserInfo.getProfileImagePath())
                 .profileName(oauth2UserInfo.getProfileName())
-                .profileBirth(oauth2UserInfo.getProfileBirth())
+                .profileBirthday(oauth2UserInfo.getProfileBirth())
                 .phoneNumber(oauth2UserInfo.getPhoneNumber())
                 .gender(oauth2UserInfo.getGender())
-                .createdAt(LocalDateTime.now())
                 .age(oauth2UserInfo.getAge())
                 .build();
     }

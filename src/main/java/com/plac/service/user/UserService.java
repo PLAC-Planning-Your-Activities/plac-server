@@ -7,9 +7,15 @@ import com.plac.dto.response.user.UserResDto;
 import java.util.List;
 
 public interface UserService {
-    public UserResDto signUp(UserReqDto.CreateUser reqDto);
-    public User findUser(Long userId);
-    public void deleteUser();
-    public void deleteUser(Long userId);
-    public List<UserResDto> findAll();
+    UserResDto signUp(UserReqDto.CreateUser reqDto);
+
+    User findUser(Long userId);
+
+    void deleteUser();
+
+    void deleteUser(Long userId);
+
+    List<UserResDto> findAll();
+
+    void checkEmailAvailability(String email);
 }

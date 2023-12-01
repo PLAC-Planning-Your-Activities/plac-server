@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @RequiredArgsConstructor
 @Service
 public class EmailVerificationService {
@@ -16,6 +18,9 @@ public class EmailVerificationService {
 
     @Value("${plac.email.expire-minutes.signup}")
     private final long SIGN_UP_EMAIL_EXP_MINUTES = 3L;
+
+    @Value("${plac.email.expire-minutes.completion}")
+    private final long VERIFICATION_COMPLETION_EFFECTIVE_TIME = 5L;
 
     public void sendSignupVerificationEmail(String email) {
         EmailVerification emailVerification = EmailVerification.createForSignup(email, SIGN_UP_EMAIL_EXP_MINUTES);
@@ -38,5 +43,13 @@ public class EmailVerificationService {
 
         emailVerification.checkAndValidate();
         emailVerification.matchVerificationCode(verificationCode);
+        emailVerificationRepository.save(emailVerification);
+    }
+
+    public boolean isVerifiedEmail(String email) {
+        EmailVerification emailVerification = emailVerificationRepository.findTopByReceiptEmailAndContentTypeOrderByCreatedAtDesc(email, EmailVerificationContentType.SIGNUP)
+                .orElseThrow(() -> new RuntimeException("이메일 인증이 필요합니다."));
+
+        return emailVerification.isCheckedStatus() && emailVerification.getUpdatedAt().isBefore(LocalDateTime.now().plusMinutes(VERIFICATION_COMPLETION_EFFECTIVE_TIME));
     }
 }
