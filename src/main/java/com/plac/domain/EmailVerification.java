@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -73,17 +75,17 @@ public class EmailVerification extends AbstractTimeEntity {
         LocalDateTime current = LocalDateTime.now();
 
         if (checkedStatus) {
-            throw new IllegalStateException("이미 인증된 번호입니다.");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "이미 인증된 번호입니다.");
         }
         if (expireAt.isBefore(current)) {
-            throw new IllegalStateException("인증 번호가 만료되었습니다.");
+            throw new ResponseStatusException(HttpStatus.GONE, "인증 번호가 만료되었습니다.");
         }
     }
 
     public void matchVerificationCode(int code) {
         int contentCode = Integer.valueOf(content);
         if (contentCode != code) {
-            throw new RuntimeException("인증 번호가 일치하지 않습니다.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "인증 번호가 일치하지 않습니다.");
         }
     }
 }

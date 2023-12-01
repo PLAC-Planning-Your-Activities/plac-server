@@ -11,8 +11,10 @@ import com.plac.repository.UserRepository;
 import com.plac.service.password_checker.PasswordChecker;
 import com.plac.util.SecurityContextHolderUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -104,7 +106,7 @@ public class UserServiceImpl implements UserService {
         Optional<User> optionalUser = userRepository.findByUsername(email);
 
         if (optionalUser.isPresent()) {
-            throw new RuntimeException("이미 존재하는 이메일입니다.");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "이미 존재하는 이메일입니다.");
         }
     }
 }
