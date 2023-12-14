@@ -13,7 +13,9 @@ import java.util.Date;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "place_review_like")
+@Table(name = "place_review_like", indexes = {
+        @Index(name = "idx_place_review_user", columnList = "place_review_id, user_id")
+})
 public class PlaceReviewLike {
 
     @Id

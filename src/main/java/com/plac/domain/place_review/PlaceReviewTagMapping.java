@@ -13,7 +13,9 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "place_review_tag_mapping")
+@Table(name = "place_review_tag_mapping", indexes = {
+        @Index(name = "idx_place_review_id", columnList = "place_review_id")
+})
 public class PlaceReviewTagMapping extends AbstractTimeEntity {
 
     @Id

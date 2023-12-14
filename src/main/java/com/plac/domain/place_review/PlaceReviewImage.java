@@ -13,7 +13,9 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "place_review_image")
+@Table(name = "place_review_image", indexes = {
+        @Index(name = "idx_place_review_turn", columnList = "place_review_id, turn")
+})
 public class PlaceReviewImage extends AbstractTimeEntity {
 
     @Id

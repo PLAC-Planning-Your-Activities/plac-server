@@ -15,7 +15,9 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "place_review")
+@Table(name = "place_review", indexes = {
+        @Index(name = "idx_place_id", columnList = "place_id")
+})
 public class PlaceReview extends AbstractTimeEntity {
 
     @Id
