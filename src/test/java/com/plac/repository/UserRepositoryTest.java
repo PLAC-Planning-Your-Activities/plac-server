@@ -1,7 +1,9 @@
 package com.plac.repository;
 
 import com.plac.domain.User;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -10,7 +12,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -35,7 +36,6 @@ public class UserRepositoryTest {
                 .username("test1@email.com")
                 .password("password1234")
                 .roles("ROLE_USER")
-                .createdAt(LocalDateTime.now())
                 .build();
         userRepository.save(buildUser);
     }
@@ -48,7 +48,6 @@ public class UserRepositoryTest {
                 .username("test2@email.com")
                 .password("password1234")
                 .roles("ROLE_USER")
-                .createdAt(LocalDateTime.now())
                 .build();
         userRepository.save(testUser);
 
@@ -81,7 +80,6 @@ public class UserRepositoryTest {
                 .username("naver_user@email.com")
                 .password("password1234")
                 .roles("ROLE_USER")
-                .createdAt(LocalDateTime.now())
                 .build();
         userRepository.save(testUser);
 

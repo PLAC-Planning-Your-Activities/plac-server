@@ -103,7 +103,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public void checkEmailAvailability(String email) {
-        Optional<User> optionalUser = userRepository.findByUsername(email);
+        Optional<User> optionalUser = userRepository.findByUsernameAndProvider(email, "normal");
 
         if (optionalUser.isPresent()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "이미 존재하는 이메일입니다.");

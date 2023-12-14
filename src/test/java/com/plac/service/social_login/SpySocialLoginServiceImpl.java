@@ -5,15 +5,12 @@ import com.plac.domain.social_login.Oauth2UserInfo;
 import com.plac.dto.request.social_login.SocialLoginReqDto;
 import com.plac.dto.response.social_login.Oauth2TokenResDto;
 import com.plac.dto.response.social_login.SocialLoginResDto;
-import com.plac.repository.RefreshTokenRepository;
 import com.plac.repository.UserRepository;
 import com.plac.service.social_login.provider.token.TokenProviderContext;
 import com.plac.service.social_login.provider.user_info.Oauth2UserInfoContext;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
 
@@ -51,8 +48,6 @@ public class SpySocialLoginServiceImpl implements SocialLoginService{
                 .password(password)
                 .roles("ROLE_USER")
                 .provider(oauth2UserInfo.getProvider())
-                .profileImagePath(oauth2UserInfo.getProfileImagePath())
-                .createdAt(LocalDateTime.now())
                 .build();
     }
 }
