@@ -27,23 +27,8 @@ public class PlaceReview extends AbstractTimeEntity {
     @Column(name = "place_id", nullable = false)
     private Long placeId;
 
-    @Column(name = "total_rating")
-    private Integer totalRating;
-
-    @Column(name = "flavor_rating")
-    private Integer flavorRating;
-
-    @Column(name = "price_rating")
-    private Integer priceRating;
-
-    @Column(name = "kindness_rating")
-    private Integer kindnessRating;
-
-    @Column(name = "cleanness_rating")
-    private Integer cleannessRating;
-
-    @Column(name = "mood_rating")
-    private Integer moodRating;
+    @Embedded
+    private Ratings ratings;
 
     @Lob
     @Column(nullable = false)
