@@ -1,5 +1,6 @@
 package com.plac.domain.place_tag;
 
+import com.plac.domain.AbstractTimeEntity;
 import com.plac.domain.Place;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,7 +18,7 @@ import javax.persistence.*;
         @Index(name = "idx_place_id", columnList = "place_id"),
         @Index(name = "idx_place_tag_id", columnList = "place_tag_id")
 })
-public class PlaceTagMapping {
+public class PlaceTagMapping extends AbstractTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

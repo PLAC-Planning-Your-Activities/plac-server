@@ -6,6 +6,8 @@ public interface Constant {
 
     String[] ALL_PERMIT_PATHS = new String[]{
             "/api/users/one",
+            "/api/places",
+            "/api/places/**",
             "/api/users/emails/availability",
             "/api/login/**",
             "/api/social-login",
