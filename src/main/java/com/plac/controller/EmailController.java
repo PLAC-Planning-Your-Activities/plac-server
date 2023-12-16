@@ -4,6 +4,7 @@ import com.plac.dto.request.email.EmailReqDto;
 import com.plac.dto.request.email.EmailVerifyReqDto;
 import com.plac.service.email.EmailVerificationService;
 import com.plac.service.user.UserService;
+import com.plac.util.MessageUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,24 +24,25 @@ public class EmailController {
     private final UserService userService;
 
     @PostMapping("/send-verification-email")
-    public ResponseEntity<Void> sendVerificationEmail(
+    public ResponseEntity<?> sendVerificationEmail(
             @Valid @RequestBody EmailReqDto dto
     ) {
         String inputEmail = dto.getEmail();
+        System.out.println(inputEmail);
 
         userService.checkEmailAvailability(inputEmail);
 
         emailVerificationService.sendSignupVerificationEmail(inputEmail);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return MessageUtil.buildResponseEntity(HttpStatus.OK, "success");
     }
 
     @PostMapping("/verify-code")
-    public ResponseEntity<Void> verifyEmailVerificationCode(
+    public ResponseEntity<?> verifyEmailVerificationCode(
             @Valid @RequestBody EmailVerifyReqDto dto
     ) {
         emailVerificationService.verifySignupEmail(dto.getEmail(), dto.getCode());
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return MessageUtil.buildResponseEntity(HttpStatus.OK, "success");
     }
 }

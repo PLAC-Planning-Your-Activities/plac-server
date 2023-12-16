@@ -15,7 +15,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -49,7 +48,6 @@ class UserServiceImplTest {
                 .username("test1@email.com")
                 .provider("normal")
                 .roles("ROLE_USER")
-                .createdAt(LocalDateTime.now())
                 .build();
 
         mockUserList = Arrays.asList(
@@ -57,13 +55,11 @@ class UserServiceImplTest {
                         .username("test2@example.com")
                         .provider("google")
                         .roles("ROLE_USER")
-                        .createdAt(LocalDateTime.now())
                         .build(),
                 User.builder()
                         .username("test3@example.com")
                         .provider("kakao")
                         .roles("ROLE_USER")
-                        .createdAt(LocalDateTime.now())
                         .build()
         );
     }

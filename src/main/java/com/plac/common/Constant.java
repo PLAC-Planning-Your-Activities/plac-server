@@ -6,6 +6,8 @@ public interface Constant {
 
     String[] ALL_PERMIT_PATHS = new String[]{
             "/api/users/one",
+            "/api/places",
+            "/api/places/**",
             "/api/users/emails/availability",
             "/api/login/**",
             "/api/social-login",
@@ -17,5 +19,10 @@ public interface Constant {
     String[] USER_ROLE_PERMIT_PATHS = new String[]{
             "/api/**",
             "/api/test/**",
+    };
+
+    String[] PLACE_REVIEW_TAGS = new String[]{
+            "혼자", "친구", "연인", "아이", "부모님", "반려동물",
+            "데이트", "SNS 핫플레이스", "힐링", "먹방", "가성비", "분위기", "혼자놀기"
     };
 }

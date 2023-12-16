@@ -74,7 +74,6 @@ class RefreshTokenRepositoryTest {
                 .username(username)
                 .password("password1234")
                 .roles("ROLE_USER")
-                .createdAt(LocalDateTime.now())
                 .build();
         userRepository.save(buildUser);
 

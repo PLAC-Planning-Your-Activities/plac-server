@@ -45,7 +45,6 @@ public class EmailVerificationServiceTest {
                 .password("password")
                 .provider("normal")
                 .roles("ROLE_USER")
-                .createdAt(LocalDateTime.now())
                 .build();
         userRepository.save(user); // userId = 1L;
     }

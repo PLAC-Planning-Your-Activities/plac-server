@@ -98,7 +98,6 @@ class SocialLoginServiceImplTest {
         return User.builder()
                 .provider("google")
                 .username("user1@email.com")
-                .createdAt(LocalDateTime.now())
                 .build();
     }
 
