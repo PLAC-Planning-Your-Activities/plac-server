@@ -10,6 +10,7 @@ import com.plac.exception.place.WrongKakaoPlaceIdException;
 import com.plac.exception.place.WrongPlaceIdException;
 import com.plac.exception.place_review.CannotRateReviewException;
 import com.plac.exception.place_review.PlaceReviewNotFoundException;
+import com.plac.exception.user.UserNotFoundException;
 import com.plac.repository.*;
 import com.plac.util.SecurityContextHolderUtil;
 import lombok.RequiredArgsConstructor;
@@ -17,11 +18,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -117,59 +118,38 @@ public class PlaceReviewServiceImpl implements PlaceReviewService{
         System.out.println("service - getPlaceReviews()");
         List<PlaceReviewResDto> results = new ArrayList<>();
 
-        if(sortBy.equals("최신순")){
-            // 페이지 번호는 0부터 시작
-            PageRequest pageRequest = PageRequest.of(page, 3); // 페이지 크기는 3
+        if ("최신순".equals(sortBy)) {
+            PageRequest pageRequest = PageRequest.of(page, 3);
             Page<PlaceReview> result = placeReviewRepository.findAllOrderByCreatedAtDesc(placeId, pageRequest);
             List<PlaceReview> placeReviews = result.getContent();
-            for (PlaceReview placeReview : placeReviews) {
-                Long placeReviewId = placeReview.getId();
-                User user = userRepository.findById(placeReview.getUserId()).get();
-                String profileName = user.getProfileName();
-
-                LocalDateTime createdAt = placeReview.getCreatedAt();
-                Ratings ratings = placeReview.getRatings();
-                String content = placeReview.getContent();
-                int likeCount = placeReviewLikeRepository.countByPlaceReviewId(placeReviewId);
-                int disLikeCount = placeReviewDislikeRepository.countByPlaceReviewId(placeReviewId);
-
-                boolean myReview, pickLike, pickDisLike;
-
-                // 해당 리뷰를 쓴 사람과 현재 로그인된 사람이 같다.
-                if(placeReview.getUserId() == SecurityContextHolderUtil.getUserId()){
-                    myReview = true;
-                }else myReview = false;
-
-                Optional<PlaceReviewLike> placeReviewLikeOpt = placeReviewLikeRepository.findByPlaceReviewIdAndUserId(placeReviewId, SecurityContextHolderUtil.getUserId());
-                Optional<PlaceReviewLike> placeReviewDislikeOpt = placeReviewDislikeRepository.findByPlaceReviewIdAndUserId(placeReviewId, SecurityContextHolderUtil.getUserId());
-
-                if(placeReviewLikeOpt.isPresent()){
-                    pickLike = true;
-                }else pickLike = false;
-
-                if(placeReviewDislikeOpt.isPresent()){
-                    pickDisLike = true;
-                }else pickDisLike = false;
-
-                PlaceReviewResDto placeReviewResDto = PlaceReviewResDto.builder()
-                        .id(placeReviewId)
-                        .userId(placeReview.getUserId())
-                        .userProfileName(user.getProfileName())
-                        .createdAt(createdAt)
-                        .ratings(ratings)
-                        .content(content)
-                        .like(likeCount)
-                        .dislike(disLikeCount)
-                        .myReview(myReview)
-                        .pickLike(pickLike)
-                        .pickDisLike(pickDisLike)
-                        .build();
-
-                results.add(placeReviewResDto);
-            }
+            results = placeReviews.stream()
+                    .map(this::convertToDto)
+                    .collect(Collectors.toList());
         }
 
         return results;
+    }
+
+    private PlaceReviewResDto convertToDto(PlaceReview placeReview) {
+        User user = userRepository.findById(placeReview.getUserId()).orElseThrow(() -> new UserNotFoundException("User not found"));
+        Long placeReviewId = placeReview.getId();
+        int likeCount = placeReviewLikeRepository.countByPlaceReviewId(placeReviewId);
+        int disLikeCount = placeReviewDislikeRepository.countByPlaceReviewId(placeReviewId);
+        long currentUserId = SecurityContextHolderUtil.getUserId();
+
+        return PlaceReviewResDto.builder()
+                .id(placeReviewId)
+                .userId(placeReview.getUserId())
+                .userProfileName(user.getProfileName())
+                .createdAt(placeReview.getCreatedAt())
+                .ratings(placeReview.getRatings())
+                .content(placeReview.getContent())
+                .like(likeCount)
+                .dislike(disLikeCount)
+                .myReview(placeReview.getUserId() == currentUserId)
+                .pickLike(placeReviewLikeRepository.findByPlaceReviewIdAndUserId(placeReviewId, currentUserId).isPresent())
+                .pickDisLike(placeReviewDislikeRepository.findByPlaceReviewIdAndUserId(placeReviewId, currentUserId).isPresent())
+                .build();
     }
 
     private PlaceReview verifyPlaceReview(Optional<PlaceReview> placeReviewRepository) {

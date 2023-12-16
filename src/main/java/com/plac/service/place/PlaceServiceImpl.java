@@ -2,7 +2,6 @@ package com.plac.service.place;
 
 import com.plac.domain.Place;
 import com.plac.dto.request.place.KakaoPlaceInfo;
-import com.plac.dto.request.place.PlaceDetailsReqDto;
 import com.plac.dto.request.place.PlaceReqDto;
 import com.plac.dto.response.place.PlaceDetailsResDto;
 import com.plac.dto.response.place.PlaceResDto;
