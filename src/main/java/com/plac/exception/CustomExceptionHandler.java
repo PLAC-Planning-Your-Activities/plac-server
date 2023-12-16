@@ -1,6 +1,8 @@
 package com.plac.exception;
 
 import com.plac.domain.Message;
+import com.plac.exception.place.WrongKakaoPlaceIdException;
+import com.plac.exception.place.WrongPlaceIdException;
 import com.plac.exception.social_login.ProviderNotSupportedException;
 import com.plac.exception.user.DuplUsernameException;
 import com.plac.exception.user.UserPrincipalNotFoundException;
@@ -48,6 +50,18 @@ public class CustomExceptionHandler {
     @ExceptionHandler(ProviderNotSupportedException.class)
     public ResponseEntity<?> handleException(ProviderNotSupportedException e){
         Message message = new Message(e.getMessage(), -201, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(message, message.getStatus());
+    }
+
+    @ExceptionHandler(WrongKakaoPlaceIdException.class)
+    public ResponseEntity<?> handleException(WrongKakaoPlaceIdException e){
+        Message message = new Message(e.getMessage(), -300, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(message, message.getStatus());
+    }
+
+    @ExceptionHandler(WrongPlaceIdException.class)
+    public ResponseEntity<?> handleException(WrongPlaceIdException e){
+        Message message = new Message(e.getMessage(), -301, HttpStatus.BAD_REQUEST);
         return new ResponseEntity<>(message, message.getStatus());
     }
 

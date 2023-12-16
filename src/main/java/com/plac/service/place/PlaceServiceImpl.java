@@ -56,6 +56,9 @@ public class PlaceServiceImpl implements PlaceService{
 
         Float averageTotalRating = placeReviewRepository.findAverageTotalRatingByPlaceId(place.getId());
         if (averageTotalRating == null) averageTotalRating = 0.0f;
+        else{
+            averageTotalRating = Math.round(averageTotalRating * 10) / 10.0f;
+        }
 
         return PlaceResDto.builder()
                 .kakaoPlaceId(placeInfo.getKakaoPlaceId())

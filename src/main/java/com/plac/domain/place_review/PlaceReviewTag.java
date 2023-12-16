@@ -23,7 +23,7 @@ public class PlaceReviewTag extends AbstractTimeEntity {
     private Long id;
 
     @Column(unique = true, nullable = false)
-    private String name;
+    private String tagName;
 
     @OneToMany(mappedBy = "placeReviewTag")
     private Set<PlaceReviewTagMapping> placeReviewTagMappings = new HashSet<>();

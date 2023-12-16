@@ -1,13 +1,20 @@
 package com.plac.domain.place_review;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.Embeddable;
 
 @Embeddable
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
 public class Ratings {
-    private Integer totalRating;
-    private Integer flavorRating;
-    private Integer priceRating;
-    private Integer kindnessRating;
-    private Integer cleannessRating;
-    private Integer moodRating;
+    private double totalRating;
+    private int flavorRating;
+    private int priceRating;
+    private int kindnessRating;
+    private int cleannessRating;
+    private int moodRating;
 }

@@ -6,9 +6,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface PlaceReviewRepository extends JpaRepository<PlaceReview, Long> {
-    @Query("SELECT ROUND(AVG(pr.totalRating), 0) FROM PlaceReview pr WHERE pr.placeId = :placeId")
+    @Query("SELECT AVG(pr.ratings.totalRating) FROM PlaceReview pr WHERE pr.placeId = :placeId")
     Float findAverageTotalRatingByPlaceId(@Param("placeId") Long placeId);
 
-    @Query("SELECT COALESCE(ROUND(AVG(pr.totalRating), 0), 0) FROM PlaceReview pr WHERE pr.placeId = :placeId")
+    @Query("SELECT ROUND(COUNT(pr), 0) FROM PlaceReview pr WHERE pr.placeId = :placeId")
     int countByPlaceId(@Param("placeId") Long placeId);
 }
