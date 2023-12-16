@@ -6,13 +6,15 @@ import lombok.*;
 import java.math.BigDecimal;
 
 @Getter
-@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class PlaceResDto {
     private Long kakaoPlaceId;
     private Long placPlaceId;
+    private String placeName;
+    private String thumbnailImageUrl;
+    private String streetNameAddress;
     private float totalRating;
     private int reviewCount;
     private BigDecimal x;

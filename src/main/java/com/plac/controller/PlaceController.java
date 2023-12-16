@@ -19,16 +19,18 @@ public class PlaceController {
     private final PlaceService placeService;
 
     @PostMapping("")
-    public ResponseEntity<?> searchPlaceSummaryInfo(@RequestBody PlaceReqDto req) throws Exception {
-        List<PlaceResDto> placeSummaryInfo = placeService.getPlaceSummaryInfo(req);
+    public ResponseEntity<?> searchSummaryInfo(@RequestBody PlaceReqDto req) throws Exception {
+        List<PlaceResDto> placeSummaryInfo = placeService.getPlacesSummaryInfo(req);
 
         return MessageUtil.buildResponseEntity(placeSummaryInfo, HttpStatus.OK, "success");
     }
 
-    @GetMapping("/detail")
-    public ResponseEntity<?> getPlaceDetails(@RequestBody PlaceReqDto req) throws Exception {
-        List<PlaceResDto> placeSummaryInfo = placeService.getPlaceSummaryInfo(req);
-
-        return MessageUtil.buildResponseEntity(placeSummaryInfo, HttpStatus.OK, "success");
-    }
+//    @GetMapping("/details")
+//    public ResponseEntity<?> searchPlaceDetails(@RequestParam("kakaoPlaceId") Long kakaoPlaceId,
+//                                             @RequestParam("sortBy") String sort,
+//                                             @RequestParam("page") int page) throws Exception {
+//
+//       placeService.getPlacesDetails(kakaoPlaceId, sort, page);
+//
+//    }
 }

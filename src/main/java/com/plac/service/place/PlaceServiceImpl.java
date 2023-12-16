@@ -26,14 +26,13 @@ public class PlaceServiceImpl implements PlaceService{
     }
 
     @Override
-    public List<PlaceResDto> getPlaceSummaryInfo(PlaceReqDto req) {
+    public List<PlaceResDto> getPlacesSummaryInfo(PlaceReqDto req) {
         List<KakaoPlaceInfo> placeInfoList = req.getPositionList();
         List<PlaceResDto> result = new ArrayList<>();
 
         for (KakaoPlaceInfo placeInfo : placeInfoList) {
             Place place = placeRepository.findByKakaoPlaceId(placeInfo.getKakaoPlaceId())
                     .orElseGet(() -> createNewPlace(placeInfo));
-
             PlaceResDto placeResDto = buildPlaceResDto(place, placeInfo);
             result.add(placeResDto);
         }
@@ -45,6 +44,9 @@ public class PlaceServiceImpl implements PlaceService{
     public Place createNewPlace(KakaoPlaceInfo req) {
         Place newPlace = Place.builder()
                 .kakaoPlaceId(req.getKakaoPlaceId())
+                .placeName(req.getPlaceName())
+                .thumbnailImageUrl(req.getThumbnailImageUrl())
+                .streetNameAddress(req.getStreetNameAddress())
                 .x(req.getX())
                 .y(req.getY())
                 .build();
@@ -63,6 +65,9 @@ public class PlaceServiceImpl implements PlaceService{
         return PlaceResDto.builder()
                 .kakaoPlaceId(placeInfo.getKakaoPlaceId())
                 .placPlaceId(place.getId())
+                .placeName(placeInfo.getPlaceName())
+                .thumbnailImageUrl(placeInfo.getThumbnailImageUrl())
+                .streetNameAddress(placeInfo.getStreetNameAddress())
                 .totalRating(averageTotalRating)
                 .reviewCount(reviewCount)
                 .x(place.getX())

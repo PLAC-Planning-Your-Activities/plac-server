@@ -1,15 +1,13 @@
 package com.plac.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.Comment;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -24,7 +22,7 @@ public class Place extends AbstractTimeEntity {
 
     private Long kakaoPlaceId;
 
-    private String name;
+    private String placeName;
 
     private String thumbnailImageUrl;
 

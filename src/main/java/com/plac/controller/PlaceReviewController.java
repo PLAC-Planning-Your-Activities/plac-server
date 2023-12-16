@@ -1,5 +1,6 @@
 package com.plac.controller;
 
+import com.plac.dto.request.place_review.AddLikeToPlaceReviewReqDto;
 import com.plac.dto.request.place_review.PlaceReviewReqDto;
 import com.plac.service.place_review.PlaceReviewService;
 import com.plac.util.MessageUtil;
@@ -21,6 +22,13 @@ public class PlaceReviewController {
     @PostMapping("")
     public ResponseEntity<?> writePlaceReview(@RequestBody PlaceReviewReqDto req){
         placeReviewService.writeReview(req);
+
+        return MessageUtil.buildResponseEntity(HttpStatus.OK, "success");
+    }
+
+    @PostMapping("/rate")
+    public ResponseEntity<?> addLikeToPlaceReview(@RequestBody AddLikeToPlaceReviewReqDto req){
+        placeReviewService.ratePlaceReview(req);
 
         return MessageUtil.buildResponseEntity(HttpStatus.OK, "success");
     }

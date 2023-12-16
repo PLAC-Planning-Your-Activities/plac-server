@@ -10,7 +10,7 @@ import java.util.List;
 public interface PlaceService {
 
     float getTotalRatingAverage(Long placeId);
-    List<PlaceResDto> getPlaceSummaryInfo(PlaceReqDto req);
+    List<PlaceResDto> getPlacesSummaryInfo(PlaceReqDto req);
     Place createNewPlace(KakaoPlaceInfo req);
 
 }
