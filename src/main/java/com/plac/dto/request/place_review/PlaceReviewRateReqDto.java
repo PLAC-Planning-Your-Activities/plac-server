@@ -2,16 +2,13 @@ package com.plac.dto.request.place_review;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Data
+@Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AddLikeToPlaceReviewReqDto {
-
+public class PlaceReviewRateReqDto {
     private Long placeReviewId;
-    private boolean like;
-    private boolean dislike;
 }

@@ -13,12 +13,9 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PlaceDetailsResDto {
-    private Long kakaoPlaceId;
-    private Long placPlaceId;
-    private BigDecimal x;
-    private BigDecimal y;
+    private Long placeId;
+    private String placeName;
+    private String streetNameAddress;
     private int reviewCount;
-    private Ratings averageRatings;
-    private String sortBy;
-    private String page;
+    private float totalRatings;
 }

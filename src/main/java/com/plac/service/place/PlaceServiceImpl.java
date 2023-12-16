@@ -2,8 +2,11 @@ package com.plac.service.place;
 
 import com.plac.domain.Place;
 import com.plac.dto.request.place.KakaoPlaceInfo;
+import com.plac.dto.request.place.PlaceDetailsReqDto;
 import com.plac.dto.request.place.PlaceReqDto;
+import com.plac.dto.response.place.PlaceDetailsResDto;
 import com.plac.dto.response.place.PlaceResDto;
+import com.plac.exception.place.WrongPlaceIdException;
 import com.plac.repository.PlaceRepository;
 import com.plac.repository.PlaceReviewRepository;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +28,7 @@ public class PlaceServiceImpl implements PlaceService{
         float totalRatingAverage = placeReviewRepository.findAverageTotalRatingByPlaceId(placeId);
         return totalRatingAverage;
     }
+
 
     @Override
     public List<PlaceResDto> getPlacesSummaryInfo(PlaceReqDto req) {
@@ -52,6 +57,26 @@ public class PlaceServiceImpl implements PlaceService{
                 .build();
         return placeRepository.save(newPlace);
     }
+
+    @Override
+    public PlaceDetailsResDto getPlaceDetails(Long placeId) {
+        Optional<Place> placeOpt = placeRepository.findById(placeId);
+        if(!placeOpt.isPresent())
+            throw new WrongPlaceIdException("Wrong placeId");
+
+        Place place = placeOpt.get();
+        Float averageRating = placeReviewRepository.findAverageTotalRatingByPlaceId(place.getId());
+        int reviewCount = placeReviewRepository.countByPlaceId(place.getId());
+
+        return PlaceDetailsResDto.builder()
+                .placeId(place.getId())
+                .placeName(place.getPlaceName())
+                .streetNameAddress(place.getStreetNameAddress())
+                .reviewCount(reviewCount)
+                .totalRatings(averageRating)
+                .build();
+    }
+
 
     private PlaceResDto buildPlaceResDto(Place place, KakaoPlaceInfo placeInfo) {
         int reviewCount = placeReviewRepository.countByPlaceId(place.getId());

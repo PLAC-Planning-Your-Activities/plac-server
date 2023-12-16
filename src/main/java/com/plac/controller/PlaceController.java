@@ -1,6 +1,8 @@
 package com.plac.controller;
 
+import com.plac.dto.request.place.PlaceDetailsReqDto;
 import com.plac.dto.request.place.PlaceReqDto;
+import com.plac.dto.response.place.PlaceDetailsResDto;
 import com.plac.dto.response.place.PlaceResDto;
 import com.plac.service.place.PlaceService;
 import com.plac.util.MessageUtil;
@@ -25,12 +27,11 @@ public class PlaceController {
         return MessageUtil.buildResponseEntity(placeSummaryInfo, HttpStatus.OK, "success");
     }
 
-//    @GetMapping("/details")
-//    public ResponseEntity<?> searchPlaceDetails(@RequestParam("kakaoPlaceId") Long kakaoPlaceId,
-//                                             @RequestParam("sortBy") String sort,
-//                                             @RequestParam("page") int page) throws Exception {
-//
-//       placeService.getPlacesDetails(kakaoPlaceId, sort, page);
-//
-//    }
+    @GetMapping("/detail")
+    public ResponseEntity<?> searchPlaceDetails( @RequestParam("placeId") Long placeId) throws Exception {
+        PlaceDetailsResDto placeDetails = placeService.getPlaceDetails(placeId);
+
+        return MessageUtil.buildResponseEntity(placeDetails, HttpStatus.OK, "success");
+    }
+
 }

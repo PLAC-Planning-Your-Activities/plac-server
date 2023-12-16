@@ -2,7 +2,9 @@ package com.plac.service.place;
 
 import com.plac.domain.Place;
 import com.plac.dto.request.place.KakaoPlaceInfo;
+import com.plac.dto.request.place.PlaceDetailsReqDto;
 import com.plac.dto.request.place.PlaceReqDto;
+import com.plac.dto.response.place.PlaceDetailsResDto;
 import com.plac.dto.response.place.PlaceResDto;
 
 import java.util.List;
@@ -13,4 +15,5 @@ public interface PlaceService {
     List<PlaceResDto> getPlacesSummaryInfo(PlaceReqDto req);
     Place createNewPlace(KakaoPlaceInfo req);
 
+    PlaceDetailsResDto getPlaceDetails(Long placeId);
 }
