@@ -65,6 +65,10 @@ public class PlaceServiceImpl implements PlaceService{
 
         Place place = placeOpt.get();
         Float averageRating = placeReviewRepository.findAverageTotalRatingByPlaceId(place.getId());
+        if (averageRating == null){
+            averageRating = 0.0f;
+        }
+
         int reviewCount = placeReviewRepository.countByPlaceId(place.getId());
 
         return PlaceDetailsResDto.builder()

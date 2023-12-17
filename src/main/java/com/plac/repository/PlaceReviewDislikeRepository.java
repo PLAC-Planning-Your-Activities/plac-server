@@ -1,7 +1,6 @@
 package com.plac.repository;
 
 import com.plac.domain.place_review.PlaceReviewDislike;
-import com.plac.domain.place_review.PlaceReviewLike;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,5 +12,5 @@ public interface PlaceReviewDislikeRepository extends JpaRepository<PlaceReviewD
     int countByPlaceReviewId(@Param("placeReviewId") Long placeReviewId);
 
     @Query("SELECT prl FROM PlaceReviewDislike prl WHERE prl.placeReview.id = :placeReviewId AND prl.userId = :userId")
-    Optional<PlaceReviewLike> findByPlaceReviewIdAndUserId(@Param("placeReviewId") Long placeReviewId, @Param("userId") Long userId);
+    Optional<PlaceReviewDislike> findByPlaceReviewIdAndUserId(@Param("placeReviewId") Long placeReviewId, @Param("userId") Long userId);
 }
