@@ -44,8 +44,8 @@ public class JwtUtil {
     public static ResponseCookie makeResponseCookie(String accessToken) {
         ResponseCookie cookies = ResponseCookie.from("plac_token", accessToken)
                 .httpOnly(true)
-                .sameSite("Strict")
-                .domain("localhost")
+                .sameSite("None")
+                .secure(true)
                 .path("/")
                 .maxAge(ACCESS_TOKEN_VALIDITY_TIME)     // 15분
                 .build();
