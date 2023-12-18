@@ -2,12 +2,11 @@ package com.plac.common;
 
 public interface Constant {
 
-    String USER_ROLE = "USER";
+    String USER_ROLE = "ROLE_USER";
 
     String[] ALL_PERMIT_PATHS = new String[]{
             "/api/users/one",
-            "/api/places",
-            "/api/places/**",
+            "/api/login",
             "/api/users/emails/availability",
             "/api/login/**",
             "/api/social-login",
