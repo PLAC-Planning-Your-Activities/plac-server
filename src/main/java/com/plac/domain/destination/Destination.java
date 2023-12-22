@@ -1,8 +1,10 @@
 package com.plac.domain.destination;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.plac.domain.AbstractBaseDocument;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.Id;

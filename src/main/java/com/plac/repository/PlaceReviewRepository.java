@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 public interface PlaceReviewRepository extends JpaRepository<PlaceReview, Long> {
     @Query("SELECT AVG(pr.ratings.totalRating) FROM PlaceReview pr WHERE pr.placeId = :placeId")
     Float findAverageTotalRatingByPlaceId(@Param("placeId") Long placeId);
@@ -27,4 +29,6 @@ public interface PlaceReviewRepository extends JpaRepository<PlaceReview, Long> 
 
     @Query("SELECT pr FROM PlaceReview pr ORDER BY pr.ratings.totalRating ASC")
     Page<PlaceReview> findAllOrderByTotalRatingAsc(Pageable pageable);
+
+    List<PlaceReview> findByPlaceIdIn(List<Long> placeId);
 }
