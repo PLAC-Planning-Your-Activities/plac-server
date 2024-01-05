@@ -1,6 +1,7 @@
 package com.plac.service.place;
 
 import com.plac.domain.Place;
+import com.plac.domain.place_review.PlaceReview;
 import com.plac.dto.request.place.KakaoPlaceInfo;
 import com.plac.dto.request.place.PlaceReqDto;
 import com.plac.dto.response.place.PlaceDetailsResDto;
@@ -13,7 +14,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -103,4 +106,47 @@ public class PlaceServiceImpl implements PlaceService{
                 .build();
     }
 
+    public List<PlaceResDto> getPlaces(List<Long> placeIds) {
+
+        List<Place> places = placeRepository.findByIdIn(placeIds);
+
+        List<PlaceReview> placeReviews = placeReviewRepository.findByPlaceIdIn(placeIds);
+
+        Map<Long, Double> placeReviewTotalRatingDouble = placeReviews.stream()
+                .collect(Collectors.groupingBy(
+                PlaceReview::getPlaceId,
+                Collectors.averagingDouble(pr -> pr.getRatings().getTotalRating())
+        ));
+
+        Map<Long, Float> placeReviewTotalRatingFloat = placeReviewTotalRatingDouble.entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> {
+                            double avgRating = entry.getValue();
+                            return (float) (Math.round(avgRating * 10) / 10.0);
+                        }
+                ));
+
+        Map<Long, Integer> placeReviewCount = placeReviews.stream()
+                .collect(Collectors.groupingBy(
+                        PlaceReview::getPlaceId,
+                        Collectors.collectingAndThen(
+                                Collectors.counting(),
+                                Long::intValue)
+                ));
+
+        return places.stream()
+                .map(p ->PlaceResDto.of(p, placeReviewTotalRatingFloat.getOrDefault(p.getId(), 0F), placeReviewCount.getOrDefault(p.getId(), 0)))
+                .collect(Collectors.toList());
+    }
+
+    public boolean placesExist(List<Long> placeIds) {
+        if (placeIds == null || placeIds.isEmpty()) {
+            return false;
+        }
+
+        long count = placeRepository.countByIdIn(placeIds);
+
+        return count == placeIds.size();
+    }
 }
