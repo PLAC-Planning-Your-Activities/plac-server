@@ -16,6 +16,14 @@ spring:
     generate-ddl: false
 
 
+  data:
+    mongodb:
+      host: ${MONGO_DB_HOST}
+      port: 27017
+      database: plac_db
+      username: ${MONGO_DB_USER}
+      password: ${MONGO_DB_PASSWORD}
+
   devtools:
     restart:
       enabled: true
