@@ -1,4 +1,4 @@
-package com.plac.domain.destination;
+package com.plac.domain.destination.entity;
 
 import com.plac.common.AbstractTimeEntity;
 import lombok.AccessLevel;
