@@ -1,7 +1,7 @@
 package com.plac.service.social_login;
 
 import com.plac.domain.user.entity.User;
-import com.plac.domain.social_login.Oauth2UserInfo;
+import com.plac.domain.user.entity.oauth.Oauth2UserInfo;
 import com.plac.dto.request.social_login.SocialLoginReqDto;
 import com.plac.dto.response.social_login.Oauth2TokenResDto;
 import com.plac.dto.response.social_login.SocialLoginResDto;

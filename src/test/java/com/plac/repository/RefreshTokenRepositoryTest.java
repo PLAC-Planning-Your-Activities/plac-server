@@ -1,7 +1,8 @@
 package com.plac.repository;
 
-import com.plac.domain.RefreshToken;
+import com.plac.domain.user.entity.RefreshToken;
 import com.plac.domain.user.entity.User;
+import com.plac.domain.user.repository.RefreshTokenRepository;
 import com.plac.domain.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

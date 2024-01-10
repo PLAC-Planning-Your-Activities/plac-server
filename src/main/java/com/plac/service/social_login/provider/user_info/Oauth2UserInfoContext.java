@@ -1,9 +1,9 @@
 package com.plac.service.social_login.provider.user_info;
 
-import com.plac.domain.social_login.GoogleUserInfo;
-import com.plac.domain.social_login.KakaoUserInfo;
-import com.plac.domain.social_login.NaverUserInfo;
-import com.plac.domain.social_login.Oauth2UserInfo;
+import com.plac.domain.user.entity.oauth.GoogleUserInfo;
+import com.plac.domain.user.entity.oauth.KakaoUserInfo;
+import com.plac.domain.user.entity.oauth.NaverUserInfo;
+import com.plac.domain.user.entity.oauth.Oauth2UserInfo;
 import com.plac.dto.response.social_login.Oauth2TokenResDto;
 import com.plac.exception.social_login.ProviderNotSupportedException;
 import org.springframework.beans.factory.annotation.Autowired;

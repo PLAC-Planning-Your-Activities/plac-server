@@ -1,6 +1,7 @@
 package com.plac.domain;
 
-import com.plac.domain.mappedenum.EmailVerificationContentType;
+import com.plac.common.AbstractTimeEntity;
+import com.plac.mappedenum.EmailVerificationContentType;
 import com.plac.util.RandomGeneratorUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

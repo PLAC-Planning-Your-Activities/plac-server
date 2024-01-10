@@ -1,5 +1,6 @@
 package com.plac.controller;
 
+import com.plac.domain.user.service.UserService;
 import com.plac.dto.request.email.EmailReqDto;
 import com.plac.dto.request.email.EmailVerifyReqDto;
 import com.plac.service.email.EmailVerificationService;

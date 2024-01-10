@@ -1,7 +1,7 @@
 package com.plac.service.email;
 
 import com.plac.domain.EmailVerification;
-import com.plac.domain.mappedenum.EmailVerificationContentType;
+import com.plac.mappedenum.EmailVerificationContentType;
 import com.plac.repository.EmailVerificationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

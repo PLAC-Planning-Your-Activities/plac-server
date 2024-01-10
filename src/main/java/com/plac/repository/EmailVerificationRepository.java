@@ -1,7 +1,7 @@
 package com.plac.repository;
 
 import com.plac.domain.EmailVerification;
-import com.plac.domain.mappedenum.EmailVerificationContentType;
+import com.plac.mappedenum.EmailVerificationContentType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -6,7 +6,7 @@ import com.plac.domain.user.dto.UserResDto;
 import com.plac.exception.user.DuplUsernameException;
 import com.plac.exception.user.UserNotFoundException;
 import com.plac.exception.user.UserPrincipalNotFoundException;
-import com.plac.repository.RefreshTokenRepository;
+import com.plac.domain.user.repository.RefreshTokenRepository;
 import com.plac.domain.user.repository.UserRepository;
 import com.plac.service.password_checker.PasswordChecker;
 import com.plac.util.SecurityContextHolderUtil;
