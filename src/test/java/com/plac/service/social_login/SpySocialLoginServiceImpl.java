@@ -1,13 +1,13 @@
 package com.plac.service.social_login;
 
 import com.plac.domain.user.entity.User;
-import com.plac.domain.user.entity.oauth.Oauth2UserInfo;
-import com.plac.dto.request.social_login.SocialLoginReqDto;
-import com.plac.dto.response.social_login.Oauth2TokenResDto;
-import com.plac.dto.response.social_login.SocialLoginResDto;
+import com.plac.domain.social_login.entity.Oauth2UserInfo;
+import com.plac.domain.social_login.dto.SocialLoginReqDto;
+import com.plac.domain.social_login.dto.Oauth2TokenResDto;
+import com.plac.domain.social_login.dto.SocialLoginResDto;
 import com.plac.domain.user.repository.UserRepository;
-import com.plac.service.social_login.provider.token.TokenProviderContext;
-import com.plac.service.social_login.provider.user_info.Oauth2UserInfoContext;
+import com.plac.domain.social_login.provider.token.TokenProviderContext;
+import com.plac.domain.social_login.provider.user_info.Oauth2UserInfoContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +16,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class SpySocialLoginServiceImpl implements SocialLoginService{
+public class SpySocialLoginServiceImpl implements SocialLoginService {
     private final String BEARER_TYPE = "Bearer";
     private final UserRepository userRepository;
     private final TokenProviderContext tokenProviderContext;

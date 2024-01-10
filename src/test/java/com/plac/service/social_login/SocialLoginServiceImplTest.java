@@ -1,14 +1,14 @@
 package com.plac.service.social_login;
 
 import com.plac.domain.user.entity.User;
-import com.plac.domain.user.entity.oauth.GoogleUserInfo;
-import com.plac.domain.user.entity.oauth.Oauth2UserInfo;
-import com.plac.dto.request.social_login.SocialLoginReqDto;
-import com.plac.dto.response.social_login.Oauth2TokenResDto;
-import com.plac.dto.response.social_login.SocialLoginResDto;
+import com.plac.domain.social_login.entity.GoogleUserInfo;
+import com.plac.domain.social_login.entity.Oauth2UserInfo;
+import com.plac.domain.social_login.dto.SocialLoginReqDto;
+import com.plac.domain.social_login.dto.Oauth2TokenResDto;
+import com.plac.domain.social_login.dto.SocialLoginResDto;
 import com.plac.domain.user.repository.UserRepository;
-import com.plac.service.social_login.provider.token.TokenProviderContext;
-import com.plac.service.social_login.provider.user_info.Oauth2UserInfoContext;
+import com.plac.domain.social_login.provider.token.TokenProviderContext;
+import com.plac.domain.social_login.provider.user_info.Oauth2UserInfoContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

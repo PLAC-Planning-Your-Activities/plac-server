@@ -8,7 +8,6 @@ import com.plac.exception.user.UserNotFoundException;
 import com.plac.exception.user.UserPrincipalNotFoundException;
 import com.plac.domain.user.repository.RefreshTokenRepository;
 import com.plac.domain.user.repository.UserRepository;
-import com.plac.service.password_checker.PasswordChecker;
 import com.plac.util.SecurityContextHolderUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

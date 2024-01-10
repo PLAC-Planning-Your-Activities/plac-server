@@ -1,7 +1,7 @@
 package com.plac.domain.user.entity;
 
 import com.plac.common.AbstractTimeEntity;
-import com.plac.mappedenum.UserStatus;
+import com.plac.common.mappedenum.UserStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

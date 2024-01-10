@@ -1,5 +1,6 @@
 package com.plac.service.password_checker;
 
+import com.plac.domain.user.service.PasswordCheckerV1;
 import com.plac.exception.user.WeakPasswordException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
