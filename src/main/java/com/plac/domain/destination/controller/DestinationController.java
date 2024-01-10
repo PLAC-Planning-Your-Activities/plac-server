@@ -18,7 +18,7 @@ public class DestinationController {
 
     private final DestinationService destinationService;
 
-    @PostMapping("/search-words")
+    @PostMapping("/words")
     public ResponseEntity<?> searchDestinations(@RequestBody SearchDestinationRequest searchDestinationRequest){
         destinationService.createSearchWords(searchDestinationRequest);
 
