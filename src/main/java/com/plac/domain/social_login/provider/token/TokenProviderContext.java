@@ -1,7 +1,7 @@
 package com.plac.domain.social_login.provider.token;
 
-import com.plac.domain.social_login.dto.SocialLoginReqDto;
-import com.plac.domain.social_login.dto.Oauth2TokenResDto;
+import com.plac.config.dto.SocialLoginReqDto;
+import com.plac.config.dto.Oauth2TokenResDto;
 import com.plac.domain.social_login.service.token_info.GoogleTokenProvider;
 import com.plac.domain.social_login.service.token_info.KakaoTokenProvider;
 import com.plac.domain.social_login.service.token_info.NaverTokenProvider;

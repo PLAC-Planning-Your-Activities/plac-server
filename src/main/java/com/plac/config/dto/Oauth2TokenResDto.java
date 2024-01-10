@@ -1,4 +1,4 @@
-package com.plac.domain.social_login.dto;
+package com.plac.config.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

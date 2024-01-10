@@ -1,6 +1,6 @@
 package com.plac.domain.social_login.service.user_info;
 
-import com.plac.domain.social_login.dto.Oauth2TokenResDto;
+import com.plac.config.dto.Oauth2TokenResDto;
 import com.plac.domain.social_login.provider.user_info.Oauth2UserInfoProviderStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;

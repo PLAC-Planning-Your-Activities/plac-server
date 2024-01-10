@@ -4,7 +4,7 @@ import com.plac.domain.social_login.entity.GoogleUserInfo;
 import com.plac.domain.social_login.entity.KakaoUserInfo;
 import com.plac.domain.social_login.entity.NaverUserInfo;
 import com.plac.domain.social_login.entity.Oauth2UserInfo;
-import com.plac.domain.social_login.dto.Oauth2TokenResDto;
+import com.plac.config.dto.Oauth2TokenResDto;
 import com.plac.domain.social_login.service.user_info.GoogleUserInfoProvider;
 import com.plac.domain.social_login.service.user_info.KakaoUserInfoProvider;
 import com.plac.domain.social_login.service.user_info.NaverUserInfoProvider;

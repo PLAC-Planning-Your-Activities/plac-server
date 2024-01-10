@@ -1,6 +1,6 @@
 package com.plac.domain.social_login.provider.user_info;
 
-import com.plac.domain.social_login.dto.Oauth2TokenResDto;
+import com.plac.config.dto.Oauth2TokenResDto;
 
 import java.util.Map;
 

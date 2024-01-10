@@ -2,9 +2,9 @@ package com.plac.service.social_login;
 
 import com.plac.domain.user.entity.User;
 import com.plac.domain.social_login.entity.Oauth2UserInfo;
-import com.plac.domain.social_login.dto.SocialLoginReqDto;
-import com.plac.domain.social_login.dto.Oauth2TokenResDto;
-import com.plac.domain.social_login.dto.SocialLoginResDto;
+import com.plac.config.dto.SocialLoginReqDto;
+import com.plac.config.dto.Oauth2TokenResDto;
+import com.plac.config.dto.SocialLoginResDto;
 import com.plac.domain.user.repository.UserRepository;
 import com.plac.domain.social_login.provider.token.TokenProviderContext;
 import com.plac.domain.social_login.provider.user_info.Oauth2UserInfoContext;
@@ -16,13 +16,12 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class SpySocialLoginServiceImpl implements SocialLoginService {
+public class SpySocialLoginService {
     private final String BEARER_TYPE = "Bearer";
     private final UserRepository userRepository;
     private final TokenProviderContext tokenProviderContext;
     private final Oauth2UserInfoContext oauth2UserInfoContext;
 
-    @Override
     public SocialLoginResDto signIn(SocialLoginReqDto.Login req) {
         Oauth2TokenResDto tokenResDto = tokenProviderContext.getTokenFromOauth2AuthServer(req);
         Map<String, Object> userInfoFromAuthServer = oauth2UserInfoContext.getUserInfoFromAuthServer(req.getProvider(), tokenResDto);

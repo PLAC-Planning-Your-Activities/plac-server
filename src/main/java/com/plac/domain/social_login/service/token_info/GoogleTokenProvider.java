@@ -1,7 +1,7 @@
 package com.plac.domain.social_login.service.token_info;
 
-import com.plac.domain.social_login.dto.SocialLoginReqDto;
-import com.plac.domain.social_login.dto.Oauth2TokenResDto;
+import com.plac.config.dto.SocialLoginReqDto;
+import com.plac.config.dto.Oauth2TokenResDto;
 import com.plac.domain.social_login.service.user_info.GoogleOauth2Properties;
 import com.plac.domain.social_login.provider.token.TokenProviderStrategy;
 import lombok.RequiredArgsConstructor;
