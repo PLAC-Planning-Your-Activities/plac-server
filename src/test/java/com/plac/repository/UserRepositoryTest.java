@@ -1,6 +1,7 @@
 package com.plac.repository;
 
-import com.plac.domain.User;
+import com.plac.domain.user.entity.User;
+import com.plac.domain.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

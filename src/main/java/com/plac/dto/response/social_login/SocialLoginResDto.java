@@ -1,6 +1,6 @@
 package com.plac.dto.response.social_login;
 
-import com.plac.domain.User;
+import com.plac.domain.user.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

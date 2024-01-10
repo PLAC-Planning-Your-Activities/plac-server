@@ -1,6 +1,6 @@
 package com.plac.security.auth;
 
-import com.plac.domain.User;
+import com.plac.domain.user.entity.User;
 import lombok.Getter;
 import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;

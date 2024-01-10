@@ -15,15 +15,6 @@ spring:
     show-sql: true
     generate-ddl: false
 
-
-<<<<<<< HEAD
-  data:
-    mongodb:
-      uri: mongodb+srv://${MONGO_DB_USER}:${MONGO_DB_PASSWORD}@${MONGO_DB_ADDR}/${MONGO_DB_NAME}??retryWrites=true&w=majority
-
-
-=======
->>>>>>> parent of 933a605 (Merge pull request #29 from PLAC-Planning-Your-Activities/feature/27)
   devtools:
     restart:
       enabled: true

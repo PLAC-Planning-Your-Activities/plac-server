@@ -2,7 +2,7 @@ package com.plac.config;
 
 import com.plac.common.Constant;
 import com.plac.repository.RefreshTokenRepository;
-import com.plac.repository.UserRepository;
+import com.plac.domain.user.repository.UserRepository;
 import com.plac.security.auth.CustomUserDetailsService;
 import com.plac.security.auth.JwtAuthenticationFilter;
 import com.plac.security.auth.JwtAuthenticationProvider;

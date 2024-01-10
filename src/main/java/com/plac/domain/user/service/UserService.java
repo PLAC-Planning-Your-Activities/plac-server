@@ -1,13 +1,13 @@
-package com.plac.service.user;
+package com.plac.domain.user.service;
 
-import com.plac.domain.User;
-import com.plac.dto.request.user.UserReqDto;
-import com.plac.dto.response.user.UserResDto;
+import com.plac.domain.user.entity.User;
+import com.plac.domain.user.dto.UserReqDto;
+import com.plac.domain.user.dto.UserResDto;
 import com.plac.exception.user.DuplUsernameException;
 import com.plac.exception.user.UserNotFoundException;
 import com.plac.exception.user.UserPrincipalNotFoundException;
 import com.plac.repository.RefreshTokenRepository;
-import com.plac.repository.UserRepository;
+import com.plac.domain.user.repository.UserRepository;
 import com.plac.service.password_checker.PasswordChecker;
 import com.plac.util.SecurityContextHolderUtil;
 import lombok.RequiredArgsConstructor;
@@ -23,13 +23,12 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService {
+public class UserService {
     private final UserRepository userRepository;
     private final PasswordChecker passwordChecker;
     private final RefreshTokenRepository refreshTokenRepository;
     private final BCryptPasswordEncoder encoder;
 
-    @Override
     public UserResDto signUp(UserReqDto.CreateUser reqDto) {
         checkDuplUser(reqDto);
         passwordChecker.checkWeakPassword(reqDto.getPassword());
@@ -40,14 +39,12 @@ public class UserServiceImpl implements UserService {
         return UserResDto.of(user);
     }
 
-    @Override
     public User findUser(Long userId) {
         return userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException("헤당 userId를 갖는 유저를 찾을 수 없습니다.")
         );
     }
 
-    @Override
     public void deleteUser() {
         String username = SecurityContextHolderUtil.getUsername();
 
@@ -61,7 +58,6 @@ public class UserServiceImpl implements UserService {
         userRepository.delete(user);
     }
 
-    @Override
     public void deleteUser(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException("헤당 id를 갖는 유저를 찾을 수 없습니다.")
@@ -70,7 +66,6 @@ public class UserServiceImpl implements UserService {
         userRepository.delete(user);
     }
 
-    @Override
     public List<UserResDto> findAll() {
         List<User> users = userRepository.findAll();
 
@@ -109,4 +104,5 @@ public class UserServiceImpl implements UserService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "이미 존재하는 이메일입니다.");
         }
     }
+
 }

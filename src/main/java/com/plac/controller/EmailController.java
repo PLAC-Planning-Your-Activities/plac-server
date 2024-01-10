@@ -3,7 +3,6 @@ package com.plac.controller;
 import com.plac.dto.request.email.EmailReqDto;
 import com.plac.dto.request.email.EmailVerifyReqDto;
 import com.plac.service.email.EmailVerificationService;
-import com.plac.service.user.UserService;
 import com.plac.util.MessageUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

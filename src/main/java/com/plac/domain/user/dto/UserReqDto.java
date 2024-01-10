@@ -1,4 +1,4 @@
-package com.plac.dto.request.user;
+package com.plac.domain.user.dto;
 
 import lombok.*;
 

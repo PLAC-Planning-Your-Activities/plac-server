@@ -1,9 +1,9 @@
 package com.plac.service.user;
 
-import com.plac.domain.User;
-import com.plac.dto.request.user.UserReqDto;
-import com.plac.dto.response.user.UserResDto;
-import com.plac.repository.UserRepository;
+import com.plac.domain.user.entity.User;
+import com.plac.domain.user.dto.UserReqDto;
+import com.plac.domain.user.dto.UserResDto;
+import com.plac.domain.user.repository.UserRepository;
 import com.plac.service.password_checker.PasswordChecker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

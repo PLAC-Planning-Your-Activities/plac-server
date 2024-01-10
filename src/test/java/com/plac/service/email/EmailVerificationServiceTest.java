@@ -1,9 +1,9 @@
 package com.plac.service.email;
 
 import com.plac.domain.EmailVerification;
-import com.plac.domain.User;
+import com.plac.domain.user.entity.User;
 import com.plac.repository.EmailVerificationRepository;
-import com.plac.repository.UserRepository;
+import com.plac.domain.user.repository.UserRepository;
 import com.plac.util.RandomGeneratorUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,8 +13,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 

@@ -1,8 +1,7 @@
-package com.plac.controller;
+package com.plac.domain.user.controller;
 
 import com.plac.dto.request.email.EmailReqDto;
-import com.plac.dto.request.user.UserReqDto;
-import com.plac.service.user.UserService;
+import com.plac.domain.user.dto.UserReqDto;
 import com.plac.util.MessageUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

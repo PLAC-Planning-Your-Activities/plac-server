@@ -1,7 +1,7 @@
 package com.plac.security.auth;
 
-import com.plac.domain.User;
-import com.plac.repository.UserRepository;
+import com.plac.domain.user.entity.User;
+import com.plac.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

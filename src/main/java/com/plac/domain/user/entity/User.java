@@ -1,5 +1,6 @@
-package com.plac.domain;
+package com.plac.domain.user.entity;
 
+import com.plac.domain.AbstractTimeEntity;
 import com.plac.domain.mappedenum.UserStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

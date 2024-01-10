@@ -1,8 +1,9 @@
 package com.plac.service.place_review;
 
 import com.plac.domain.Place;
-import com.plac.domain.User;
+import com.plac.domain.user.entity.User;
 import com.plac.domain.place_review.*;
+import com.plac.domain.user.repository.UserRepository;
 import com.plac.dto.request.place_review.PlaceReviewRateReqDto;
 import com.plac.dto.request.place_review.PlaceReviewReqDto;
 import com.plac.dto.response.place_review.PlaceReviewResDto;

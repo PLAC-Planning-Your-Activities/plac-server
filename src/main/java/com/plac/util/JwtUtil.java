@@ -1,6 +1,6 @@
 package com.plac.util;
 
-import com.plac.domain.User;
+import com.plac.domain.user.entity.User;
 import com.plac.security.auth.AuthProperties;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

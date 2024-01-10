@@ -1,10 +1,10 @@
 package com.plac.security.auth;
 
 import com.plac.domain.RefreshToken;
-import com.plac.domain.User;
+import com.plac.domain.user.entity.User;
 import com.plac.exception.user.UserPrincipalNotFoundException;
 import com.plac.repository.RefreshTokenRepository;
-import com.plac.repository.UserRepository;
+import com.plac.domain.user.repository.UserRepository;
 import com.plac.util.JwtUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;

@@ -1,11 +1,11 @@
 package com.plac.service.social_login;
 
-import com.plac.domain.User;
+import com.plac.domain.user.entity.User;
 import com.plac.domain.social_login.Oauth2UserInfo;
 import com.plac.dto.request.social_login.SocialLoginReqDto;
 import com.plac.dto.response.social_login.Oauth2TokenResDto;
 import com.plac.dto.response.social_login.SocialLoginResDto;
-import com.plac.repository.UserRepository;
+import com.plac.domain.user.repository.UserRepository;
 import com.plac.service.social_login.provider.token.TokenProviderContext;
 import com.plac.service.social_login.provider.user_info.Oauth2UserInfoContext;
 import lombok.RequiredArgsConstructor;
