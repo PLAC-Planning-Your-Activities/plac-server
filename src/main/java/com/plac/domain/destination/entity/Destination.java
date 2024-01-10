@@ -2,7 +2,6 @@ package com.plac.domain.destination.entity;
 
 import com.plac.common.AbstractTimeEntity;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -16,16 +15,18 @@ public class Destination extends AbstractTimeEntity {
     @Column(name = "id")
     private Long id;
 
-    private Long external_id;
+    private String name;
 
     private String imageUrl;
 
     private int count;
 
-    @Builder
-    public Destination(Long id, Long external_id, String imageUrl, int count) {
-        this.external_id = external_id;
-        this.imageUrl = imageUrl;
+    public Destination(String name, int count) {
+        this.name = name;
         this.count = count;
+    }
+
+    public void raiseCount(){
+        this.count++;
     }
 }
