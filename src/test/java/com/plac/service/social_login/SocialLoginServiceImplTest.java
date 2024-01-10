@@ -1,14 +1,14 @@
 package com.plac.service.social_login;
 
 import com.plac.domain.user.entity.User;
-import com.plac.domain.social_login.GoogleUserInfo;
-import com.plac.domain.social_login.Oauth2UserInfo;
-import com.plac.dto.request.social_login.SocialLoginReqDto;
-import com.plac.dto.response.social_login.Oauth2TokenResDto;
-import com.plac.dto.response.social_login.SocialLoginResDto;
+import com.plac.domain.social_login.entity.GoogleUserInfo;
+import com.plac.domain.social_login.entity.Oauth2UserInfo;
+import com.plac.config.dto.SocialLoginReqDto;
+import com.plac.config.dto.Oauth2TokenResDto;
+import com.plac.config.dto.SocialLoginResDto;
 import com.plac.domain.user.repository.UserRepository;
-import com.plac.service.social_login.provider.token.TokenProviderContext;
-import com.plac.service.social_login.provider.user_info.Oauth2UserInfoContext;
+import com.plac.domain.social_login.provider.token.TokenProviderContext;
+import com.plac.domain.social_login.provider.user_info.Oauth2UserInfoContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,7 +30,7 @@ import static org.mockito.Mockito.when;
 class SocialLoginServiceImplTest {
 
     @InjectMocks
-    private SpySocialLoginServiceImpl spySocialLoginService;
+    private SpySocialLoginService spySocialLoginService;
     @Mock
     private UserRepository userRepository;
     @Mock

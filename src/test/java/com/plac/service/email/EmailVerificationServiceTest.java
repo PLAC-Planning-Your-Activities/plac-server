@@ -1,8 +1,9 @@
 package com.plac.service.email;
 
-import com.plac.domain.EmailVerification;
+import com.plac.domain.email_verification.entity.EmailVerification;
+import com.plac.domain.email_verification.service.EmailVerificationService;
 import com.plac.domain.user.entity.User;
-import com.plac.repository.EmailVerificationRepository;
+import com.plac.domain.email_verification.repository.EmailVerificationRepository;
 import com.plac.domain.user.repository.UserRepository;
 import com.plac.util.RandomGeneratorUtil;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,7 +1,7 @@
 package com.plac.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.plac.domain.Message;
+import com.plac.common.Message;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

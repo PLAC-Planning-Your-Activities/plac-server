@@ -1,6 +1,6 @@
 package com.plac.util;
 
-import com.plac.domain.Message;
+import com.plac.common.Message;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
