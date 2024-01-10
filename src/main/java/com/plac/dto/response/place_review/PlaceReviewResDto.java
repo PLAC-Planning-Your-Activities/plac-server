@@ -1,6 +1,10 @@
 package com.plac.dto.response.place_review;
 
+import com.plac.domain.User;
+import com.plac.domain.place_review.PlaceReview;
 import com.plac.domain.place_review.Ratings;
+import com.plac.dto.response.user.UserResDto;
+import com.plac.service.user.UserService;
 import lombok.*;
 
 import java.time.LocalDateTime;

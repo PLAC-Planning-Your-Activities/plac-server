@@ -1,6 +1,5 @@
 package com.plac.util;
 
-import com.plac.domain.User;
 import com.plac.security.auth.CustomUserDetails;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -18,16 +17,5 @@ public class SecurityContextHolderUtil {
         CustomUserDetails principal = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = principal.getUsername();
         return username;
-    }
-
-    public static int getUserAge(){
-        CustomUserDetails principal = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        int userAge = principal.getUser().getAge();
-        return userAge;
-    }
-
-    public static User getUser(){
-        CustomUserDetails principal = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return principal.getUser();
     }
 }
