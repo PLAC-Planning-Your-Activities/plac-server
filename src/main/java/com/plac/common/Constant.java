@@ -2,7 +2,7 @@ package com.plac.common;
 
 public interface Constant {
 
-    String USER_ROLE = "ROLE_USER";
+    String USER_ROLE = "USER";
 
     String[] ALL_PERMIT_PATHS = new String[]{
             "/api/users/one",
