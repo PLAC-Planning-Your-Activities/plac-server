@@ -154,4 +154,19 @@ public class PlanService {
             planPlaceMappingRepository.delete(planPlaceMapping);
         }
     }
+
+    @Transactional
+    public void deletePlan(Long planId) {
+        Plan plan = planRepository.findById(planId).orElseThrow(
+                () -> new PlanNotFoundException("plan not found")
+        );
+        System.out.println("deletePlan() ==== = ");
+        List<PlanPlaceMapping> planPlaceMapping = planPlaceMappingRepository.findByPlanId(planId);
+
+        for (PlanPlaceMapping mappingEntity : planPlaceMapping) {
+            planPlaceMappingRepository.delete(mappingEntity);
+        }
+
+        planRepository.delete(plan);
+    }
 }
