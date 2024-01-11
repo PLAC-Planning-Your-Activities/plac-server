@@ -2,12 +2,12 @@ package com.plac.domain.plan.entity;
 
 import com.plac.common.AbstractTimeEntity;
 import com.plac.domain.user.entity.User;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 @Entity
 @Getter
@@ -15,25 +15,27 @@ import javax.persistence.ManyToOne;
 public class Plan extends AbstractTimeEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
 
-    private String thumbnailImage;
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Setter
-    private boolean open;
-
     private String destinationName;
 
+    @Column(columnDefinition = "tinyint(1)")
+    private boolean open;
+
+    public void changeOpenness(boolean value){
+        this.open = value;
+    }
+
     @Builder
-    public Plan(String name, String thumbnailImage, User user, boolean open, String destinationName) {
+    public Plan(String name, User user, boolean open, String destinationName) {
         this.name = name;
-        this.thumbnailImage = thumbnailImage;
         this.user = user;
         this.open = open;
         this.destinationName = destinationName;
