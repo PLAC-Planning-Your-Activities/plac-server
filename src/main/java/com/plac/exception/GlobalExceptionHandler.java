@@ -3,6 +3,7 @@ package com.plac.exception;
 import com.plac.common.Message;
 import com.plac.exception.place.WrongKakaoPlaceIdException;
 import com.plac.exception.place.WrongPlaceIdException;
+import com.plac.exception.plan.FavoritePlanNotFoundException;
 import com.plac.exception.plan.PlanNotFoundException;
 import com.plac.exception.social_login.ProviderNotSupportedException;
 import com.plac.exception.user.DuplUsernameException;
@@ -69,6 +70,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(PlanNotFoundException.class)
     public ResponseEntity<?> handleException(PlanNotFoundException e){
         Message message = new Message(e.getMessage(), -330, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(message, message.getStatus());
+    }
+
+    @ExceptionHandler(FavoritePlanNotFoundException.class)
+    public ResponseEntity<?> handleException(FavoritePlanNotFoundException e){
+        Message message = new Message(e.getMessage(), -331, HttpStatus.BAD_REQUEST);
         return new ResponseEntity<>(message, message.getStatus());
     }
 

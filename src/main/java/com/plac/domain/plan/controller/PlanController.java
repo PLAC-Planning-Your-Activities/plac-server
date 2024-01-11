@@ -55,4 +55,27 @@ public class PlanController {
         return MessageUtil.buildResponseEntity(HttpStatus.OK, "success");
     }
 
+    @PostMapping("/like/{planId}")
+    public ResponseEntity<?> createFavoritePlan(
+            @PathVariable("planId") Long planId
+    ){
+        planService.makeFavoritePlan(planId);
+
+        return MessageUtil.buildResponseEntity(HttpStatus.OK, "success");
+    }
+
+    @PostMapping("/dislike/{planId}")
+    public ResponseEntity<?> clearFavoritePlan(@PathVariable("planId") Long planId) {
+        planService.clearFavoritePlan(planId);
+
+        return MessageUtil.buildResponseEntity(HttpStatus.OK, "success");
+    }
+
+    // 플랜 저장하기 (마이페이지에서 확인 가능)
+    @PostMapping("/bookmarks/{planId}")
+    public ResponseEntity<?> savePlan(@PathVariable("planId") Long planId){
+        planService.savePlan(planId);
+
+        return MessageUtil.buildResponseEntity(HttpStatus.OK, "success");
+    }
 }
