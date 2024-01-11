@@ -2,6 +2,7 @@ package com.plac.domain.destination.entity;
 
 import com.plac.common.AbstractTimeEntity;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -15,9 +16,8 @@ public class Destination extends AbstractTimeEntity {
     @Column(name = "id")
     private Long id;
 
+    @Getter
     private String name;
-
-    private String imageUrl;
 
     private int count;
 
