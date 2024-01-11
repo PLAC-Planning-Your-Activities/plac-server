@@ -21,6 +21,8 @@ public class Place extends AbstractTimeEntity {
     @Column(name = "id")
     private Long id;
 
+    private String type;
+
     private Long kakaoPlaceId;
 
     private String placeName;
