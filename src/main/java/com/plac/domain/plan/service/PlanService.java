@@ -224,4 +224,22 @@ public class PlanService {
                 );
         bookmarkPlanRepository.delete(bookmarkPlan);
     }
+
+    public List<PlaceInfo> getPlansByDestinations(String destinationName) {
+        Plan plan = planRepository.findByDestinationName(destinationName)
+                .orElseThrow(
+                    () -> new PlanNotFoundException("plan not found")
+                );
+
+        List<PlanPlaceMapping> planPlaceMappings = plan.getPlanPlaceMappings();
+        List<PlaceInfo> result = new ArrayList<>();
+
+        for (PlanPlaceMapping planPlaceMapping : planPlaceMappings) {
+            Place place = planPlaceMapping.getPlace();
+            PlaceInfo buildPlaceInfo = PlaceInfo.of(place);
+            result.add(buildPlaceInfo);
+        }
+
+        return result;
+    }
 }

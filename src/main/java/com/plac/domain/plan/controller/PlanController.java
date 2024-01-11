@@ -1,5 +1,6 @@
 package com.plac.domain.plan.controller;
 
+import com.plac.domain.place.dto.response.PlaceInfo;
 import com.plac.domain.plan.dto.request.PlanCreateRequest;
 import com.plac.domain.plan.dto.request.PlanFixRequest;
 import com.plac.domain.plan.dto.request.PlanShareRequest;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -84,5 +86,14 @@ public class PlanController {
         planService.deleteBookMarkPlan(planId);
 
         return MessageUtil.buildResponseEntity(HttpStatus.OK, "success");
+    }
+
+    @GetMapping("/destinations")
+    public ResponseEntity<?> getPlansByDestination(
+            @RequestParam(name = "destinationName", required = true) String destinationName
+    ){
+        List<PlaceInfo> planPlaceInfo = planService.getPlansByDestinations(destinationName);
+
+        return MessageUtil.buildResponseEntity(planPlaceInfo, HttpStatus.OK, "success");
     }
 }

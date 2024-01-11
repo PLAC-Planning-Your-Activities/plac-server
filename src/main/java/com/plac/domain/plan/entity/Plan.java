@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -23,6 +25,9 @@ public class Plan extends AbstractTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToMany(mappedBy = "plan", orphanRemoval = true)
+    List<PlanPlaceMapping> planPlaceMappings = new ArrayList<>();
 
     private String destinationName;
 
