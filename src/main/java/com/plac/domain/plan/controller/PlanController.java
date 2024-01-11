@@ -48,4 +48,11 @@ public class PlanController {
         return MessageUtil.buildResponseEntity(HttpStatus.OK, "success");
     }
 
+    @DeleteMapping("/{planId}")
+    public ResponseEntity<?> deletePlan(@PathVariable("planId") Long planId){
+        planService.deletePlan(planId);
+
+        return MessageUtil.buildResponseEntity(HttpStatus.OK, "success");
+    }
+
 }
