@@ -73,8 +73,15 @@ public class PlanController {
 
     // 플랜 저장하기 (마이페이지에서 확인 가능)
     @PostMapping("/bookmarks/{planId}")
-    public ResponseEntity<?> savePlan(@PathVariable("planId") Long planId){
-        planService.savePlan(planId);
+    public ResponseEntity<?> createBookMarkPlan(@PathVariable("planId") Long planId){
+        planService.saveBookMarkPlan(planId);
+
+        return MessageUtil.buildResponseEntity(HttpStatus.OK, "success");
+    }
+
+    @DeleteMapping("/bookmarks/{planId}")
+    public ResponseEntity<?> deleteBookMarkPlan(@PathVariable("planId") Long planId){
+        planService.deleteBookMarkPlan(planId);
 
         return MessageUtil.buildResponseEntity(HttpStatus.OK, "success");
     }
