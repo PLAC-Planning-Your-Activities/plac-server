@@ -11,6 +11,7 @@ import com.plac.domain.plan.entity.*;
 import com.plac.domain.plan.repository.*;
 import com.plac.domain.user.entity.User;
 import com.plac.domain.user.repository.UserRepository;
+import com.plac.exception.plan.BookmarkPlanNotFoundException;
 import com.plac.exception.plan.FavoritePlanNotFoundException;
 import com.plac.exception.plan.PlanNotFoundException;
 import com.plac.exception.user.UserPrincipalNotFoundException;
@@ -34,6 +35,7 @@ public class PlanService {
     private final PlanTagRepository planTagRepository;
     private final PlanTagMappingRepository planTagMappingRepository;
     private final FavoritePlanRepository favoritePlanRepository;
+    private final BookmarkPlanRepository bookmarkPlanRepository;
 
     @Transactional
     public PlanCreateResponse createPlan(PlanCreateRequest planRequest) {
@@ -179,7 +181,7 @@ public class PlanService {
         FavoritePlan favoritePlan = FavoritePlan.builder()
                 .plan(plan)
                 .user(user)
-                .like(true)
+                .favorite(true)
                 .build();
 
         favoritePlanRepository.save(favoritePlan);
@@ -195,8 +197,31 @@ public class PlanService {
                 .orElseThrow(() -> new FavoritePlanNotFoundException("no favorite plan")
         );
 
-        favoritePlan.setLike(false);
+        favoritePlan.setFavorite(false);
     }
 
+    public void saveBookMarkPlan(Long planId) {
+        User user = userRepository.findById(SecurityContextHolderUtil.getUserId()).get();
 
+        Plan plan = planRepository.findById(planId).orElseThrow (
+                () -> new PlanNotFoundException("plan not found")
+        );
+
+        BookmarkPlan bookmarkPlan = BookmarkPlan.builder()
+                .user(user)
+                .plan(plan)
+                .build();
+
+        bookmarkPlanRepository.save(bookmarkPlan);
+    }
+
+    public void deleteBookMarkPlan(Long planId) {
+        Long userId = SecurityContextHolderUtil.getUserId();
+
+        BookmarkPlan bookmarkPlan = bookmarkPlanRepository.findByUserIdAndPlanId(userId, planId)
+                .orElseThrow(
+                        ()-> new BookmarkPlanNotFoundException("bookmark-plan not found")
+                );
+        bookmarkPlanRepository.delete(bookmarkPlan);
+    }
 }
