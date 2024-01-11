@@ -7,16 +7,11 @@ import com.plac.domain.plan.dto.request.PlanCreateRequest;
 import com.plac.domain.plan.dto.request.PlanFixRequest;
 import com.plac.domain.plan.dto.request.PlanShareRequest;
 import com.plac.domain.plan.dto.response.PlanCreateResponse;
-import com.plac.domain.plan.entity.Plan;
-import com.plac.domain.plan.entity.PlanPlaceMapping;
-import com.plac.domain.plan.entity.PlanTag;
-import com.plac.domain.plan.entity.PlanTagMapping;
-import com.plac.domain.plan.repository.PlanPlaceMappingRepository;
-import com.plac.domain.plan.repository.PlanRepository;
-import com.plac.domain.plan.repository.PlanTagMappingRepository;
-import com.plac.domain.plan.repository.PlanTagRepository;
+import com.plac.domain.plan.entity.*;
+import com.plac.domain.plan.repository.*;
 import com.plac.domain.user.entity.User;
 import com.plac.domain.user.repository.UserRepository;
+import com.plac.exception.plan.FavoritePlanNotFoundException;
 import com.plac.exception.plan.PlanNotFoundException;
 import com.plac.exception.user.UserPrincipalNotFoundException;
 import com.plac.util.SecurityContextHolderUtil;
@@ -38,6 +33,7 @@ public class PlanService {
     private final PlanPlaceMappingRepository planPlaceMappingRepository;
     private final PlanTagRepository planTagRepository;
     private final PlanTagMappingRepository planTagMappingRepository;
+    private final FavoritePlanRepository favoritePlanRepository;
 
     @Transactional
     public PlanCreateResponse createPlan(PlanCreateRequest planRequest) {
@@ -169,4 +165,38 @@ public class PlanService {
 
         planRepository.delete(plan);
     }
+
+    /**
+     * 추후 캐시로 성능 개선해보기!!*/
+    public void makeFavoritePlan(Long planId) {
+        Long userId = SecurityContextHolderUtil.getUserId();
+        User user = userRepository.findById(userId).get();
+
+        Plan plan = planRepository.findById(planId).orElseThrow (
+                () -> new PlanNotFoundException("plan not found")
+        );
+
+        FavoritePlan favoritePlan = FavoritePlan.builder()
+                .plan(plan)
+                .user(user)
+                .like(true)
+                .build();
+
+        favoritePlanRepository.save(favoritePlan);
+    }
+
+    /**
+     * 추후 캐시로 성능 개선해보기!!*/
+    @Transactional
+    public void clearFavoritePlan(Long planId) {
+        Long userId = SecurityContextHolderUtil.getUserId();
+
+        FavoritePlan favoritePlan = favoritePlanRepository.findByUserIdAndPlanId(userId, planId)
+                .orElseThrow(() -> new FavoritePlanNotFoundException("no favorite plan")
+        );
+
+        favoritePlan.setLike(false);
+    }
+
+
 }
