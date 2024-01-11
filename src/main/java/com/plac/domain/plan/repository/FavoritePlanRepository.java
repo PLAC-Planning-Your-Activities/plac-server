@@ -11,4 +11,6 @@ public interface FavoritePlanRepository extends JpaRepository<FavoritePlan, Long
     List<FavoritePlan> findByUserId(Long userId);
 
     Optional<FavoritePlan> findByUserIdAndPlanId(Long userId, Long planId);
+
+    List<FavoritePlan> findByPlanId(Long planId);
 }

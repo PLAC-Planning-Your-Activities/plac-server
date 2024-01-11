@@ -1,10 +1,10 @@
 package com.plac.domain.plan.controller;
 
-import com.plac.domain.place.dto.response.PlaceInfo;
 import com.plac.domain.plan.dto.request.PlanCreateRequest;
 import com.plac.domain.plan.dto.request.PlanFixRequest;
 import com.plac.domain.plan.dto.request.PlanShareRequest;
 import com.plac.domain.plan.dto.response.PlanCreateResponse;
+import com.plac.domain.plan.dto.response.PlansByDestination;
 import com.plac.domain.plan.service.PlanService;
 import com.plac.util.MessageUtil;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,6 @@ public class PlanController {
     @PostMapping("")
     public ResponseEntity<?> createPlan(@RequestBody PlanCreateRequest planRequest){
         PlanCreateResponse result = planService.createPlan(planRequest);
-        System.out.println("result.getPlanId() = " + result.getPlanId());
 
         return MessageUtil.buildResponseEntity(result, HttpStatus.OK, "success");
     }
@@ -92,8 +91,10 @@ public class PlanController {
     public ResponseEntity<?> getPlansByDestination(
             @RequestParam(name = "destinationName", required = true) String destinationName
     ){
-        List<PlaceInfo> planPlaceInfo = planService.getPlansByDestinations(destinationName);
+        List<PlansByDestination> result = planService.getPlansByDestinations(destinationName);
 
-        return MessageUtil.buildResponseEntity(planPlaceInfo, HttpStatus.OK, "success");
+        return MessageUtil.buildResponseEntity(result, HttpStatus.OK, "success");
     }
+
+
 }
