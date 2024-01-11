@@ -1,7 +1,6 @@
 package com.plac.domain.plan.entity;
 
 import com.plac.common.AbstractTimeEntity;
-import com.plac.domain.place.entity.Place;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,7 +11,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PlanPlaceMapping extends AbstractTimeEntity {
+public class PlanTagMapping extends AbstractTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,16 +21,11 @@ public class PlanPlaceMapping extends AbstractTimeEntity {
     @JoinColumn(name = "plan_id")
     private Plan plan;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "place_id")
-    private Place place;
-
-    private int seq;
+    private Long planTagId;
 
     @Builder
-    public PlanPlaceMapping(Plan plan, Place place, int seq) {
+    public PlanTagMapping(Plan plan, Long planTagId) {
         this.plan = plan;
-        this.place = place;
-        this.seq = seq;
+        this.planTagId = planTagId;
     }
 }
