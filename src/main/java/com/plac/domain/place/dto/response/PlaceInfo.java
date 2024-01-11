@@ -17,7 +17,7 @@ public class PlaceInfo {
     private BigDecimal x;
     private BigDecimal y;
     private String address;
-    private int page;
+    private int seq;
 
     public static PlaceInfo of(Place place){
         return PlaceInfo.builder()

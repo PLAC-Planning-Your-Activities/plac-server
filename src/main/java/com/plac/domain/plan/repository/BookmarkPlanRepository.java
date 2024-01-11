@@ -11,4 +11,6 @@ public interface BookmarkPlanRepository extends JpaRepository<BookmarkPlan, Long
     List<BookmarkPlan> findByUserId(Long userId);
 
     Optional<BookmarkPlan> findByUserIdAndPlanId(Long userId, Long planId);
+
+    List<BookmarkPlan> findByPlanId(Long planId);
 }

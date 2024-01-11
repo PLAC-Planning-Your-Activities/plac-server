@@ -7,6 +7,7 @@ import com.plac.domain.plan.dto.request.PlanCreateRequest;
 import com.plac.domain.plan.dto.request.PlanFixRequest;
 import com.plac.domain.plan.dto.request.PlanShareRequest;
 import com.plac.domain.plan.dto.response.PlanCreateResponse;
+import com.plac.domain.plan.dto.response.PlansByDestination;
 import com.plac.domain.plan.entity.*;
 import com.plac.domain.plan.repository.*;
 import com.plac.domain.user.entity.User;
@@ -20,9 +21,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -40,21 +44,24 @@ public class PlanService {
     @Transactional
     public PlanCreateResponse createPlan(PlanCreateRequest planRequest) {
         Long userId = SecurityContextHolderUtil.getUserId();
-        Optional<User> userOpt = userRepository.findById(userId);
 
-        if (!userOpt.isPresent()) {
-            throw new UserPrincipalNotFoundException("no user");
-        }
-        User user = userOpt.get();
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new UserPrincipalNotFoundException("user not found")
+        );
+
+        List<PlaceInfo> placeInfoList = planRequest.getPlaceList();
+        // PlaceInfo seq 오름차순으로 원소를 정렬
+        Collections.sort(placeInfoList, Comparator.comparingInt(PlaceInfo::getSeq));
+
         List<Place> placeList = new ArrayList<>();
 
-        for (PlaceInfo placeInfo : planRequest.getPlaceList()) {
-            Optional<Place> placeOpt = placeRepository.findByKakaoPlaceId(placeInfo.getKakaoPlaceId());
+        for (PlaceInfo placeInfo : placeInfoList) {
+            Long kakaoPlaceId = placeInfo.getKakaoPlaceId();
 
-            if (!placeOpt.isPresent())
-                placeList.add(createAndSavePlace(placeInfo));
-            else
-                placeList.add(placeOpt.get());
+            placeRepository.findByKakaoPlaceId(kakaoPlaceId).ifPresentOrElse(
+                    placeList::add,
+                    () -> placeList.add(createAndSavePlace(placeInfo))
+            );
         }
         Plan savedPlan = createNewPlan(planRequest, user, placeList);
 
@@ -76,7 +83,6 @@ public class PlanService {
     }
 
     public Plan createNewPlan(PlanCreateRequest planRequest, User user, List<Place> placeList) {
-        System.out.println("planRequest.getDestinationName() = " + planRequest.getDestinationName());
         Plan plan = Plan.builder()
                 .destinationName(planRequest.getDestinationName())
                 .name(planRequest.getPlanName())
@@ -225,20 +231,54 @@ public class PlanService {
         bookmarkPlanRepository.delete(bookmarkPlan);
     }
 
-    public List<PlaceInfo> getPlansByDestinations(String destinationName) {
-        Plan plan = planRepository.findByDestinationName(destinationName)
-                .orElseThrow(
-                    () -> new PlanNotFoundException("plan not found")
-                );
+    public List<PlansByDestination> getPlansByDestinations(String destinationName) {
 
-        List<PlanPlaceMapping> planPlaceMappings = plan.getPlanPlaceMappings();
-        List<PlaceInfo> result = new ArrayList<>();
+        Long userId = SecurityContextHolderUtil.getUserId();
+        User user = userRepository.findById(userId).get();
 
-        for (PlanPlaceMapping planPlaceMapping : planPlaceMappings) {
-            Place place = planPlaceMapping.getPlace();
-            PlaceInfo buildPlaceInfo = PlaceInfo.of(place);
-            result.add(buildPlaceInfo);
+        String userProfileName = user.getProfileName();
+
+        List<Plan> plans = planRepository.findByDestinationName(destinationName);
+
+        List<PlansByDestination> result = new ArrayList<>();
+
+        for (Plan plan : plans) {
+            // 두 LocalDateTime 객체 간의 시간 차이 계산
+            Duration duration = Duration.between(plan.getUpdatedAt(), LocalDateTime.now());
+            long minutesDifference = duration.toMinutes();
+
+            String planName = plan.getName();
+
+            List<PlanPlaceMapping> planPlaceMappings = plan.getPlanPlaceMappings();
+            List<PlaceInfo> placeInfoList = new ArrayList<>();
+
+            for (PlanPlaceMapping planPlaceMapping : planPlaceMappings) {
+                Place place = planPlaceMapping.getPlace();
+                PlaceInfo buildPlaceInfo = PlaceInfo.of(place);
+                placeInfoList.add(buildPlaceInfo);
+            }
+            // PlaceInfo 객체를 seq 오름차순으로 정렬
+            Collections.sort(placeInfoList, Comparator.comparingInt(PlaceInfo::getSeq));
+
+            List<FavoritePlan> favoritePlans = favoritePlanRepository.findByPlanId(plan.getId());
+            int favoriteCount = favoritePlans.size();
+
+            List<BookmarkPlan> bookmarkPlans = bookmarkPlanRepository.findByPlanId(plan.getId());
+            int bookmarkCount = bookmarkPlans.size();
+
+            PlansByDestination temp = PlansByDestination.builder()
+                    .userProfileName(userProfileName)
+                    .minuteDifferences(minutesDifference)
+                    .planName(planName)
+                    .placeInfoList(placeInfoList)
+                    .favoriteCount(favoriteCount)
+                    .bookmarkCount(bookmarkCount)
+                    .build();
+
+            result.add(temp);
         }
+
+        Collections.sort(result, Comparator.comparingInt(PlansByDestination::getFavoriteCount).reversed());
 
         return result;
     }
