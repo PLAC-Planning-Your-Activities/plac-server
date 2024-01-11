@@ -4,15 +4,18 @@ import com.plac.domain.place.dto.response.PlaceInfo;
 import com.plac.domain.place.entity.Place;
 import com.plac.domain.place.repository.PlaceRepository;
 import com.plac.domain.plan.dto.request.PlanCreateRequest;
+import com.plac.domain.plan.dto.request.PlanShareRequest;
 import com.plac.domain.plan.dto.response.PlanCreateResponse;
 import com.plac.domain.plan.entity.Plan;
 import com.plac.domain.plan.repository.PlanRepository;
 import com.plac.domain.user.entity.User;
 import com.plac.domain.user.repository.UserRepository;
+import com.plac.exception.plan.PlanNotFoundException;
 import com.plac.exception.user.UserPrincipalNotFoundException;
 import com.plac.util.SecurityContextHolderUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,5 +78,14 @@ public class PlanService {
         Place savePlace = placeRepository.save(newPlace);
 
         return savePlace.getId();
+    }
+
+    @Transactional
+    public void sharePlanToCommunity(PlanShareRequest planRequest, Long planId) {
+        Plan plan = planRepository.findById(planId)
+                .orElseThrow(() -> new PlanNotFoundException("존재하지 않는 planId 입니다.")
+        );
+
+        plan.setOpen(true);
     }
 }

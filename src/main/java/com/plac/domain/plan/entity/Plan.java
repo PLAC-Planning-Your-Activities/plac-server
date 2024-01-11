@@ -2,10 +2,7 @@ package com.plac.domain.plan.entity;
 
 import com.plac.common.AbstractTimeEntity;
 import com.plac.domain.user.entity.User;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -28,6 +25,7 @@ public class Plan extends AbstractTimeEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Setter
     private boolean open;
 
     private String destinationName;
