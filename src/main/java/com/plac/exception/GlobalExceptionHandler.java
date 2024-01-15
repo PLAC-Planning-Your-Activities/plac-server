@@ -3,6 +3,9 @@ package com.plac.exception;
 import com.plac.common.Message;
 import com.plac.exception.place.WrongKakaoPlaceIdException;
 import com.plac.exception.place.WrongPlaceIdException;
+import com.plac.exception.plan.BookmarkPlanNotFoundException;
+import com.plac.exception.plan.FavoritePlanException;
+import com.plac.exception.plan.PlanNotFoundException;
 import com.plac.exception.social_login.ProviderNotSupportedException;
 import com.plac.exception.user.DuplUsernameException;
 import com.plac.exception.user.UserPrincipalNotFoundException;
@@ -62,6 +65,24 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(WrongPlaceIdException.class)
     public ResponseEntity<?> handleException(WrongPlaceIdException e){
         Message message = new Message(e.getMessage(), -301, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(message, message.getStatus());
+    }
+
+    @ExceptionHandler(PlanNotFoundException.class)
+    public ResponseEntity<?> handleException(PlanNotFoundException e){
+        Message message = new Message(e.getMessage(), -330, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(message, message.getStatus());
+    }
+
+    @ExceptionHandler(FavoritePlanException.class)
+    public ResponseEntity<?> handleException(FavoritePlanException e){
+        Message message = new Message(e.getMessage(), -331, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(message, message.getStatus());
+    }
+
+    @ExceptionHandler(BookmarkPlanNotFoundException.class)
+    public ResponseEntity<?> handleException(BookmarkPlanNotFoundException e){
+        Message message = new Message(e.getMessage(), -332, HttpStatus.BAD_REQUEST);
         return new ResponseEntity<>(message, message.getStatus());
     }
 

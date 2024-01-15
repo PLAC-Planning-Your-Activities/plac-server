@@ -9,11 +9,11 @@ import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class SearchDestinationRequest {
+public class CreateSearchWordsRequest {
     private List<String> words;
 
     @Builder
-    public SearchDestinationRequest(List<String> words) {
+    public CreateSearchWordsRequest(List<String> words) {
         this.words = words;
     }
 }

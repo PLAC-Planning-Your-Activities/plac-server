@@ -1,13 +1,14 @@
 package com.plac.domain.user.service;
 
+import com.plac.domain.user.dto.request.CreateUserRequest;
+import com.plac.domain.user.dto.response.CreateUserResponse;
+import com.plac.domain.user.dto.request.DeleteUserRequest;
 import com.plac.domain.user.entity.User;
-import com.plac.domain.user.dto.UserReqDto;
-import com.plac.domain.user.dto.UserResDto;
+import com.plac.domain.user.repository.RefreshTokenRepository;
+import com.plac.domain.user.repository.UserRepository;
 import com.plac.exception.user.DuplUsernameException;
 import com.plac.exception.user.UserNotFoundException;
 import com.plac.exception.user.UserPrincipalNotFoundException;
-import com.plac.domain.user.repository.RefreshTokenRepository;
-import com.plac.domain.user.repository.UserRepository;
 import com.plac.util.SecurityContextHolderUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,10 +16,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,19 +27,19 @@ public class UserService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final BCryptPasswordEncoder encoder;
 
-    public UserResDto signUp(UserReqDto.CreateUser reqDto) {
-        checkDuplUser(reqDto);
-        passwordChecker.checkWeakPassword(reqDto.getPassword());
+    public CreateUserResponse signUp(CreateUserRequest userRequest) {
+        checkDuplUser(userRequest);
+        passwordChecker.checkWeakPassword(userRequest.getPassword());
 
-        User user = createNormalUserInfo(reqDto, reqDto.getPassword());
+        User user = createNormalUserInfo(userRequest, userRequest.getPassword());
         userRepository.save(user);
 
-        return UserResDto.of(user);
+        return new CreateUserResponse(user.getId());
     }
 
     public User findUser(Long userId) {
         return userRepository.findById(userId).orElseThrow(
-                () -> new UserNotFoundException("헤당 userId를 갖는 유저를 찾을 수 없습니다.")
+                () -> new UserNotFoundException("user not found.")
         );
     }
 
@@ -48,7 +47,7 @@ public class UserService {
         String username = SecurityContextHolderUtil.getUsername();
 
         User user = userRepository.findByUsername(username).orElseThrow(
-                () -> new UserPrincipalNotFoundException("유저를 찾을 수 없습니다.")
+                () -> new UserPrincipalNotFoundException("user not found.")
         );
 
         refreshTokenRepository.findByUserId(user.getId())
@@ -57,41 +56,48 @@ public class UserService {
         userRepository.delete(user);
     }
 
-    public void deleteUser(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(
-                () -> new UserNotFoundException("헤당 id를 갖는 유저를 찾을 수 없습니다.")
+    public void deleteUser(DeleteUserRequest userRequest) {
+        User user = userRepository.findById(SecurityContextHolderUtil.getUserId()).orElseThrow(
+                () -> new UserNotFoundException("uer not found!")
         );
 
         userRepository.delete(user);
     }
 
-    public List<UserResDto> findAll() {
-        List<User> users = userRepository.findAll();
 
-        return users.stream()
-                .map(UserResDto::of)
-                .collect(Collectors.toList());
-    }
-
-    private void checkDuplUser(UserReqDto.CreateUser reqDto) {
-        final Optional<User> user = userRepository.findByUsername(reqDto.getUsername());
+    private void checkDuplUser(CreateUserRequest userRequest) {
+        final Optional<User> user = userRepository.findByUsername(userRequest.getUsername());
 
         if (user.isPresent()) {
             throw new DuplUsernameException("이미 존재하는 username(이메일)입니다.");
         }
     }
 
-    private User createNormalUserInfo(UserReqDto.CreateUser reqDto, String password) {
+    private User createNormalUserInfo(CreateUserRequest userRequest, String password) {
         UUID salt = UUID.randomUUID();
         String encodedPassword = encoder.encode(password + salt);
 
+        int age = userRequest.getAge();
+        int ageRange = -1;
+
+        if (age <= 19){
+            ageRange = 0;
+        }else if (age <= 24) ageRange = 1;
+        else if (age <= 29) ageRange = 2;
+        else if (age <= 34) ageRange = 3;
+        else if (age <= 39) ageRange = 4;
+        else if (age >= 40) ageRange = 5;
+
         User user = User.builder()
-                .username(reqDto.getUsername())
+                .username(userRequest.getUsername())
                 .password(encodedPassword)
                 .salt(salt)
+                .age(userRequest.getAge())
+                .ageRange(ageRange)
+                .gender(userRequest.getGender())
+                .profileName(userRequest.getProfileName())
                 .provider("normal")
                 .roles("ROLE_USER")
-                .profileName(reqDto.getProfileName())
                 .build();
         return user;
     }

@@ -8,7 +8,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.plac.common.Message;
 import com.plac.domain.user.entity.RefreshToken;
 import com.plac.domain.user.entity.User;
-import com.plac.domain.user.dto.UserResDto;
+import com.plac.domain.user.dto.response.CreateUserResponse;
 import com.plac.exception.user.WrongLoginException;
 import com.plac.domain.user.repository.RefreshTokenRepository;
 import com.plac.security.auth.CustomUserDetails;
@@ -82,7 +82,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         Message message = new Message();
         message.setStatus(HttpStatus.OK);
-        message.setData(UserResDto.of(user));
+        message.setData(new CreateUserResponse(user.getId()));
         message.setMessage("login_success");
 
         this.createResponseMessage(response, message, HttpStatus.OK);
