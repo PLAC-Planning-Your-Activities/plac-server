@@ -29,6 +29,9 @@ public class Plan extends AbstractTimeEntity {
     @OneToMany(mappedBy = "plan", orphanRemoval = true)
     List<PlanPlaceMapping> planPlaceMappings = new ArrayList<>();
 
+    @OneToMany(mappedBy = "plan", orphanRemoval = true)
+    List<PlanTagMapping> planTagMappings = new ArrayList<>();
+
     private String destinationName;
 
     @Column(columnDefinition = "tinyint(1)")
@@ -39,10 +42,10 @@ public class Plan extends AbstractTimeEntity {
     }
 
     @Builder
-    public Plan(String name, User user, boolean open, String destinationName) {
+    public Plan(String name, User user, String destinationName, boolean open) {
         this.name = name;
         this.user = user;
-        this.open = open;
         this.destinationName = destinationName;
+        this.open = open;
     }
 }

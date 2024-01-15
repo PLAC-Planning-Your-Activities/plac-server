@@ -24,6 +24,7 @@ public class FavoritePlan extends AbstractTimeEntity {
     private Plan plan;
 
     @Setter
+    @Column(columnDefinition = "tinyint(1)")
     private boolean favorite;
 
     @Builder

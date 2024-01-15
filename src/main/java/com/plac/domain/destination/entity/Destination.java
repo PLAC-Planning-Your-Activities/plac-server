@@ -2,11 +2,13 @@ package com.plac.domain.destination.entity;
 
 import com.plac.common.AbstractTimeEntity;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Comment;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -20,20 +22,11 @@ public class Destination extends AbstractTimeEntity {
     @Getter
     private String name;
 
-    @Getter
-    private int count;
+    @OneToMany(mappedBy = "destination")
+    List<DestinationMapping> destinationMappings = new ArrayList<>();
 
-    @Getter
-    @Comment("검색용이면 1, 아니면 0")
-    private boolean search;
-
-    public Destination(String name, int count, boolean search) {
+    @Builder
+    public Destination(String name) {
         this.name = name;
-        this.count = count;
-        this.search = search;
-    }
-
-    public void raiseCount(){
-        this.count++;
     }
 }
