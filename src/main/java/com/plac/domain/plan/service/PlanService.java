@@ -70,14 +70,14 @@ public class PlanService {
 
     private void createNewDestination(PlanCreateRequest planRequest, User user) {
         String destinationName = planRequest.getDestinationName();
+        Optional<Destination> destinationOpt = destinationRepository.findByName(destinationName);
+        Destination destination;
 
-        Destination destination = destinationRepository.findByName(destinationName).orElse(
-                destinationRepository.save(
-                        Destination.builder()
-                                .name(destinationName)
-                                .build()
-                )
-        );
+        if (!destinationOpt.isPresent()) {
+            destination = destinationRepository.save(Destination.builder()
+                    .name(planRequest.getDestinationName())
+                    .build());
+        } else destination = destinationOpt.get();
 
         destinationMappingRepository.save(
                 DestinationMapping.builder()
