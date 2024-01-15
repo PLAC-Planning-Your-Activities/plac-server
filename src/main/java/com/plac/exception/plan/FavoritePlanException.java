@@ -6,11 +6,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Getter
 @ResponseStatus(HttpStatus.BAD_REQUEST)
-public class FavoritePlanNotFoundException extends RuntimeException {
+public class FavoritePlanException extends RuntimeException {
 
     private String message;
 
-    public FavoritePlanNotFoundException(String message) {
+    public FavoritePlanException(String message) {
         super(message);
         this.message = message;
     }

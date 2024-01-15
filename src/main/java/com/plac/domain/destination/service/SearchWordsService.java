@@ -35,7 +35,6 @@ public class SearchWordsService {
         List<String> words = userRequest.getWords();
 
         for (String word : words) {
-            System.out.println("word = " + word);
             SearchWords searchWords;
             Optional<SearchWords> searchWordsOpt = searchWordsRepository.findByName(word);
 

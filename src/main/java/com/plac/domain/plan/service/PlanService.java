@@ -15,7 +15,7 @@ import com.plac.domain.plan.repository.*;
 import com.plac.domain.user.entity.User;
 import com.plac.domain.user.repository.UserRepository;
 import com.plac.exception.plan.BookmarkPlanNotFoundException;
-import com.plac.exception.plan.FavoritePlanNotFoundException;
+import com.plac.exception.plan.FavoritePlanException;
 import com.plac.exception.plan.PlanNotFoundException;
 import com.plac.util.SecurityContextHolderUtil;
 import lombok.RequiredArgsConstructor;
@@ -25,10 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -192,6 +189,12 @@ public class PlanService {
                 () -> new PlanNotFoundException("plan not found")
         );
 
+        Optional<FavoritePlan> favoritePlanOpt = favoritePlanRepository.findByUserIdAndPlanId(userId, planId);
+
+        if (favoritePlanOpt.isPresent()) {
+            throw new FavoritePlanException("이미 좋아요를 눌렀습니다.");
+        }
+
         FavoritePlan favoritePlan = FavoritePlan.builder()
                 .plan(plan)
                 .user(user)
@@ -208,10 +211,10 @@ public class PlanService {
         Long userId = SecurityContextHolderUtil.getUserId();
 
         FavoritePlan favoritePlan = favoritePlanRepository.findByUserIdAndPlanId(userId, planId)
-                .orElseThrow(() -> new FavoritePlanNotFoundException("no favorite plan")
+                .orElseThrow(() -> new FavoritePlanException("no favorite plan")
         );
 
-        favoritePlan.setFavorite(false);
+        favoritePlanRepository.delete(favoritePlan);
     }
 
     public void saveBookMarkPlan(Long planId) {
