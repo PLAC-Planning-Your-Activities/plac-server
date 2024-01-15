@@ -4,7 +4,7 @@ import com.plac.common.Message;
 import com.plac.exception.place.WrongKakaoPlaceIdException;
 import com.plac.exception.place.WrongPlaceIdException;
 import com.plac.exception.plan.BookmarkPlanNotFoundException;
-import com.plac.exception.plan.FavoritePlanNotFoundException;
+import com.plac.exception.plan.FavoritePlanException;
 import com.plac.exception.plan.PlanNotFoundException;
 import com.plac.exception.social_login.ProviderNotSupportedException;
 import com.plac.exception.user.DuplUsernameException;
@@ -74,8 +74,8 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(message, message.getStatus());
     }
 
-    @ExceptionHandler(FavoritePlanNotFoundException.class)
-    public ResponseEntity<?> handleException(FavoritePlanNotFoundException e){
+    @ExceptionHandler(FavoritePlanException.class)
+    public ResponseEntity<?> handleException(FavoritePlanException e){
         Message message = new Message(e.getMessage(), -331, HttpStatus.BAD_REQUEST);
         return new ResponseEntity<>(message, message.getStatus());
     }
