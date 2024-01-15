@@ -19,38 +19,30 @@ import java.util.UUID;
 @Entity
 @Table(name = "user")
 public class User extends AbstractTimeEntity {
-
-    @Column(name = "password", nullable = false)
-    String password;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-    @Column(name = "username", nullable = false)
+
     private String username;
-    @Column(name = "salt", nullable = true)
+
+    String password;
+
     @Type(type = "uuid-char")
     private UUID salt;
 
-    @Column(name = "roles", nullable = false)
     private String roles;
 
-    @Column(nullable = true)
     private String profileName;
 
-    @Column(nullable = true)
     private String profileImageUrl;
 
-    @Column(nullable = true)
-    private String profileBirthday;
+    private String profileBirth;
 
-    @Column(nullable = true)
     private int age;
 
-    @Column(nullable = true)
     private String gender;
 
-    @Column(nullable = true)
     private String phoneNumber;
 
     @Enumerated(EnumType.STRING)
@@ -59,8 +51,9 @@ public class User extends AbstractTimeEntity {
     private UserStatus status = UserStatus.ACTIVE;
 
     @Comment("소셜 로그인시 갱신됨 (네이버, 카카오, 구글 중 하나)")
-    @Column(name = "provider", nullable = true)
     private String provider;
+
+    private int ageRange;
 
     public User(String username, String password) {
         this.username = username;
@@ -87,7 +80,7 @@ public class User extends AbstractTimeEntity {
                 ", roles='" + roles + '\'' +
                 ", profileName='" + profileName + '\'' +
                 ", profileImagePath='" + profileImageUrl + '\'' +
-                ", profileBirth='" + profileBirthday + '\'' +
+                ", profileBirth='" + profileBirth + '\'' +
                 ", age=" + age +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", createdAt=" + super.getCreatedAt() +

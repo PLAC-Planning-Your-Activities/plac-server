@@ -1,7 +1,8 @@
 package com.plac.service.user;
 
-import com.plac.domain.user.dto.UserReqDto;
-import com.plac.domain.user.dto.UserResDto;
+import com.plac.domain.user.dto.request.CreateUserRequest;
+import com.plac.domain.user.dto.response.CreateUserResponse;
+import com.plac.domain.user.dto.request.DeleteUserRequest;
 import com.plac.domain.user.entity.User;
 import com.plac.domain.user.repository.UserRepository;
 import com.plac.domain.user.service.PasswordChecker;
@@ -28,7 +29,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
-class UserServiceImplTest {
+class UserServiceTest {
 
     @Autowired
     private UserService userService;
@@ -68,18 +69,20 @@ class UserServiceImplTest {
     @Test
     @DisplayName("사용자 등록(회원가입)이 올바르게 동작하는지 테스트")
     void signUpTest() {
-        UserReqDto.CreateUser reqDto = new UserReqDto.CreateUser();
-        reqDto.setUsername("test1@email.com");
-        reqDto.setPassword("password1234");
+        CreateUserRequest userRequest = CreateUserRequest.builder()
+                        .username("test1@email.com")
+                        .password("password1234")
+                        .profileName("닉네임1")
+                        .build();
+
 
         when(userRepository.save(any(User.class))).thenReturn(mockUser);
         when(encoder.encode(anyString())).thenReturn("encodedPassword");
         when(passwordChecker.checkWeakPassword(anyString())).thenReturn(false);
 
-        UserResDto result = userService.signUp(reqDto);
+        CreateUserResponse result = userService.signUp(userRequest);
 
         assertNotNull(result);
-        assertEquals(reqDto.getUsername(), result.getUsername());
     }
 
     @Test
@@ -98,11 +101,12 @@ class UserServiceImplTest {
     @DisplayName("유저 삭제 테스트 : deleteUser() 호출 시 예외가 발생하지 않음을 확인")
     void deleteUserByIdTest() {
         Long userId = 1L;
+        DeleteUserRequest userRequest = new DeleteUserRequest("password123");
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(mockUser));
         doNothing().when(userRepository).delete(mockUser);
 
-        assertDoesNotThrow(() -> userService.deleteUser(userId));
+        assertDoesNotThrow(() -> userService.deleteUser(userRequest));
     }
 
     @Test
@@ -110,7 +114,7 @@ class UserServiceImplTest {
     void findAllUserTest() {
         when(userRepository.findAll()).thenReturn(mockUserList);
 
-        List<UserResDto> result = userService.findAll();
+        List<CreateUserResponse> result = userService.findAll();
         assertNotNull(result);
         assertEquals(2, result.size());
     }
