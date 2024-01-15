@@ -9,11 +9,12 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PlansByDestination {
+public class PlansInformation {
     private String userProfileName;
     private long minuteDifferences;
     private String planName;
     private List<PlaceInfo> placeInfoList;
     private int favoriteCount;
     private int bookmarkCount;
+    private List<String> tagList;
 }

@@ -4,7 +4,7 @@ import com.plac.domain.plan.dto.request.PlanCreateRequest;
 import com.plac.domain.plan.dto.request.PlanFixRequest;
 import com.plac.domain.plan.dto.request.PlanShareRequest;
 import com.plac.domain.plan.dto.response.PlanCreateResponse;
-import com.plac.domain.plan.dto.response.PlansByDestination;
+import com.plac.domain.plan.dto.response.PlansInformation;
 import com.plac.domain.plan.service.PlanService;
 import com.plac.util.MessageUtil;
 import lombok.RequiredArgsConstructor;
@@ -91,7 +91,15 @@ public class PlanController {
     public ResponseEntity<?> getPlansByDestination(
             @RequestParam(name = "destinationName", required = true) String destinationName
     ){
-        List<PlansByDestination> result = planService.getPlansByDestinations(destinationName);
+        List<PlansInformation> result = planService.getPlansByDestinations(destinationName);
+
+        return MessageUtil.buildResponseEntity(result, HttpStatus.OK, "success");
+    }
+
+
+    @GetMapping("/most-favorites")
+    public ResponseEntity<?> getMostPopularPlans(){
+        List<PlansInformation> result = planService.getMostPopularPlans();
 
         return MessageUtil.buildResponseEntity(result, HttpStatus.OK, "success");
     }
