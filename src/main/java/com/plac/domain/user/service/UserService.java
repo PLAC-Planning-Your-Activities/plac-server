@@ -77,11 +77,23 @@ public class UserService {
         UUID salt = UUID.randomUUID();
         String encodedPassword = encoder.encode(password + salt);
 
+        int age = userRequest.getAge();
+        int ageRange = -1;
+
+        if (age <= 19){
+            ageRange = 0;
+        }else if (age <= 24) ageRange = 1;
+        else if (age <= 29) ageRange = 2;
+        else if (age <= 34) ageRange = 3;
+        else if (age <= 39) ageRange = 4;
+        else if (age >= 40) ageRange = 5;
+
         User user = User.builder()
                 .username(userRequest.getUsername())
                 .password(encodedPassword)
                 .salt(salt)
                 .age(userRequest.getAge())
+                .ageRange(ageRange)
                 .gender(userRequest.getGender())
                 .profileName(userRequest.getProfileName())
                 .provider("normal")

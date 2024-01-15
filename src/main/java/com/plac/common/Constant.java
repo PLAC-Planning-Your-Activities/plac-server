@@ -5,7 +5,7 @@ public interface Constant {
     String USER_ROLE = "USER";
 
     String[] ALL_PERMIT_PATHS = new String[]{
-            "/api/users/one",
+            "/api/users",
             "/api/login",
             "/api/users/emails/availability",
             "/api/login/**",
