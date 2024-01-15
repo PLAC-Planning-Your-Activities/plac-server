@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface DestinationMappingRepository extends JpaRepository<DestinationMapping, Long> {
 
-    @Query("SELECT destination.name, COUNT(destination) as frequency " +
+    @Query("SELECT destination.name as frequency " +
             "FROM DestinationMapping destinationMapping " +
             "JOIN destinationMapping.user user " +
             "JOIN destinationMapping.destination destination " +
@@ -19,7 +19,7 @@ public interface DestinationMappingRepository extends JpaRepository<DestinationM
             "ORDER BY frequency DESC")
     List<String> findTop7DestinationsByAgeRangeAndGender(@Param("ageRange") int ageRange, @Param("gender") String gender, Pageable pageable);
 
-    @Query("SELECT destination.name, COUNT(destination) as frequency " +
+    @Query("SELECT destination.name as frequency " +
             "FROM DestinationMapping destinationMapping " +
             "JOIN destinationMapping.destination destination " +
             "GROUP BY destination " +

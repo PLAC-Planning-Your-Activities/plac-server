@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface UserSearchWordsMappingRepository extends JpaRepository<UserSearchWordsMapping, Long> {
 
-    @Query("SELECT searchWords.name, COUNT(searchWords) as frequency " +
+    @Query("SELECT searchWords.name as frequency " +
             "FROM UserSearchWordsMapping searchWordsMapping " +
             "JOIN searchWordsMapping.user user " +
             "JOIN searchWordsMapping.searchWords searchWords " +
@@ -19,7 +19,7 @@ public interface UserSearchWordsMappingRepository extends JpaRepository<UserSear
             "ORDER BY frequency DESC")
     List<String> findTop6SearchWordsByAgeRangeAndGender(@Param("ageRange") int ageRange, @Param("gender") String gender, Pageable pageable);
 
-    @Query("SELECT searchWords.name, COUNT(searchWords) as frequency " +
+    @Query("SELECT searchWords.name as frequency " +
             "FROM UserSearchWordsMapping searchWordsMapping " +
             "JOIN searchWordsMapping.searchWords searchWords " +
             "GROUP BY searchWords " +

@@ -1,6 +1,8 @@
 package com.plac.domain.plan.service;
 
 import com.plac.domain.destination.entity.Destination;
+import com.plac.domain.destination.entity.DestinationMapping;
+import com.plac.domain.destination.repository.DestinationMappingRepository;
 import com.plac.domain.destination.repository.DestinationRepository;
 import com.plac.domain.place.dto.response.PlaceInfo;
 import com.plac.domain.place.entity.Place;
@@ -40,6 +42,7 @@ public class PlanService {
     private final FavoritePlanRepository favoritePlanRepository;
     private final BookmarkPlanRepository bookmarkPlanRepository;
     private final DestinationRepository destinationRepository;
+    private final DestinationMappingRepository destinationMappingRepository;
 
     @Transactional
     public PlanCreateResponse createPlan(PlanCreateRequest planRequest) {
@@ -59,22 +62,29 @@ public class PlanService {
                     () -> placeList.add(createAndSavePlace(placeInfo))
             );
         }
-        createNewDestination(planRequest);
+        createNewDestination(planRequest, user);
         Plan savedPlan = createNewPlan(planRequest, user, placeList);
 
         return new PlanCreateResponse(savedPlan.getId());
     }
 
-    private void createNewDestination(PlanCreateRequest planRequest) {
+    private void createNewDestination(PlanCreateRequest planRequest, User user) {
         String destinationName = planRequest.getDestinationName();
 
-        if(!destinationRepository.findByName(destinationName).isPresent()) {
-            destinationRepository.save(
-                    Destination.builder()
-                            .name(destinationName)
-                            .build()
-            );
-        }
+        Destination destination = destinationRepository.findByName(destinationName).orElse(
+                destinationRepository.save(
+                        Destination.builder()
+                                .name(destinationName)
+                                .build()
+                )
+        );
+
+        destinationMappingRepository.save(
+                DestinationMapping.builder()
+                        .user(user)
+                        .destination(destination)
+                        .build()
+        );
     }
 
     private Place createAndSavePlace(PlaceInfo placeInfo) {
