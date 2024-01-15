@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -34,8 +35,14 @@ public class SearchWordsService {
         List<String> words = userRequest.getWords();
 
         for (String word : words) {
-            SearchWords searchWords = searchWordsRepository.findByName(word)
-                    .orElse(searchWordsRepository.save(new SearchWords(word)));
+            System.out.println("word = " + word);
+            SearchWords searchWords;
+            Optional<SearchWords> searchWordsOpt = searchWordsRepository.findByName(word);
+
+            if (!searchWordsOpt.isPresent()) {
+                searchWords = searchWordsRepository.save(new SearchWords(word));
+            }
+            else searchWords = searchWordsOpt.get();
 
             UserSearchWordsMapping userSearchWordsMapping = UserSearchWordsMapping.builder()
                     .user(user)

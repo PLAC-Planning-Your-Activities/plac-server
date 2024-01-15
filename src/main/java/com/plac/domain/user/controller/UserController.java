@@ -21,6 +21,7 @@ public class UserController {
 
     @PostMapping("")
     public ResponseEntity<?> signUp(@RequestBody CreateUserRequest userRequest) throws Exception {
+        System.out.println("userRequest = " + userRequest);
         userService.signUp(userRequest);
 
         return MessageUtil.buildResponseEntity(HttpStatus.OK, "success");
