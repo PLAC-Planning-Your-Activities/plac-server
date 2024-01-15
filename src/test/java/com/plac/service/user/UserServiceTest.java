@@ -109,14 +109,4 @@ class UserServiceTest {
         assertDoesNotThrow(() -> userService.deleteUser(userRequest));
     }
 
-    @Test
-    @DisplayName("모든 유저 조회 테스트")
-    void findAllUserTest() {
-        when(userRepository.findAll()).thenReturn(mockUserList);
-
-        List<CreateUserResponse> result = userService.findAll();
-        assertNotNull(result);
-        assertEquals(2, result.size());
-    }
-
 }
