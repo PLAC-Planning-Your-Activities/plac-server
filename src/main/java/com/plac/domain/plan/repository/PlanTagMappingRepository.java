@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Set;
 
 public interface PlanTagMappingRepository extends JpaRepository<PlanTagMapping, Long> {
 
@@ -14,4 +15,7 @@ public interface PlanTagMappingRepository extends JpaRepository<PlanTagMapping, 
 
     @Query("select mapping from PlanTagMapping mapping where mapping.planTagId = :planTagId")
     List<PlanTagMapping> findByPlanTagId(@Param("planTagId") Long planTagId);
+
+    @Query("SELECT ptm.plan.id, ptm.planTagId FROM PlanTagMapping ptm WHERE ptm.plan.id IN :planIds")
+    List<Object[]> findPlanTagIdsByPlanIds(@Param("planIds") Set<Long> planIds);
 }

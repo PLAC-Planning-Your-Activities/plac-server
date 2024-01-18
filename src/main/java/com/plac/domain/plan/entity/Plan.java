@@ -26,10 +26,10 @@ public class Plan extends AbstractTimeEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "plan", orphanRemoval = true)
+    @OneToMany(mappedBy = "plan", orphanRemoval = true, fetch = FetchType.EAGER)
     List<PlanPlaceMapping> planPlaceMappings = new ArrayList<>();
 
-    @OneToMany(mappedBy = "plan", orphanRemoval = true)
+    @OneToMany(mappedBy = "plan", orphanRemoval = true, fetch = FetchType.LAZY)
     List<PlanTagMapping> planTagMappings = new ArrayList<>();
 
     private String destinationName;

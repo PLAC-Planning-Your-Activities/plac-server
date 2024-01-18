@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -260,48 +261,36 @@ public class PlanService {
         String userProfileName = user.getProfileName();
 
         List<Plan> plans = planRepository.findByDestinationName(destinationName);
+        Set<Long> planIds = plans.stream().map(Plan::getId).collect(Collectors.toSet());
+
+        Map<Long, Integer> favoriteCountMap = getFavoriteCountByPlanIds(planIds);
+        Map<Long, Integer> bookmarkCountMap = getBookMarkCountByPlanIds(planIds);
+        Map<Long, List<String>> tagListMap = getTagListMapByPlanIds(planIds);
 
         List<PlansInformation> result = new ArrayList<>();
 
         for (Plan plan : plans) {
-            // 두 LocalDateTime 객체 간의 시간 차이 계산
             Duration duration = Duration.between(plan.getUpdatedAt(), LocalDateTime.now());
             long minutesDifference = duration.toMinutes();
-
             String planName = plan.getName();
 
-            List<PlanPlaceMapping> planPlaceMappings = plan.getPlanPlaceMappings();
-            List<PlaceInfo> placeInfoList = new ArrayList<>();
+            // 기존의 계산 로직 유지
+            List<PlaceInfo> placeInfoList = plan.getPlanPlaceMappings().stream()
+                    .map(PlanPlaceMapping::getPlace)
+                    .map(PlaceInfo::of)
+                    .sorted(Comparator.comparingInt(PlaceInfo::getSeq))
+                    .collect(Collectors.toList());
 
-            for (PlanPlaceMapping planPlaceMapping : planPlaceMappings) {
-                Place place = planPlaceMapping.getPlace();
-                PlaceInfo buildPlaceInfo = PlaceInfo.of(place);
-                placeInfoList.add(buildPlaceInfo);
-            }
-            // PlaceInfo 객체를 seq 오름차순으로 정렬
-            Collections.sort(placeInfoList, Comparator.comparingInt(PlaceInfo::getSeq));
-
-            List<FavoritePlan> favoritePlans = favoritePlanRepository.findByPlanId(plan.getId());
-            int favoriteCount = favoritePlans.size();
-
-            List<BookmarkPlan> bookmarkPlans = bookmarkPlanRepository.findByPlanId(plan.getId());
-            int bookmarkCount = bookmarkPlans.size();
-
-            List<PlanTagMapping> planTagMappingList = planTagMappingRepository.findByPlanId(plan.getId());
-
-            List<String> tagList = new ArrayList<>();
-
-            for (PlanTagMapping planTagMapping : planTagMappingList) {
-                Long planTagId = planTagMapping.getPlanTagId();
-                PlanTag planTag = planTagRepository.findById(planTagId).get();
-
-                String tagName = planTag.getTagName();
-                tagList.add(tagName);
-            }
+            int favoriteCount = favoriteCountMap.getOrDefault(plan.getId(), 0);
+            int bookmarkCount = bookmarkCountMap.getOrDefault(plan.getId(), 0);
+            List<String> tagList = tagListMap.getOrDefault(plan.getId(), Collections.emptyList());
 
             PlansInformation temp = PlansInformation.builder()
+                    .userId(plan.getUser().getId())
+                    .userProfileUrl(plan.getUser().getProfileImageUrl())
                     .userProfileName(userProfileName)
                     .minuteDifferences(minutesDifference)
+                    .planId(plan.getId())
                     .planName(planName)
                     .placeInfoList(placeInfoList)
                     .favoriteCount(favoriteCount)
@@ -383,4 +372,47 @@ public class PlanService {
         return result;
 
     }
+
+    public Map<Long, Integer> getFavoriteCountByPlanIds(Set<Long> planIds) {
+        List<Object[]> counts = favoritePlanRepository.countByPlanIds(planIds);
+        return counts.stream().collect(Collectors.toMap(
+                count -> (Long) count[0], // Plan ID
+                count -> ((Long) count[1]).intValue() // Count
+        ));
+    }
+
+    public Map<Long, Integer> getBookMarkCountByPlanIds(Set<Long> planIds) {
+        List<Object[]> counts = bookmarkPlanRepository.countByPlanIds(planIds);
+        return counts.stream().collect(Collectors.toMap(
+                count -> (Long) count[0], // Plan ID
+                count -> ((Long) count[1]).intValue() // Count
+        ));
+    }
+
+    public Map<Long, List<String>> getTagListMapByPlanIds(Set<Long> planIds) {
+        List<Object[]> planTagIdsData = planTagMappingRepository.findPlanTagIdsByPlanIds(planIds);
+        Set<Long> planTagIds = planTagIdsData.stream()
+                .map(data -> (Long) data[1])
+                .collect(Collectors.toSet());
+
+        List<Object[]> tagsData = planTagRepository.findTagNamesByPlanTagIds(planTagIds);
+        Map<Long, String> tagNameMap = tagsData.stream()
+                .collect(Collectors.toMap(
+                        data -> (Long) data[0],
+                        data -> (String) data[1]
+                ));
+
+        Map<Long, List<String>> tagListMap = new HashMap<>();
+        for (Object[] data : planTagIdsData) {
+            Long planId = (Long) data[0];
+            Long planTagId = (Long) data[1];
+            String tagName = tagNameMap.get(planTagId);
+
+            tagListMap.computeIfAbsent(planId, k -> new ArrayList<>()).add(tagName);
+        }
+
+        return tagListMap;
+    }
+
+
 }
