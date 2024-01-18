@@ -20,17 +20,16 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("")
-    public ResponseEntity<?> signUp(@RequestBody CreateUserRequest userRequest) throws Exception {
-        System.out.println("userRequest = " + userRequest);
+    public ResponseEntity<?> signUp(
+            @RequestBody @Valid CreateUserRequest userRequest
+    ) {
         userService.signUp(userRequest);
-
         return MessageUtil.buildResponseEntity(HttpStatus.OK, "success");
     }
 
     @DeleteMapping("")
-    public ResponseEntity<?> deleteUser(@RequestBody DeleteUserRequest userRequest) throws Exception {
+    public ResponseEntity<?> deleteUser(@RequestBody DeleteUserRequest userRequest) {
         userService.deleteUser(userRequest);
-
         return MessageUtil.buildResponseEntity(HttpStatus.OK, "success");
     }
 
