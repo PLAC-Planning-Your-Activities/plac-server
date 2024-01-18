@@ -319,7 +319,6 @@ public class PlanService {
 
     public List<PlansInformation> getMostPopularPlans() {
         PageRequest pageable = PageRequest.of(0, 5); // 최대 5개 결과를 가져오기 위한 Pageable 생성
-
         List<Object[]> resultList = favoritePlanRepository.findPlansOrderByTotalLikesDesc(pageable);
 
         List<Long> planIds = new ArrayList<>();
@@ -328,11 +327,6 @@ public class PlanService {
             Long planId = (Long) result[0];
             planIds.add(planId);
         }
-
-        for (Long planId : planIds) {
-            System.out.println("planId = " + planId);
-        }
-
 
         List<PlansInformation> result = new ArrayList<>();
 
@@ -372,7 +366,10 @@ public class PlanService {
             }
 
             PlansInformation temp = PlansInformation.builder()
+                    .userId(user.getId())
+                    .userProfileUrl(user.getProfileImageUrl())
                     .userProfileName(user.getProfileName())
+                    .planId(planId)
                     .planName(planName)
                     .placeInfoList(placeInfoList)
                     .favoriteCount(favoriteCount)

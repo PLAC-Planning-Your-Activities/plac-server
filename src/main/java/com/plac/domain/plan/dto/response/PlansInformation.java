@@ -10,11 +10,14 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PlansInformation {
+    private Long userId;
+    private String userProfileUrl;
     private String userProfileName;
-    private long minuteDifferences;
-    private String planName;
-    private List<PlaceInfo> placeInfoList;
     private int favoriteCount;
     private int bookmarkCount;
     private List<String> tagList;
+    private Long minuteDifferences;
+    private Long planId;
+    private String planName;
+    private List<PlaceInfo> placeInfoList;
 }
