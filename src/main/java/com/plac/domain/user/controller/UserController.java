@@ -1,8 +1,10 @@
 package com.plac.domain.user.controller;
 
 import com.plac.domain.email_verification.dto.request.EmailReqDto;
+import com.plac.domain.user.dto.UserUpdateDto;
 import com.plac.domain.user.dto.request.CreateUserRequest;
 import com.plac.domain.user.dto.request.DeleteUserRequest;
+import com.plac.domain.user.dto.response.LoginUserInfo;
 import com.plac.domain.user.service.UserService;
 import com.plac.util.MessageUtil;
 import lombok.RequiredArgsConstructor;
@@ -42,5 +44,14 @@ public class UserController {
         userService.checkEmailAvailability(inputEmail);
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping("{userId}")
+    public ResponseEntity<?> updateUser(
+            @PathVariable("userId") Long userId,
+            @RequestBody @Valid UserUpdateDto updateDto
+    ) {
+        LoginUserInfo result = userService.updateUser(userId, updateDto);
+        return MessageUtil.buildResponseEntity(result, HttpStatus.OK, "success");
     }
 }

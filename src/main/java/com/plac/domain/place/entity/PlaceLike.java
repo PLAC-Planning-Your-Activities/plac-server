@@ -22,13 +22,11 @@ public class PlaceLike extends AbstractTimeEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "place_id")
-    private Place place;
+    private Long kakaoPlaceId;
 
     @Builder
-    public PlaceLike(User user, Place place) {
+    public PlaceLike(User user, Long kakaoPlaceId) {
         this.user = user;
-        this.place = place;
+        this.kakaoPlaceId = kakaoPlaceId;
     }
 }

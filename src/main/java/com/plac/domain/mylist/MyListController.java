@@ -1,5 +1,6 @@
 package com.plac.domain.mylist;
 
+import com.plac.domain.place.service.PlaceLikeService;
 import com.plac.domain.plan.dto.response.MyListPlan;
 import com.plac.domain.plan.service.BookMarkPlanService;
 import com.plac.domain.plan.service.PlanService;
@@ -21,7 +22,7 @@ public class MyListController {
 
     private final PlanService planService;
     private final BookMarkPlanService bookMarkPlanService;
-
+    private final PlaceLikeService placeLikeService;
     @GetMapping("/plans")
     public ResponseEntity<?> getMyListPlans(){
         List<MyListPlan> myPlans = planService.getMyPlans();
@@ -33,8 +34,9 @@ public class MyListController {
         return MessageUtil.buildResponseEntity(result, HttpStatus.OK, "success");
     }
 
-    @GetMapping("/place")
-    public ResponseEntity<?> getMyListPlaces(){
-
-    }
+//    @GetMapping("/place")
+//    public ResponseEntity<?> getMyListPlaces(){
+//        List<MyListPlace> result = placeLikeService.getMyPlaces();
+//        return MessageUtil.buildResponseEntity(result, HttpStatus.OK, "success");
+//    }
 }
