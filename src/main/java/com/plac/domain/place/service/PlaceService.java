@@ -4,6 +4,7 @@ import com.plac.domain.place.dto.request.CreatePlaceRequest;
 import com.plac.domain.place.dto.request.KakaoPlaceInfo;
 import com.plac.domain.place.entity.Place;
 import com.plac.domain.place.repository.PlaceRepository;
+import com.plac.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,7 @@ import java.util.List;
 public class PlaceService {
 
     private final PlaceRepository placeRepository;
+    private final UserRepository userRepository;
 
     public void createNewPlace(CreatePlaceRequest req) {
         List<KakaoPlaceInfo> positionList = req.getPositionList();
@@ -39,4 +41,5 @@ public class PlaceService {
             placeRepository.save(newPlace);
         }
     }
+    
 }

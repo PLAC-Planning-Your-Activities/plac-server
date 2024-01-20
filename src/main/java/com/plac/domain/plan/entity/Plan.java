@@ -44,6 +44,10 @@ public class Plan extends AbstractTimeEntity {
         this.open = value;
     }
 
+    public void softDelete(){
+        this.isDeleted = true;
+    }
+
     @Builder
     public Plan(String name, User user, String destinationName, String imageUrl) {
         this.name = name;

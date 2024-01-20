@@ -11,4 +11,6 @@ public interface PlanPlaceMappingRepository extends JpaRepository<PlanPlaceMappi
 
     @Query("select mapping from PlanPlaceMapping mapping where mapping.plan.id = :planId")
     List<PlanPlaceMapping> findByPlanId(@Param("planId") Long planId);
+
+    List<PlanPlaceMapping> findByPlanIdIn(List<Long> planIds);
 }

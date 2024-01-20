@@ -39,12 +39,34 @@ public class PlanController {
         return MessageUtil.buildResponseEntity(HttpStatus.OK, "success");
     }
 
+    @GetMapping("/{planId}")
+    public ResponseEntity<?> getPlanDetails(
+            @PathVariable("planId") Long planId
+    ){
+        PlansInformation result = planService.getPlanDetails(planId);
+        return MessageUtil.buildResponseEntity(result, HttpStatus.OK, "success");
+    }
+
     @PostMapping("/{planId}/community")
     public ResponseEntity<?> sharePlanToCommunity(
             @PathVariable("planId") Long planId,
             @Valid @RequestBody PlanShareRequest planRequest
     ){
         planService.sharePlanToCommunity(planRequest, planId);
+        return MessageUtil.buildResponseEntity(HttpStatus.OK, "success");
+    }
+
+    @GetMapping("/sharing")
+    public ResponseEntity<?> getSharedPlans(){
+        List<PlansInformation> result = planService.getSharedPlans();
+        return MessageUtil.buildResponseEntity(result, HttpStatus.OK, "success");
+    }
+
+    @DeleteMapping("/{planId}/community")
+    public ResponseEntity<?> deleteSharedPlan(
+            @PathVariable("planId") Long planId
+    ){
+        planService.deleteSharedPlan(planId);
         return MessageUtil.buildResponseEntity(HttpStatus.OK, "success");
     }
 
@@ -89,7 +111,6 @@ public class PlanController {
     @GetMapping("/most-favorites")
     public ResponseEntity<?> getMostPopularPlans(){
         List<PlansInformation> result = planService.getMostPopularPlans();
-
         return MessageUtil.buildResponseEntity(result, HttpStatus.OK, "success");
     }
 

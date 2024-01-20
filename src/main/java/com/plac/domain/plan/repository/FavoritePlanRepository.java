@@ -20,7 +20,7 @@ public interface FavoritePlanRepository extends JpaRepository<FavoritePlan, Long
 
     @Query("SELECT fp.plan.id, SUM(CASE WHEN fp.favorite = true THEN 1 ELSE 0 END) AS totalLikes " +
             "FROM FavoritePlan fp " +
-            "WHERE fp.plan.isDeleted = false "+
+            "WHERE fp.plan.isDeleted = false AND fp.plan.open = true "+
             "GROUP BY fp.plan.id " +
             "ORDER BY totalLikes DESC")
     List<Object[]> findPlansOrderByTotalLikesDesc(Pageable pageable);
@@ -30,4 +30,6 @@ public interface FavoritePlanRepository extends JpaRepository<FavoritePlan, Long
             "WHERE fp.plan.isDeleted = false " +
             "AND fp.plan.id IN :planIds GROUP BY fp.plan.id")
     List<Object[]> countByPlanIds(@Param("planIds") Set<Long> planIds);
+
+    List<FavoritePlan> findByPlanIdIn(List<Long> planIds);
 }

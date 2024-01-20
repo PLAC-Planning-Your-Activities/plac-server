@@ -18,5 +18,8 @@ public interface PlanRepository extends JpaRepository <Plan, Long> {
     @Query("select p from Plan p where p.user.id = :userId and p.isDeleted = false")
     List<Plan> findByUserId(@Param("userId") Long userId);
 
+    @Query("select p from Plan p where p.user.id = :userId and p.isDeleted = false and p.open = true")
+    List<Plan> findByUserIdAndOpen(@Param("userId") Long userId);
+
     List<Plan> findByIdIn(List<Long> planIds);
 }

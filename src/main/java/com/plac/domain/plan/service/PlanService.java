@@ -135,6 +135,9 @@ public class PlanService {
         Plan plan = planRepository.findById(planId)
                 .orElseThrow(() -> new PlanNotFoundException("존재하지 않는 planId 입니다.")
         );
+        if(plan.getUser().getId() != SecurityContextHolderUtil.getUserId()){
+            throw new DataNotFoundException();
+        }
         plan.changeOpenness(true);
 
         createPlanTagMappings(planRequest, plan);
@@ -194,7 +197,7 @@ public class PlanService {
             throw new PlanSharedToCummunityException();
         }
 
-        if (isMyPlan == false) {  // 내가 만든 플랜이 아닌 경우 => 삭제 불가
+        if (isMyPlan == false) {  // 내가 만든 플랜이 아닌 경우 => 삭제 불가 (북마크만 해제)
             bookmarkPlanRepository.deleteByUserIdAndPlanId(SecurityContextHolderUtil.getUserId(), planId);
         }
         else if (isMyPlan == true) {  // 내가 만든 플랜인 경우
@@ -244,10 +247,12 @@ public class PlanService {
         User user = userRepository.findById(SecurityContextHolderUtil.getUserId()).orElseThrow(
                 () -> new UserNotFoundException("user not found")
         );
-
         Plan plan = planRepository.findById(planId).orElseThrow (
                 () -> new PlanNotFoundException("plan not found")
         );
+        if (user.getId() == plan.getUser().getId()){
+            throw new DataNotFoundException();
+        }
 
         BookmarkPlan bookmarkPlan = BookmarkPlan.builder()
                 .user(user)
@@ -338,64 +343,50 @@ public class PlanService {
         PageRequest pageable = PageRequest.of(0, 5); // 최대 5개 결과를 가져오기 위한 Pageable 생성
         List<Object[]> resultList = favoritePlanRepository.findPlansOrderByTotalLikesDesc(pageable);
 
-        List<Long> planIds = new ArrayList<>();
+        List<Long> planIds = resultList.stream()
+                .map(result -> (Long) result[0])
+                .collect(Collectors.toList());
 
-        for (Object[] result : resultList) {
-            Long planId = (Long) result[0];
-            planIds.add(planId);
-        }
+        Set<Long> planIdSet = new HashSet<>(planIds);
 
-        List<PlansInformation> result = new ArrayList<>();
+        // Bulk 연산으로 모든 Plan 객체를 가져옴
+        List<Plan> plans = planRepository.findByIdIn(planIds);
 
-        for (Long planId : planIds) {
-            Plan plan = planRepository.findById(planId).get();
-            String planName = plan.getName();
+        // 관련 데이터를 Bulk 연산으로 가져옴
+        List<PlanPlaceMapping> planPlaceMappings = planPlaceMappingRepository.findByPlanIdIn(planIds);
+        Map<Long, List<PlanPlaceMapping>> planPlaceMappingsMap = planPlaceMappings.stream()
+                .collect(Collectors.groupingBy(mapping -> mapping.getPlan().getId()));
 
-            User user = plan.getUser();
+        Map<Long, Integer> favoriteCountMap = getFavoriteCountByPlanIds(planIdSet);
+        Map<Long, Integer> bookmarkCountMap = getBookMarkCountByPlanIds(planIdSet);
+        Map<Long, List<String>> tagListMap = getTagListMapByPlanIds(planIdSet);
 
-            List<PlanPlaceMapping> planPlaceMappings = plan.getPlanPlaceMappings();
-            List<PlaceInfo> placeInfoList = new ArrayList<>();
+        List<PlansInformation> result = plans.stream().map(plan -> {
+            // planPlaceMappingsMap 에서 Plan ID에 해당하는 PlanPlaceMapping 객체들의 리스트를 가져옴
+            List<PlanPlaceMapping> mappings = planPlaceMappingsMap.getOrDefault(plan.getId(), Collections.emptyList());
 
-            for (PlanPlaceMapping planPlaceMapping : planPlaceMappings) {
-                Place place = planPlaceMapping.getPlace();
-                PlaceInfo buildPlaceInfo = PlaceInfo.of(place);
-                placeInfoList.add(buildPlaceInfo);
-            }
-            // PlaceInfo 객체를 seq 오름차순으로 정렬
-            Collections.sort(placeInfoList, Comparator.comparingInt(PlaceInfo::getSeq));
+            // PlanPlaceMapping 객체들을 PlaceInfo 객체들로 변환
+            List<PlaceInfo> placeInfoList = mappings.stream()
+                    .map(PlanPlaceMapping::getPlace) // PlanPlaceMapping에서 Place 객체를 가져옴
+                    .map(PlaceInfo::of) // Place 객체를 PlaceInfo 객체로 변환
+                    .collect(Collectors.toList());
 
-            List<FavoritePlan> favoritePlans = favoritePlanRepository.findByPlanId(plan.getId());
-            int favoriteCount = favoritePlans.size();
+            int favoriteCount = favoriteCountMap.getOrDefault(plan.getId(), 0);
+            int bookmarkCount = bookmarkCountMap.getOrDefault(plan.getId(), 0);
+            List<String> tagList = tagListMap.getOrDefault(plan.getId(), Collections.emptyList());
 
-            List<BookmarkPlan> bookmarkPlans = bookmarkPlanRepository.findByPlanId(plan.getId());
-            int bookmarkCount = bookmarkPlans.size();
-
-            List<PlanTagMapping> planTagMappingList = planTagMappingRepository.findByPlanId(plan.getId());
-
-            List<String> tagList = new ArrayList<>();
-
-            for (PlanTagMapping planTagMapping : planTagMappingList) {
-                Long planTagId = planTagMapping.getPlanTagId();
-                PlanTag planTag = planTagRepository.findById(planTagId).get();
-
-                String tagName = planTag.getTagName();
-                tagList.add(tagName);
-            }
-
-            PlansInformation temp = PlansInformation.builder()
-                    .userId(user.getId())
-                    .userProfileUrl(user.getProfileImageUrl())
-                    .userProfileName(user.getProfileName())
-                    .planId(planId)
-                    .planName(planName)
+            return PlansInformation.builder()
+                    .userId(plan.getUser().getId())
+                    .userProfileUrl(plan.getUser().getProfileImageUrl())
+                    .userProfileName(plan.getUser().getProfileName())
+                    .planId(plan.getId())
+                    .planName(plan.getName())
                     .placeInfoList(placeInfoList)
                     .favoriteCount(favoriteCount)
                     .bookmarkCount(bookmarkCount)
                     .tagList(tagList)
                     .build();
-
-            result.add(temp);
-        }
+        }).collect(Collectors.toList());
 
         return result;
 
@@ -473,5 +464,120 @@ public class PlanService {
         }
 
         return result;
+    }
+
+    public PlansInformation getPlanDetails(Long planId) {
+        Plan plan = planRepository.findById(planId).orElseThrow(
+                () -> new DataNotFoundException()
+        );
+
+        User planUser = plan.getUser();
+
+        Set<Long> planIds = new HashSet<>();
+        planIds.add(plan.getId());
+
+        Map<Long, Integer> favoriteCountMap = getFavoriteCountByPlanIds(planIds);
+        Map<Long, Integer> bookmarkCountMap = getBookMarkCountByPlanIds(planIds);
+        Map<Long, List<String>> tagListMap = getTagListMapByPlanIds(planIds);
+
+        Duration duration = Duration.between(plan.getUpdatedAt(), LocalDateTime.now());
+        long minutesDifference = duration.toMinutes();
+
+        String planName = plan.getName();
+
+        // 기존의 계산 로직 유지
+        List<PlaceInfo> placeInfoList = plan.getPlanPlaceMappings().stream()
+                .map(PlanPlaceMapping::getPlace)
+                .map(PlaceInfo::of)
+                .sorted(Comparator.comparingInt(PlaceInfo::getSeq))
+                .collect(Collectors.toList());
+
+        int favoriteCount = favoriteCountMap.getOrDefault(plan.getId(), 0);
+        int bookmarkCount = bookmarkCountMap.getOrDefault(plan.getId(), 0);
+        List<String> tagList = tagListMap.getOrDefault(plan.getId(), Collections.emptyList());
+
+        PlansInformation result = PlansInformation.builder()
+                .userId(planUser.getId())
+                .userProfileUrl(planUser.getProfileImageUrl())
+                .userProfileName(planUser.getProfileName())
+                .minuteDifferences(minutesDifference)
+                .planId(plan.getId())
+                .planName(planName)
+                .placeInfoList(placeInfoList)
+                .favoriteCount(favoriteCount)
+                .bookmarkCount(bookmarkCount)
+                .tagList(tagList)
+                .build();
+
+        return result;
+
+    }
+
+    public List<PlansInformation> getSharedPlans() {
+        List<Plan> sharedPlans = planRepository.findByUserIdAndOpen(SecurityContextHolderUtil.getUserId());
+
+        List<Long> planIds = new ArrayList<>();
+
+        for (Plan plan : sharedPlans) {
+            planIds.add(plan.getId());
+        }
+
+        Set<Long> planIdSet = new HashSet<>(planIds);
+
+        // Bulk 연산으로 모든 Plan 객체를 가져옴
+        List<Plan> plans = planRepository.findByIdIn(planIds);
+
+        // 관련 데이터를 Bulk 연산으로 가져옴
+        List<PlanPlaceMapping> planPlaceMappings = planPlaceMappingRepository.findByPlanIdIn(planIds);
+        Map<Long, List<PlanPlaceMapping>> planPlaceMappingsMap = planPlaceMappings.stream()
+                .collect(Collectors.groupingBy(mapping -> mapping.getPlan().getId()));
+
+        Map<Long, Integer> favoriteCountMap = getFavoriteCountByPlanIds(planIdSet);
+        Map<Long, Integer> bookmarkCountMap = getBookMarkCountByPlanIds(planIdSet);
+        Map<Long, List<String>> tagListMap = getTagListMapByPlanIds(planIdSet);
+
+        List<PlansInformation> result = plans.stream().map(plan -> {
+            // planPlaceMappingsMap 에서 Plan ID에 해당하는 PlanPlaceMapping 객체들의 리스트를 가져옴
+            List<PlanPlaceMapping> mappings = planPlaceMappingsMap.getOrDefault(plan.getId(), Collections.emptyList());
+
+            // PlanPlaceMapping 객체들을 PlaceInfo 객체들로 변환
+            List<PlaceInfo> placeInfoList = mappings.stream()
+                    .map(PlanPlaceMapping::getPlace) // PlanPlaceMapping에서 Place 객체를 가져옴
+                    .map(PlaceInfo::of) // Place 객체를 PlaceInfo 객체로 변환
+                    .collect(Collectors.toList());
+
+            int favoriteCount = favoriteCountMap.getOrDefault(plan.getId(), 0);
+            int bookmarkCount = bookmarkCountMap.getOrDefault(plan.getId(), 0);
+            List<String> tagList = tagListMap.getOrDefault(plan.getId(), Collections.emptyList());
+
+            return PlansInformation.builder()
+                    .userId(plan.getUser().getId())
+                    .userProfileUrl(plan.getUser().getProfileImageUrl())
+                    .userProfileName(plan.getUser().getProfileName())
+                    .planId(plan.getId())
+                    .planName(plan.getName())
+                    .placeInfoList(placeInfoList)
+                    .favoriteCount(favoriteCount)
+                    .bookmarkCount(bookmarkCount)
+                    .tagList(tagList)
+                    .build();
+        }).collect(Collectors.toList());
+
+        return result;
+    }
+
+    @Transactional
+    public void deleteSharedPlan(Long planId) {
+        Plan plan = planRepository.findById(planId).orElseThrow(
+                () -> new DataNotFoundException()
+        );
+        User user = userRepository.findById(SecurityContextHolderUtil.getUserId()).orElseThrow(
+                () -> new DataNotFoundException()
+        );
+        if(plan.getUser().getId() != user.getId()) {
+            throw new DataNotFoundException();
+        }
+
+        plan.changeOpenness(false);
     }
 }
