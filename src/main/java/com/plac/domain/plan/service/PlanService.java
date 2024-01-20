@@ -10,15 +10,18 @@ import com.plac.domain.place.repository.PlaceRepository;
 import com.plac.domain.plan.dto.request.PlanCreateRequest;
 import com.plac.domain.plan.dto.request.PlanFixRequest;
 import com.plac.domain.plan.dto.request.PlanShareRequest;
+import com.plac.domain.plan.dto.request.TagListRequest;
+import com.plac.domain.plan.dto.response.MyListPlan;
 import com.plac.domain.plan.dto.response.PlanCreateResponse;
 import com.plac.domain.plan.dto.response.PlansInformation;
 import com.plac.domain.plan.entity.*;
 import com.plac.domain.plan.repository.*;
 import com.plac.domain.user.entity.User;
 import com.plac.domain.user.repository.UserRepository;
-import com.plac.exception.plan.BookmarkPlanNotFoundException;
+import com.plac.exception.common.DataNotFoundException;
 import com.plac.exception.plan.FavoritePlanException;
 import com.plac.exception.plan.PlanNotFoundException;
+import com.plac.exception.user.UserNotFoundException;
 import com.plac.util.SecurityContextHolderUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -108,7 +111,6 @@ public class PlanService {
                 .destinationName(planRequest.getDestinationName())
                 .name(planRequest.getPlanName())
                 .user(user)
-                .open(false)
                 .build();
 
         Plan savedPlan = planRepository.save(plan);
@@ -183,11 +185,13 @@ public class PlanService {
     @Transactional
     public void deletePlan(Long planId) {
         Plan plan = planRepository.findById(planId).orElseThrow(
-                () -> new PlanNotFoundException("plan not found")
+                () -> new DataNotFoundException()
         );
-        List<PlanPlaceMapping> planPlaceMapping = planPlaceMappingRepository.findByPlanId(planId);
+        if (plan.isDeleted() == true){
+            throw new DataNotFoundException();
+        }
 
-        planRepository.delete(plan);
+        plan.setDeleted(true);
     }
 
     /**
@@ -229,7 +233,9 @@ public class PlanService {
     }
 
     public void saveBookMarkPlan(Long planId) {
-        User user = userRepository.findById(SecurityContextHolderUtil.getUserId()).get();
+        User user = userRepository.findById(SecurityContextHolderUtil.getUserId()).orElseThrow(
+                () -> new UserNotFoundException("user not found")
+        );
 
         Plan plan = planRepository.findById(planId).orElseThrow (
                 () -> new PlanNotFoundException("plan not found")
@@ -239,7 +245,6 @@ public class PlanService {
                 .user(user)
                 .plan(plan)
                 .build();
-
         bookmarkPlanRepository.save(bookmarkPlan);
     }
 
@@ -247,13 +252,11 @@ public class PlanService {
         Long userId = SecurityContextHolderUtil.getUserId();
 
         BookmarkPlan bookmarkPlan = bookmarkPlanRepository.findByUserIdAndPlanId(userId, planId)
-                .orElseThrow(
-                        ()-> new BookmarkPlanNotFoundException("bookmark-plan not found")
-                );
+                .orElseThrow(()-> new DataNotFoundException());
         bookmarkPlanRepository.delete(bookmarkPlan);
     }
 
-    public List<PlansInformation> getPlansByDestinations(String destinationName) {
+    public List<PlansInformation> getPlansByDestinations(String destinationName, String sortBy, TagListRequest tagListRequest, String placeName) {
 
         Long userId = SecurityContextHolderUtil.getUserId();
         User user = userRepository.findById(userId).get();
@@ -301,7 +304,24 @@ public class PlanService {
             result.add(temp);
         }
 
-        Collections.sort(result, Comparator.comparingInt(PlansInformation::getFavoriteCount).reversed());
+        List<String> userTags = tagListRequest.getTags();
+        // 필터링 로직: 사용자가 지정한 태그들을 모두 포함하는 PlansInformation 객체만을 선택
+        if (userTags != null && !userTags.isEmpty()) {
+            result = result.stream()
+                    .filter(plansInfo -> userTags.stream().allMatch(tag -> plansInfo.getTagList().contains(tag)))
+                    .collect(Collectors.toList());
+        }
+
+        if (sortBy.equals("최신순")) {
+            Collections.sort(result, Comparator.comparingLong(PlansInformation::getMinuteDifferences));
+        } else if (sortBy.equals("인기순")) {
+            Collections.sort(result, Comparator.comparingInt(PlansInformation::getFavoriteCount).reversed());
+        } else if (sortBy.equals("저장순")) {
+            Collections.sort(result, Comparator.comparingInt(PlansInformation::getBookmarkCount).reversed());
+        }
+
+        if (!placeName.equals("NONE"))
+            result = filterPlansByPlaceName(placeName, result);
 
         return result;
     }
@@ -414,5 +434,36 @@ public class PlanService {
         return tagListMap;
     }
 
+    public List<PlansInformation> filterPlansByPlaceName(String placeNameKeyword, List<PlansInformation> plansList) {
+        String searchTerm = placeNameKeyword.toLowerCase();
 
+        return plansList.stream()
+                .filter(plansInfo -> plansInfo.getPlaceInfoList().stream()
+                        .anyMatch(placeInfo -> {
+                            String placeNameLower = placeInfo.getPlaceName().toLowerCase();
+                            return Arrays.asList(placeNameLower.split(" ")).contains(searchTerm)
+                                    || placeNameLower.equals(searchTerm); // 추가된 조건
+                        }))
+                .collect(Collectors.toList());
+    }
+
+
+    public List<MyListPlan> getMyPlans() {
+        List<Plan> planList = planRepository.findByUserId(SecurityContextHolderUtil.getUserId());
+        List<MyListPlan> result = new ArrayList<>();
+
+        for (Plan plan : planList) {
+            MyListPlan myListPlan = MyListPlan.builder()
+                    .planId(plan.getId())
+                    .planName(plan.getName())
+                    .imageUrl(plan.getImageUrl())
+                    .destinationName(plan.getDestinationName())
+                    .myPlan(true)
+                    .build();
+
+            result.add(myListPlan);
+        }
+
+        return result;
+    }
 }
