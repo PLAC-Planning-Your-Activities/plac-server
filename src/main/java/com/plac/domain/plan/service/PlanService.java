@@ -21,6 +21,7 @@ import com.plac.domain.user.repository.UserRepository;
 import com.plac.exception.common.DataNotFoundException;
 import com.plac.exception.plan.FavoritePlanException;
 import com.plac.exception.plan.PlanNotFoundException;
+import com.plac.exception.plan.PlanSharedToCummunityException;
 import com.plac.exception.user.UserNotFoundException;
 import com.plac.util.SecurityContextHolderUtil;
 import lombok.RequiredArgsConstructor;
@@ -183,15 +184,22 @@ public class PlanService {
     }
 
     @Transactional
-    public void deletePlan(Long planId) {
-        Plan plan = planRepository.findById(planId).orElseThrow(
-                () -> new DataNotFoundException()
-        );
-        if (plan.isDeleted() == true){
+    public void deletePlan(Long planId, boolean isMyPlan) {
+        Plan plan = planRepository.findById(planId).orElseThrow(() -> new DataNotFoundException());
+
+        if (plan.isDeleted() == true) {
             throw new DataNotFoundException();
         }
+        if (plan.isOpen() == true){
+            throw new PlanSharedToCummunityException();
+        }
 
-        plan.setDeleted(true);
+        if (isMyPlan == false) {  // 내가 만든 플랜이 아닌 경우 => 삭제 불가
+            bookmarkPlanRepository.deleteByUserIdAndPlanId(SecurityContextHolderUtil.getUserId(), planId);
+        }
+        else if (isMyPlan == true) {  // 내가 만든 플랜인 경우
+            plan.setDeleted(true);
+        }
     }
 
     /**

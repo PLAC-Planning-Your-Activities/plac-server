@@ -6,6 +6,7 @@ import com.plac.exception.place.WrongPlaceIdException;
 import com.plac.exception.plan.BookmarkPlanNotFoundException;
 import com.plac.exception.plan.FavoritePlanException;
 import com.plac.exception.plan.PlanNotFoundException;
+import com.plac.exception.plan.PlanSharedToCummunityException;
 import com.plac.exception.social_login.ProviderNotSupportedException;
 import com.plac.exception.user.DuplUsernameException;
 import com.plac.exception.user.UserPrincipalNotFoundException;
@@ -83,6 +84,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BookmarkPlanNotFoundException.class)
     public ResponseEntity<?> handleException(BookmarkPlanNotFoundException e){
         Message message = new Message(e.getMessage(), -332, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(message, message.getStatus());
+    }
+
+    @ExceptionHandler(PlanSharedToCummunityException.class)
+    public ResponseEntity<?> handleException(PlanSharedToCummunityException e){
+        Message message = new Message("플랜이 커뮤니티에 공유되어 있습니다.", -410, HttpStatus.BAD_REQUEST);
         return new ResponseEntity<>(message, message.getStatus());
     }
 
