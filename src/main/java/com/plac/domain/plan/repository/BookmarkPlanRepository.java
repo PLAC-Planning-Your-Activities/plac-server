@@ -19,4 +19,6 @@ public interface BookmarkPlanRepository extends JpaRepository<BookmarkPlan, Long
 
     @Query("SELECT bp.plan.id, COUNT(bp) FROM BookmarkPlan bp WHERE bp.plan.id IN :planIds GROUP BY bp.plan.id")
     List<Object[]> countByPlanIds(@Param("planIds") Set<Long> planIds);
+
+    void deleteByUserIdAndPlanId(Long userId, Long planId);
 }

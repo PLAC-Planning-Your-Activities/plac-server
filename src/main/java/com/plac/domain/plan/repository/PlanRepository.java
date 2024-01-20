@@ -15,7 +15,7 @@ public interface PlanRepository extends JpaRepository <Plan, Long> {
     @Query("select p from Plan p where p.destinationName= :destinationName and p.open = true and p.isDeleted = false")
     List<Plan> findByDestinationName(@Param("destinationName") String destinationName);
 
-    @Query("select p from Plan p where p.user.id = :userId")
+    @Query("select p from Plan p where p.user.id = :userId and p.isDeleted = false")
     List<Plan> findByUserId(@Param("userId") Long userId);
 
     List<Plan> findByIdIn(List<Long> planIds);
