@@ -1,11 +1,14 @@
 package com.plac.domain.user.service;
 
+import com.plac.domain.user.dto.UserUpdateDto;
 import com.plac.domain.user.dto.request.CreateUserRequest;
-import com.plac.domain.user.dto.response.CreateUserResponse;
 import com.plac.domain.user.dto.request.DeleteUserRequest;
+import com.plac.domain.user.dto.response.CreateUserResponse;
+import com.plac.domain.user.dto.response.LoginUserInfo;
 import com.plac.domain.user.entity.User;
 import com.plac.domain.user.repository.RefreshTokenRepository;
 import com.plac.domain.user.repository.UserRepository;
+import com.plac.exception.common.DataNotFoundException;
 import com.plac.exception.user.DuplUsernameException;
 import com.plac.exception.user.UserNotFoundException;
 import com.plac.exception.user.UserPrincipalNotFoundException;
@@ -14,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
@@ -110,4 +114,21 @@ public class UserService {
         }
     }
 
+    @Transactional
+    public LoginUserInfo updateUser(Long userId, UserUpdateDto updateDto) {
+        if (userId != SecurityContextHolderUtil.getUserId()){
+            throw new UserPrincipalNotFoundException("user not valid");
+        }
+
+        User user = userRepository.findById(SecurityContextHolderUtil.getUserId()).orElseThrow(
+                () -> new DataNotFoundException()
+        );
+
+        user.setProfileName(updateDto.getNickname());
+        user.setProfileImageUrl(updateDto.getProfileImageUrl());
+        user.setGender(updateDto.getGender());
+        user.setAgeRange(updateDto.getAgeGroup());
+
+        return LoginUserInfo.of(user);
+    }
 }

@@ -2,10 +2,7 @@ package com.plac.domain.user.entity;
 
 import com.plac.common.AbstractTimeEntity;
 import com.plac.common.mappedenum.UserStatus;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.Type;
 
@@ -33,14 +30,18 @@ public class User extends AbstractTimeEntity {
 
     private String roles;
 
+    @Setter
     private String profileName;
 
+    @Setter
     private String profileImageUrl;
 
     private String profileBirth;
 
+    @Setter
     private int age;
 
+    @Setter
     private String gender;
 
     private String phoneNumber;
@@ -53,6 +54,7 @@ public class User extends AbstractTimeEntity {
     @Comment("소셜 로그인시 갱신됨 (네이버, 카카오, 구글 중 하나)")
     private String provider;
 
+    @Setter
     private int ageRange;
 
     public User(String username, String password) {
