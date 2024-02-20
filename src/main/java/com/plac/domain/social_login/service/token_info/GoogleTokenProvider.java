@@ -10,6 +10,9 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+
 @Service
 @RequiredArgsConstructor
 public class GoogleTokenProvider implements TokenProviderStrategy {
@@ -19,8 +22,9 @@ public class GoogleTokenProvider implements TokenProviderStrategy {
     @Override
     public Oauth2TokenResDto getToken(SocialLoginReqDto.Login req) {
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+        String code = URLDecoder.decode(req.getCode(), StandardCharsets.UTF_8);
 
-        formData.add("code", req.getCode());
+        formData.add("code", code);
         formData.add("client_id", googleOauth2Properties.getClientId());
         formData.add("client_secret", googleOauth2Properties.getClientSecret());
         formData.add("redirect_uri", googleOauth2Properties.getRedirectUri());
