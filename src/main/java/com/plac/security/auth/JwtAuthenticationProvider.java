@@ -29,8 +29,6 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         UUID salt = savedUser.getUser().getSalt();
 
         String saltedPassword = password + salt.toString();
-        System.out.println(saltedPassword);
-        System.out.println(savedUser.getPassword());
 
         if(!passwordEncoder.matches(saltedPassword, savedUser.getPassword())) {
             throw new BadCredentialsException("로그인 정보가 올바르지 않습니다.");
