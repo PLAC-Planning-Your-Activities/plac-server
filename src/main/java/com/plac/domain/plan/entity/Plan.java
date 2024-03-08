@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +33,7 @@ public class Plan extends AbstractTimeEntity {
     @OneToMany(mappedBy = "plan", orphanRemoval = true)
     List<PlanTagMapping> planTagMappings = new ArrayList<>();
 
+    @NotNull
     private String destinationName;
 
     @Column(columnDefinition = "tinyint(1)")
@@ -42,10 +44,10 @@ public class Plan extends AbstractTimeEntity {
     }
 
     @Builder
-    public Plan(String name, User user, String destinationName, boolean open) {
+    public Plan(String name, User user, String destinationName) {
         this.name = name;
         this.user = user;
         this.destinationName = destinationName;
-        this.open = open;
+        this.open = false;
     }
 }

@@ -1,4 +1,4 @@
-package com.plac.domain.plan.repository;
+package com.plac.domain.plan.repository.planTag;
 
 import com.plac.domain.plan.entity.PlanTag;
 import org.springframework.data.jpa.repository.JpaRepository;
