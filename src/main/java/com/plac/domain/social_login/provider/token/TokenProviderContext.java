@@ -16,7 +16,6 @@ import java.util.Map;
 public class TokenProviderContext {
     private Map<String, TokenProviderStrategy> strategies;
 
-    @Autowired
     public TokenProviderContext(NaverTokenProvider naverTokenProvider,
                                 GoogleTokenProvider googleTokenProvider,
                                 KakaoTokenProvider kakaoTokenProvider) {

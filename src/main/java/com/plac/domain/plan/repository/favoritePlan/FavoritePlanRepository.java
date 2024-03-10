@@ -1,4 +1,4 @@
-package com.plac.domain.plan.repository;
+package com.plac.domain.plan.repository.favoritePlan;
 
 import com.plac.domain.plan.entity.FavoritePlan;
 import org.springframework.data.domain.Pageable;

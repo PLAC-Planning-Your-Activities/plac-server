@@ -11,7 +11,12 @@ import com.plac.domain.plan.dto.request.PlanShareRequest;
 import com.plac.domain.plan.dto.response.PlanCreateResponse;
 import com.plac.domain.plan.dto.response.PlansInformation;
 import com.plac.domain.plan.entity.*;
-import com.plac.domain.plan.repository.*;
+import com.plac.domain.plan.repository.bookmark.BookmarkPlanRepository;
+import com.plac.domain.plan.repository.favoritePlan.FavoritePlanRepository;
+import com.plac.domain.plan.repository.plan.PlanRepository;
+import com.plac.domain.plan.repository.planPlaceMapping.PlanPlaceMappingMappingRepository;
+import com.plac.domain.plan.repository.planTagMapping.PlanTagMappingRepository;
+import com.plac.domain.plan.repository.planTag.PlanTagRepository;
 import com.plac.domain.user.entity.User;
 import com.plac.domain.user.repository.UserRepository;
 import com.plac.exception.plan.BookmarkPlanNotFoundException;
@@ -26,6 +31,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +41,7 @@ public class PlanService {
     private final PlaceRepository placeRepository;
     private final PlanRepository planRepository;
     private final UserRepository userRepository;
-    private final PlanPlaceMappingRepository planPlaceMappingRepository;
+    private final PlanPlaceMappingMappingRepository planPlaceMappingRepository;
     private final PlanTagRepository planTagRepository;
     private final PlanTagMappingRepository planTagMappingRepository;
     private final FavoritePlanRepository favoritePlanRepository;
@@ -47,34 +54,29 @@ public class PlanService {
 
         List<PlaceInfo> placeInfoList = planRequest.getPlaceList();
         // PlaceInfo seq 오름차순으로 원소를 정렬
-        Collections.sort(placeInfoList, Comparator.comparingInt(PlaceInfo::getSeq));
+        placeInfoList.sort(Comparator.comparingInt(PlaceInfo::getSeq));
 
-        List<Place> placeList = new ArrayList<>();
+        List<Place> placeList = placeInfoList.stream()
+                .map(placeInfo -> {
+                    Long kakaoPlaceId = placeInfo.getKakaoPlaceId();
+                    return placeRepository.findByKakaoPlaceId(kakaoPlaceId)
+                            .orElseGet(() -> createAndSavePlace(placeInfo));
+                })
+                .collect(Collectors.toList());
 
-        for (PlaceInfo placeInfo : placeInfoList) {
-            Long kakaoPlaceId = placeInfo.getKakaoPlaceId();
-
-            placeRepository.findByKakaoPlaceId(kakaoPlaceId).ifPresentOrElse(
-                    placeList::add,
-                    () -> placeList.add(createAndSavePlace(placeInfo))
-            );
-        }
         createNewDestination(planRequest);
         Plan savedPlan = createNewPlan(planRequest, user, placeList);
-
         return new PlanCreateResponse(savedPlan.getId());
     }
 
     private void createNewDestination(PlanCreateRequest planRequest) {
         String destinationName = planRequest.getDestinationName();
-
-        if(!destinationRepository.findByName(destinationName).isPresent()) {
-            destinationRepository.save(
-                    Destination.builder()
-                            .name(destinationName)
-                            .build()
-            );
-        }
+        destinationRepository.findByName(destinationName)
+                .orElseGet(() -> destinationRepository.save(
+                        Destination.builder()
+                                .name(destinationName)
+                                .build()
+                ));
     }
 
     private Place createAndSavePlace(PlaceInfo placeInfo) {
@@ -92,27 +94,26 @@ public class PlanService {
     }
 
     public Plan createNewPlan(PlanCreateRequest planRequest, User user, List<Place> placeList) {
-
         Plan plan = Plan.builder()
                 .destinationName(planRequest.getDestinationName())
                 .name(planRequest.getPlanName())
                 .user(user)
-                .open(false)
                 .build();
 
         Plan savedPlan = planRepository.save(plan);
 
-        int sequence = 0;
-
-        for (Place place : placeList) {
-            PlanPlaceMapping planPlaceMapping = PlanPlaceMapping.builder()
-                    .plan(savedPlan)
-                    .place(place)
-                    .seq(sequence++)
-                    .build();
-            planPlaceMappingRepository.save(planPlaceMapping);
-        }
-
+        planPlaceMappingRepository.saveAll(
+                IntStream.range(0, placeList.size())
+                .mapToObj(sequence -> {
+                    Place place = placeList.get(sequence);
+                    return PlanPlaceMapping.builder()
+                            .plan(savedPlan)
+                            .place(place)
+                            .seq(sequence)
+                            .build();
+                })
+                .collect(Collectors.toList())
+        );
         return savedPlan;
     }
 
@@ -249,7 +250,7 @@ public class PlanService {
 
         String userProfileName = user.getProfileName();
 
-        List<Plan> plans = planRepository.findByDestinationName(destinationName);
+        List<Plan> plans = planRepository.findPlansByDestinationName(destinationName);
 
         List<PlansInformation> result = new ArrayList<>();
 
@@ -274,10 +275,10 @@ public class PlanService {
             List<FavoritePlan> favoritePlans = favoritePlanRepository.findByPlanId(plan.getId());
             int favoriteCount = favoritePlans.size();
 
-            List<BookmarkPlan> bookmarkPlans = bookmarkPlanRepository.findByPlanId(plan.getId());
+            List<BookmarkPlan> bookmarkPlans = bookmarkPlanRepository.findBookmarksPlansByPlanId(plan.getId());
             int bookmarkCount = bookmarkPlans.size();
 
-            List<PlanTagMapping> planTagMappingList = planTagMappingRepository.findByPlanId(plan.getId());
+            List<PlanTagMapping> planTagMappingList = planTagMappingRepository.findTagsByPlanId(plan.getId());
 
             List<String> tagList = new ArrayList<>();
 
@@ -346,10 +347,10 @@ public class PlanService {
             List<FavoritePlan> favoritePlans = favoritePlanRepository.findByPlanId(plan.getId());
             int favoriteCount = favoritePlans.size();
 
-            List<BookmarkPlan> bookmarkPlans = bookmarkPlanRepository.findByPlanId(plan.getId());
+            List<BookmarkPlan> bookmarkPlans = bookmarkPlanRepository.findBookmarksPlansByPlanId(plan.getId());
             int bookmarkCount = bookmarkPlans.size();
 
-            List<PlanTagMapping> planTagMappingList = planTagMappingRepository.findByPlanId(plan.getId());
+            List<PlanTagMapping> planTagMappingList = planTagMappingRepository.findTagsByPlanId(plan.getId());
 
             List<String> tagList = new ArrayList<>();
 

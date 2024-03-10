@@ -1,30 +1,50 @@
 spring:
-
   config:
     activate:
       on-profile: test
 
   datasource:
+    url: jdbc:h2:mem:test;MODE=MySQL;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false;
     username: sa
     password:
     driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:test;MODE=MySQL;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false
     # h2 기반 인메모리 휘발성 테스트로 진행할것이기 때문에 h2:mem으로 설정
-
 
   jpa:
     hibernate:
       ddl-auto: create-drop
     properties:
-      hibernate.dialect: org.hibernate.dialect.MySQL8Dialect
       hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
         format_sql: true
-        globally_quoted_identifiers: true
+        auto_quote_keyword: true
     show-sql: true
     generate-ddl: true
     database-platform: org.hibernate.dialect.MySQL8Dialect
     database: h2
 
-  h2:
+    h2:
     console:
       enabled: true
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: '1234'
+    password: '1234'
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+plac:
+  jwt:
+    secret:
+      access: 'qwert12345'
+      refresh: 'qwert12345'
+  email:
+    expire-minutes:
+      signup: 3
+      completion: 5

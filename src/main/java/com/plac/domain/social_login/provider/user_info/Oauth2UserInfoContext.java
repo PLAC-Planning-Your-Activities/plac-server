@@ -21,7 +21,6 @@ public class Oauth2UserInfoContext {
     private Map<String, Oauth2UserInfoProviderStrategy> strategies;
     private Map<String, Function<Map<String, Object>, Oauth2UserInfo>> userInfoProviderMap = new HashMap<>();
 
-    @Autowired
     public Oauth2UserInfoContext(NaverUserInfoProvider naverUserInfoProvider,
                                  GoogleUserInfoProvider googleUserInfoProvider,
                                  KakaoUserInfoProvider kakaoUserInfoProvider) {
