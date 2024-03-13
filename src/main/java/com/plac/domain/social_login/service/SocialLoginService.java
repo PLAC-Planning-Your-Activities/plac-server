@@ -1,15 +1,15 @@
 package com.plac.domain.social_login.service;
 
-import com.plac.domain.user.entity.RefreshToken;
-import com.plac.domain.user.entity.User;
+import com.plac.domain.social_login.dto.Oauth2TokenResDto;
+import com.plac.domain.social_login.dto.SocialLoginRequest;
+import com.plac.domain.social_login.dto.SocialLoginResponse;
 import com.plac.domain.social_login.entity.Oauth2UserInfo;
-import com.plac.config.dto.SocialLoginReqDto;
-import com.plac.config.dto.Oauth2TokenResDto;
-import com.plac.config.dto.SocialLoginResDto;
-import com.plac.domain.user.repository.RefreshTokenRepository;
-import com.plac.domain.user.repository.UserRepository;
 import com.plac.domain.social_login.provider.token.TokenProviderContext;
 import com.plac.domain.social_login.provider.user_info.Oauth2UserInfoContext;
+import com.plac.domain.user.entity.RefreshToken;
+import com.plac.domain.user.entity.User;
+import com.plac.domain.user.repository.RefreshTokenRepository;
+import com.plac.domain.user.repository.UserRepository;
 import com.plac.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,23 +33,21 @@ public class SocialLoginService {
     private final TokenProviderContext tokenProviderContext;
     private final Oauth2UserInfoContext oauth2UserInfoContext;
 
-    public SocialLoginResDto signIn(SocialLoginReqDto.Login req) {
-        Oauth2TokenResDto tokenResDto = tokenProviderContext.getTokenFromOauth2AuthServer(req);
-        Map<String, Object> userInfoFromAuthServer = oauth2UserInfoContext.getUserInfoFromAuthServer(req.getProvider(), tokenResDto);
+    public SocialLoginResponse signIn(SocialLoginRequest socialLoginRequest) {
+        Oauth2TokenResDto tokenResDto = tokenProviderContext.getTokenFromOauth2AuthServer(socialLoginRequest);
+        Map<String, Object> userInfoFromAuthServer = oauth2UserInfoContext.getUserInfoFromAuthServer(socialLoginRequest.getProvider(), tokenResDto);
 
-        Oauth2UserInfo oauth2UserInfo = oauth2UserInfoContext.makeOauth2UserInfo(req.getProvider(), userInfoFromAuthServer);
+        Oauth2UserInfo oauth2UserInfo = oauth2UserInfoContext.makeOauth2UserInfo(socialLoginRequest.getProvider(), userInfoFromAuthServer);
 
         Optional<User> findUser = userRepository.findByUsernameAndProvider(oauth2UserInfo.getUsername(), oauth2UserInfo.getProvider());
         User userEntity = findUser.orElseGet(() -> createUser(oauth2UserInfo));
-        log.info("userEntity = {}", userEntity);
 
         if (!findUser.isPresent()){
             userRepository.save(userEntity);
         }
-
         String accessToken = processAccessAndRefreshToken(userEntity);
 
-        return SocialLoginResDto.builder()
+        return SocialLoginResponse.builder()
                 .token_type(BEARER_TYPE)
                 .user(userEntity)
                 .access_token(accessToken)

@@ -1,7 +1,7 @@
 package com.plac.domain.social_login.provider.token;
 
-import com.plac.config.dto.Oauth2TokenResDto;
-import com.plac.config.dto.SocialLoginReqDto;
+import com.plac.domain.social_login.dto.Oauth2TokenResDto;
+import com.plac.domain.social_login.dto.SocialLoginRequest;
 import com.plac.domain.social_login.service.token_info.GoogleTokenProvider;
 import com.plac.domain.social_login.service.token_info.KakaoTokenProvider;
 import com.plac.domain.social_login.service.token_info.NaverTokenProvider;
@@ -24,12 +24,12 @@ public class TokenProviderContext {
         strategies.put("kakao", kakaoTokenProvider);
     }
 
-    public Oauth2TokenResDto getTokenFromOauth2AuthServer(SocialLoginReqDto.Login req){
-        TokenProviderStrategy strategy = strategies.get(req.getProvider().toLowerCase());
+    public Oauth2TokenResDto getTokenFromOauth2AuthServer(SocialLoginRequest socialLoginRequest){
+        TokenProviderStrategy strategy = strategies.get(socialLoginRequest.getProvider().toLowerCase());
 
         if(strategy != null){
-            return strategy.getToken(req);
+            return strategy.getToken(socialLoginRequest);
         }
-        throw new BadRequestException("Unknown Provider: " + req.getProvider());
+        throw new BadRequestException("Unknown Provider: " + socialLoginRequest.getProvider());
     }
 }

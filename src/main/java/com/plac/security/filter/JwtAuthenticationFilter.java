@@ -1,22 +1,16 @@
 package com.plac.security.filter;
 
-import com.fasterxml.jackson.core.exc.StreamWriteException;
-import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.plac.common.Message;
+import com.plac.domain.user.dto.response.CreateUserResponse;
 import com.plac.domain.user.entity.RefreshToken;
 import com.plac.domain.user.entity.User;
-import com.plac.domain.user.dto.response.CreateUserResponse;
-import com.plac.exception.BaseErrorResponse;
-import com.plac.exception.common.BadRequestException;
 import com.plac.domain.user.repository.RefreshTokenRepository;
+import com.plac.exception.common.BadRequestException;
 import com.plac.security.auth.CustomUserDetails;
 import com.plac.util.JwtUtil;
+import com.plac.util.ResponseUtil;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -70,27 +64,20 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         ResponseCookie cookies = JwtUtil.makeResponseCookie(accessToken);
         response.addHeader(HttpHeaders.SET_COOKIE, cookies.toString());
 
-        Message message = new Message(new CreateUserResponse(user.getId()));
-
-        this.createResponseMessage(response, message, HttpStatus.OK);
+        CreateUserResponse createUserResponse = new CreateUserResponse(user.getId());
+        ResponseUtil.setResponse(response, createUserResponse, HttpStatus.OK);
     }
 
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
                                               AuthenticationException failed) throws IOException, ServletException {
-        // 1. Http Response Message 세팅 후 반환
         Object failedType = failed.getClass();
 
-        // 2. 예외에 따른 response 세팅
         if(failedType.equals(BadCredentialsException.class) || failedType.equals(UsernameNotFoundException.class)) {
-            this.createResponseMessage(response, null, HttpStatus.UNAUTHORIZED);
+            ResponseUtil.setResponse(response, HttpStatus.UNAUTHORIZED);
         } else {
-            Message message = new Message();
-            message.setStatus(HttpStatus.BAD_REQUEST);
-            message.setMessage(failed.getLocalizedMessage());
-
-            this.createResponseMessage(response, message, HttpStatus.UNAUTHORIZED);
+            ResponseUtil.setResponse(response, failed.getLocalizedMessage(), HttpStatus.UNAUTHORIZED);
         }
     }
 
@@ -116,16 +103,5 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .userId(user.getId())
                 .build();
         return newRefreshToken;
-    }
-
-    private void createResponseMessage(HttpServletResponse response, Message message, HttpStatus status) throws StreamWriteException, DatabindException, IOException {
-        response.setStatus(status.value());
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        response.setContentType(MediaType.APPLICATION_JSON.toString());
-
-        objectMapper.writeValue(response.getOutputStream(), message);
     }
 }

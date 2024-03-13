@@ -1,8 +1,8 @@
 package com.plac.domain.social_login.provider.token;
 
-import com.plac.config.dto.SocialLoginReqDto;
-import com.plac.config.dto.Oauth2TokenResDto;
+import com.plac.domain.social_login.dto.Oauth2TokenResDto;
+import com.plac.domain.social_login.dto.SocialLoginRequest;
 
 public interface TokenProviderStrategy {
-    Oauth2TokenResDto getToken(SocialLoginReqDto.Login req);
+    Oauth2TokenResDto getToken(SocialLoginRequest request);
 }

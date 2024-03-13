@@ -3,7 +3,7 @@
 //import com.plac.domain.user.entity.User;
 //import com.plac.domain.social_login.entity.Oauth2UserInfo;
 //import com.plac.config.dto.SocialLoginReqDto;
-//import com.plac.config.dto.Oauth2TokenResDto;
+//import com.plac.domain.social_login.dto.Oauth2TokenResDto;
 //import com.plac.config.dto.SocialLoginResDto;
 //import com.plac.domain.user.repository.UserRepository;
 //import com.plac.domain.social_login.provider.token.TokenProviderContext;
