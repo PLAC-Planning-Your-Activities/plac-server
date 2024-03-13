@@ -6,9 +6,7 @@ import com.plac.domain.plan.dto.request.PlanShareRequest;
 import com.plac.domain.plan.dto.response.PlanCreateResponse;
 import com.plac.domain.plan.dto.response.PlansInformation;
 import com.plac.domain.plan.service.PlanService;
-import com.plac.util.MessageUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,11 +20,10 @@ public class PlanController {
 
     private final PlanService planService;
 
-    @PostMapping("")
+    @PostMapping
     public ResponseEntity<?> createPlan(@RequestBody PlanCreateRequest planRequest){
         PlanCreateResponse result = planService.createPlan(planRequest);
-
-        return MessageUtil.buildResponseEntity(result, HttpStatus.OK, "success");
+        return ResponseEntity.ok().body(result);
     }
 
     @PostMapping("/community/{planId}")
@@ -35,25 +32,22 @@ public class PlanController {
             @Valid @RequestBody PlanShareRequest planRequest
     ){
         planService.sharePlanToCommunity(planRequest, planId);
-
-        return MessageUtil.buildResponseEntity(HttpStatus.OK, "success");
+        return ResponseEntity.ok().build();
     }
 
-    @PatchMapping("")
+    @PatchMapping
     public ResponseEntity<?> fixPlan(
             @PathVariable("planId") Long planId,
             @RequestBody PlanFixRequest planRequest
     ){
         planService.fixPlan(planRequest, planId);
-
-        return MessageUtil.buildResponseEntity(HttpStatus.OK, "success");
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{planId}")
     public ResponseEntity<?> deletePlan(@PathVariable("planId") Long planId){
         planService.deletePlan(planId);
-
-        return MessageUtil.buildResponseEntity(HttpStatus.OK, "success");
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/like/{planId}")
@@ -61,30 +55,26 @@ public class PlanController {
             @PathVariable("planId") Long planId
     ){
         planService.makeFavoritePlan(planId);
-
-        return MessageUtil.buildResponseEntity(HttpStatus.OK, "success");
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/dislike/{planId}")
     public ResponseEntity<?> clearFavoritePlan(@PathVariable("planId") Long planId) {
         planService.clearFavoritePlan(planId);
-
-        return MessageUtil.buildResponseEntity(HttpStatus.OK, "success");
+        return ResponseEntity.ok().build();
     }
 
     // 플랜 저장하기 (마이페이지에서 확인 가능)
     @PostMapping("/bookmarks/{planId}")
     public ResponseEntity<?> createBookMarkPlan(@PathVariable("planId") Long planId){
         planService.saveBookMarkPlan(planId);
-
-        return MessageUtil.buildResponseEntity(HttpStatus.OK, "success");
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/bookmarks/{planId}")
     public ResponseEntity<?> deleteBookMarkPlan(@PathVariable("planId") Long planId){
         planService.deleteBookMarkPlan(planId);
-
-        return MessageUtil.buildResponseEntity(HttpStatus.OK, "success");
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/destinations")
@@ -92,17 +82,13 @@ public class PlanController {
             @RequestParam(name = "destinationName", required = true) String destinationName
     ){
         List<PlansInformation> result = planService.getPlansByDestinations(destinationName);
-
-        return MessageUtil.buildResponseEntity(result, HttpStatus.OK, "success");
+        return ResponseEntity.ok().body(result);
     }
 
 
     @GetMapping("/most-favorites")
     public ResponseEntity<?> getMostPopularPlans(){
         List<PlansInformation> result = planService.getMostPopularPlans();
-
-        return MessageUtil.buildResponseEntity(result, HttpStatus.OK, "success");
+        return ResponseEntity.ok().body(result);
     }
-
-
 }

@@ -1,7 +1,7 @@
 package com.plac.domain.social_login.service.token_info;
 
-import com.plac.config.dto.SocialLoginReqDto;
-import com.plac.config.dto.Oauth2TokenResDto;
+import com.plac.domain.social_login.dto.Oauth2TokenResDto;
+import com.plac.domain.social_login.dto.SocialLoginRequest;
 import com.plac.domain.social_login.provider.token.TokenProviderStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -27,8 +27,8 @@ public class KakaoTokenProvider implements TokenProviderStrategy {
     }
 
     @Override
-    public Oauth2TokenResDto getToken(SocialLoginReqDto.Login req) {
-        MultiValueMap<String, String> formData = createKakaoFormData(req);
+    public Oauth2TokenResDto getToken(SocialLoginRequest socialLoginRequest) {
+        MultiValueMap<String, String> formData = createKakaoFormData(socialLoginRequest);
 
         return WebClient.create()
                 .post()
@@ -43,14 +43,14 @@ public class KakaoTokenProvider implements TokenProviderStrategy {
                 .block();
     }
 
-    private MultiValueMap<String, String> createKakaoFormData(SocialLoginReqDto.Login req) {
+    private MultiValueMap<String, String> createKakaoFormData(SocialLoginRequest socialLoginRequest) {
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
 
         formData.add("grant_type", "authorization_code");
         formData.add("client_id", clientRegistration.getClientId());
         formData.add("client_secret", clientRegistration.getClientSecret());
         formData.add("redirect_uri", clientRegistration.getRedirectUri());
-        formData.add("code", req.getCode());
+        formData.add("code", socialLoginRequest.getCode());
         return formData;
     }
 }

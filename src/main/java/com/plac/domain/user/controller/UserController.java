@@ -1,12 +1,11 @@
 package com.plac.domain.user.controller;
 
 import com.plac.domain.email_verification.dto.request.EmailReqDto;
+import com.plac.domain.user.dto.request.ChangeProfileRequest;
 import com.plac.domain.user.dto.request.CreateUserRequest;
-import com.plac.domain.user.dto.request.DeleteUserRequest;
+import com.plac.domain.user.dto.response.UserInfoResponse;
 import com.plac.domain.user.service.UserService;
-import com.plac.util.MessageUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,29 +18,32 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("")
-    public ResponseEntity<?> signUp(@RequestBody CreateUserRequest userRequest) throws Exception {
-        System.out.println("userRequest = " + userRequest);
+    @PostMapping
+    public ResponseEntity<Void> signUp(@RequestBody CreateUserRequest userRequest) {
         userService.signUp(userRequest);
-
-        return MessageUtil.buildResponseEntity(HttpStatus.OK, "success");
+        return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("")
-    public ResponseEntity<?> deleteUser(@RequestBody DeleteUserRequest userRequest) throws Exception {
-        userService.deleteUser(userRequest);
-
-        return MessageUtil.buildResponseEntity(HttpStatus.OK, "success");
+    @DeleteMapping
+    public ResponseEntity<Void> deleteUser() {
+        userService.deleteUser();
+        return ResponseEntity.ok().build();
     }
+
+    @PutMapping("/{userId}")
+    public ResponseEntity<UserInfoResponse> changeProfile(
+            @PathVariable Long userId, ChangeProfileRequest changeProfileRequest
+    ) {
+        UserInfoResponse userInfo = userService.changeProfile(userId, changeProfileRequest);
+        return ResponseEntity.ok().body(userInfo);
+    }
+
 
     @GetMapping("/emails/availability")
     public ResponseEntity<Void> checkEmailAvailability(
             @Valid @RequestBody EmailReqDto dto
     ) {
-        String inputEmail = dto.getEmail();
-
-        userService.checkEmailAvailability(inputEmail);
-
-        return new ResponseEntity<>(HttpStatus.OK);
+        userService.checkEmailAvailability(dto.getEmail());
+        return ResponseEntity.ok().build();
     }
 }

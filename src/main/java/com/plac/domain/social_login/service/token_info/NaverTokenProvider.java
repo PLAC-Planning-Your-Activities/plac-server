@@ -1,7 +1,7 @@
 package com.plac.domain.social_login.service.token_info;
 
-import com.plac.config.dto.SocialLoginReqDto;
-import com.plac.config.dto.Oauth2TokenResDto;
+import com.plac.domain.social_login.dto.Oauth2TokenResDto;
+import com.plac.domain.social_login.dto.SocialLoginRequest;
 import com.plac.domain.social_login.provider.token.TokenProviderStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -26,8 +26,8 @@ public class NaverTokenProvider implements TokenProviderStrategy {
         this.clientRegistration = clientRegistrationRepository.findByRegistrationId("naver");
     }
     @Override
-    public Oauth2TokenResDto getToken(SocialLoginReqDto.Login req) {
-        MultiValueMap<String, String> formData = createNaverFormData(req);
+    public Oauth2TokenResDto getToken(SocialLoginRequest socialLoginRequest) {
+        MultiValueMap<String, String> formData = createNaverFormData(socialLoginRequest);
 
         return WebClient.create()
                 .post()
@@ -42,13 +42,13 @@ public class NaverTokenProvider implements TokenProviderStrategy {
                 .block();
     }
 
-    private MultiValueMap<String, String> createNaverFormData(SocialLoginReqDto.Login req) {
+    private MultiValueMap<String, String> createNaverFormData(SocialLoginRequest socialLoginRequest) {
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
 
         formData.add("grant_type", "authorization_code");
         formData.add("client_id", clientRegistration.getClientId());
         formData.add("client_secret", clientRegistration.getClientSecret());
-        formData.add("code", req.getCode());
+        formData.add("code", socialLoginRequest.getCode());
         return formData;
     }
 }

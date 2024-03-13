@@ -1,19 +1,21 @@
 package com.plac.domain.user.service;
 
+import com.plac.domain.user.dto.request.ChangeProfileRequest;
 import com.plac.domain.user.dto.request.CreateUserRequest;
 import com.plac.domain.user.dto.response.CreateUserResponse;
-import com.plac.domain.user.dto.request.DeleteUserRequest;
+import com.plac.domain.user.dto.response.UserInfoResponse;
 import com.plac.domain.user.entity.User;
 import com.plac.domain.user.repository.RefreshTokenRepository;
 import com.plac.domain.user.repository.UserRepository;
-import com.plac.exception.user.DuplUsernameException;
-import com.plac.exception.user.UserNotFoundException;
-import com.plac.exception.user.UserPrincipalNotFoundException;
+import com.plac.exception.common.ConflictException;
+import com.plac.exception.common.DataNotFoundException;
+import com.plac.exception.common.UnAuthorizedException;
 import com.plac.util.SecurityContextHolderUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
@@ -37,39 +39,23 @@ public class UserService {
         return new CreateUserResponse(user.getId());
     }
 
-    public User findUser(Long userId) {
-        return userRepository.findById(userId).orElseThrow(
-                () -> new UserNotFoundException("user not found.")
-        );
-    }
-
     public void deleteUser() {
-        String username = SecurityContextHolderUtil.getUsername();
+        Long userId = SecurityContextHolderUtil.getUserId();
 
-        User user = userRepository.findByUsername(username).orElseThrow(
-                () -> new UserPrincipalNotFoundException("user not found.")
-        );
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new DataNotFoundException("user not found."));
 
-        refreshTokenRepository.findByUserId(user.getId())
+        refreshTokenRepository.findByUserId(userId)
                 .ifPresent(refreshTokenRepository::delete);
 
         userRepository.delete(user);
     }
 
-    public void deleteUser(DeleteUserRequest userRequest) {
-        User user = userRepository.findById(SecurityContextHolderUtil.getUserId()).orElseThrow(
-                () -> new UserNotFoundException("uer not found!")
-        );
-
-        userRepository.delete(user);
-    }
-
-
     private void checkDuplUser(CreateUserRequest userRequest) {
         final Optional<User> user = userRepository.findByUsername(userRequest.getUsername());
 
         if (user.isPresent()) {
-            throw new DuplUsernameException("이미 존재하는 username(이메일)입니다.");
+            throw new ConflictException("이미 존재하는 이메일입니다. 다른 이메일을 입력하세요.");
         }
     }
 
@@ -88,7 +74,7 @@ public class UserService {
         else if (age <= 39) ageRange = 4;
         else if (age >= 40) ageRange = 5;
 
-        User user = User.builder()
+        return User.builder()
                 .username(userRequest.getUsername())
                 .password(encodedPassword)
                 .salt(salt)
@@ -99,7 +85,6 @@ public class UserService {
                 .provider("normal")
                 .roles("ROLE_USER")
                 .build();
-        return user;
     }
 
     public void checkEmailAvailability(String email) {
@@ -110,4 +95,17 @@ public class UserService {
         }
     }
 
+    @Transactional
+    public UserInfoResponse changeProfile(Long userId, ChangeProfileRequest changeProfileRequest) {
+        if (userId != SecurityContextHolderUtil.getUserId()) {
+            throw new UnAuthorizedException();
+        }
+
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new DataNotFoundException("user not found")
+        );
+
+        user.changeProfile(changeProfileRequest);
+        return UserInfoResponse.of(user);
+    }
 }

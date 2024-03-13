@@ -1,9 +1,9 @@
 package com.plac.domain.social_login.service.token_info;
 
-import com.plac.config.dto.SocialLoginReqDto;
-import com.plac.config.dto.Oauth2TokenResDto;
-import com.plac.domain.social_login.service.user_info.GoogleOauth2Properties;
+import com.plac.domain.social_login.dto.Oauth2TokenResDto;
+import com.plac.domain.social_login.dto.SocialLoginRequest;
 import com.plac.domain.social_login.provider.token.TokenProviderStrategy;
+import com.plac.domain.social_login.service.user_info.GoogleOauth2Properties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -20,9 +20,9 @@ public class GoogleTokenProvider implements TokenProviderStrategy {
     private final GoogleOauth2Properties googleOauth2Properties;
 
     @Override
-    public Oauth2TokenResDto getToken(SocialLoginReqDto.Login req) {
+    public Oauth2TokenResDto getToken(SocialLoginRequest socialLoginRequest) {
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
-        String code = URLDecoder.decode(req.getCode(), StandardCharsets.UTF_8);
+        String code = URLDecoder.decode(socialLoginRequest.getCode(), StandardCharsets.UTF_8);
 
         formData.add("code", code);
         formData.add("client_id", googleOauth2Properties.getClientId());
@@ -39,5 +39,4 @@ public class GoogleTokenProvider implements TokenProviderStrategy {
                 .bodyToMono(Oauth2TokenResDto.class)
                 .block();
     }
-
 }

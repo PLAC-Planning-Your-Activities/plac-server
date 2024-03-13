@@ -2,10 +2,8 @@ package com.plac.domain.user.entity;
 
 import com.plac.common.AbstractTimeEntity;
 import com.plac.common.mappedenum.UserStatus;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.plac.domain.user.dto.request.ChangeProfileRequest;
+import lombok.*;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.Type;
 
@@ -66,8 +64,11 @@ public class User extends AbstractTimeEntity {
         this.password = password;
     }
 
-    public String getUsername() {
-        return this.username;
+    public void changeProfile(ChangeProfileRequest req) {
+        this.profileName = req.getProfileName();
+        this.profileImageUrl = req.getProfileImageUrl();
+        this.gender = req.getGender();
+        this.ageRange = req.getAgeGroup();
     }
 
     @Override

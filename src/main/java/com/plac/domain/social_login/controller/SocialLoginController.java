@@ -3,13 +3,10 @@ package com.plac.domain.social_login.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.plac.common.Message;
-import com.plac.config.dto.SocialLoginReqDto;
-import com.plac.config.dto.SocialLoginResDto;
+import com.plac.domain.social_login.dto.SocialLoginRequest;
+import com.plac.domain.social_login.dto.SocialLoginResponse;
 import com.plac.domain.social_login.service.SocialLoginService;
 import com.plac.util.JwtUtil;
-import com.plac.util.MessageUtil;
-import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -29,19 +26,18 @@ public class SocialLoginController {
 
     private final SocialLoginService socialLoginService;
 
-    @Operation(summary = "소셜 로그인 api", description = "소셜 로그인 (네이버, 구글, 카카오)")
-    @PostMapping("")
-    public void signIn(HttpServletResponse response, @RequestBody SocialLoginReqDto.Login req) throws Exception {
+    @PostMapping
+    public void signIn(HttpServletResponse response, @RequestBody SocialLoginRequest socialLoginRequest) throws Exception {
+        SocialLoginResponse socialLoginResponse = socialLoginService.signIn(socialLoginRequest);
+        ResponseCookie responseCookie = JwtUtil.makeResponseCookie(socialLoginResponse.getAccess_token());
+
         ObjectMapper om = settingObjectMapper();
         response.setContentType(MediaType.APPLICATION_JSON.toString());
-        
-        SocialLoginResDto loginResponse = socialLoginService.signIn(req);
-        Message message = MessageUtil.buildMessage(HttpStatus.OK, "소셜로그인 성공. 엑세스 토큰을 발급합니다.");
-
-        ResponseCookie responseCookie = JwtUtil.makeResponseCookie(loginResponse.getAccess_token());
 
         response.addHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
-        om.writeValue(response.getOutputStream(), message);
+        response.setStatus(HttpStatus.OK.value());
+
+        om.writeValue(response.getOutputStream(), null);
     }
 
     private static ObjectMapper settingObjectMapper() {
