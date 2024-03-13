@@ -1,10 +1,11 @@
 package com.plac.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.plac.domain.user.dto.response.CreateUserResponse;
+import com.plac.domain.user.dto.response.UserInfoResponse;
 import com.plac.domain.user.entity.RefreshToken;
 import com.plac.domain.user.entity.User;
 import com.plac.domain.user.repository.RefreshTokenRepository;
+import com.plac.exception.BaseErrorResponse;
 import com.plac.exception.common.BadRequestException;
 import com.plac.security.auth.CustomUserDetails;
 import com.plac.util.JwtUtil;
@@ -64,20 +65,27 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         ResponseCookie cookies = JwtUtil.makeResponseCookie(accessToken);
         response.addHeader(HttpHeaders.SET_COOKIE, cookies.toString());
 
-        CreateUserResponse createUserResponse = new CreateUserResponse(user.getId());
-        ResponseUtil.setResponse(response, createUserResponse, HttpStatus.OK);
+        UserInfoResponse userInfoResponse = UserInfoResponse.builder()
+                .userId(user.getId())
+                .username(user.getUsername())
+                .profileName(user.getProfileName())
+                .profileImageUrl(user.getProfileImageUrl())
+                .age(user.getAge())
+                .gender(user.getGender())
+                .build();
+
+        ResponseUtil.setResponse(response, userInfoResponse, HttpStatus.OK);
     }
 
 
     @Override
-    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
-                                              AuthenticationException failed) throws IOException, ServletException {
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
         Object failedType = failed.getClass();
 
         if(failedType.equals(BadCredentialsException.class) || failedType.equals(UsernameNotFoundException.class)) {
-            ResponseUtil.setResponse(response, HttpStatus.UNAUTHORIZED);
+            ResponseUtil.setResponse(response, new BaseErrorResponse("로그인 정보가 올바르지 않습니다."), HttpStatus.UNAUTHORIZED);
         } else {
-            ResponseUtil.setResponse(response, failed.getLocalizedMessage(), HttpStatus.UNAUTHORIZED);
+            ResponseUtil.setResponse(response, new BaseErrorResponse(failed.getLocalizedMessage()), HttpStatus.UNAUTHORIZED);
         }
     }
 

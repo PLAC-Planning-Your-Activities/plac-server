@@ -1,6 +1,6 @@
 package com.plac.security.handler;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.plac.util.ResponseUtil;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -25,6 +25,6 @@ public class CustomLogoutHandler implements LogoutSuccessHandler {
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookies.toString());
 
-        new ObjectMapper().writeValue(response.getOutputStream(), null);
+        ResponseUtil.setResponse(response, HttpStatus.OK);
     }
 }

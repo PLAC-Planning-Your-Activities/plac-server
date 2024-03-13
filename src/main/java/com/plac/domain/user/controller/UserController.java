@@ -1,8 +1,9 @@
 package com.plac.domain.user.controller;
 
 import com.plac.domain.email_verification.dto.request.EmailReqDto;
+import com.plac.domain.user.dto.request.ChangeProfileRequest;
 import com.plac.domain.user.dto.request.CreateUserRequest;
-import com.plac.domain.user.dto.request.DeleteUserRequest;
+import com.plac.domain.user.dto.response.UserInfoResponse;
 import com.plac.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,16 +19,25 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<Void> signUp(@RequestBody CreateUserRequest userRequest) throws Exception {
+    public ResponseEntity<Void> signUp(@RequestBody CreateUserRequest userRequest) {
         userService.signUp(userRequest);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping
-    public ResponseEntity<Void> deleteUser(@RequestBody DeleteUserRequest userRequest) throws Exception {
-        userService.deleteUser(userRequest);
+    public ResponseEntity<Void> deleteUser() {
+        userService.deleteUser();
         return ResponseEntity.ok().build();
     }
+
+    @PutMapping("/{userId}")
+    public ResponseEntity<UserInfoResponse> changeProfile(
+            @PathVariable Long userId, ChangeProfileRequest changeProfileRequest
+    ) {
+        UserInfoResponse userInfo = userService.changeProfile(userId, changeProfileRequest);
+        return ResponseEntity.ok().body(userInfo);
+    }
+
 
     @GetMapping("/emails/availability")
     public ResponseEntity<Void> checkEmailAvailability(
