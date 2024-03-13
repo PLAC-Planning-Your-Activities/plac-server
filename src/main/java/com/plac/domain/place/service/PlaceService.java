@@ -15,7 +15,7 @@ public class PlaceService {
 
     private final PlaceRepository placeRepository;
 
-    public void createNewPlace(CreatePlaceRequest req) {
+    public void createPlaces(CreatePlaceRequest req) {
         List<KakaoPlaceInfo> positionList = req.getPositionList();
 
         /**

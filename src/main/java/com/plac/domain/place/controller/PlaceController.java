@@ -18,7 +18,7 @@ public class PlaceController {
 
     @PostMapping
     public ResponseEntity<?> createPlaceInfo(@RequestBody CreatePlaceRequest placeRequest) throws Exception {
-        placeService.createNewPlace(placeRequest);
+        placeService.createPlaces(placeRequest);
         return ResponseEntity.ok().build();
     }
 }
