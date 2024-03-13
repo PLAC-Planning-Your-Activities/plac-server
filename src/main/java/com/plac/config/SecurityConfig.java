@@ -98,6 +98,4 @@ public class SecurityConfig {
         JwtAuthorizationFilter authorizationFilter = new JwtAuthorizationFilter(authenticationManager, userRepository, refreshTokenRepository);
         return authorizationFilter;
     }
-
-
 }
