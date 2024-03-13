@@ -1,6 +1,7 @@
 package com.plac.domain.place.service;
 
 import com.plac.domain.place.dto.request.CreatePlaceRequest;
+import com.plac.domain.place.dto.request.CreatePlacesRequest;
 import com.plac.domain.place.dto.request.KakaoPlaceInfo;
 import com.plac.domain.place.entity.Place;
 import com.plac.domain.place.repository.PlaceRepository;
@@ -15,7 +16,16 @@ public class PlaceService {
 
     private final PlaceRepository placeRepository;
 
-    public void createPlaces(CreatePlaceRequest req) {
+    public Place createPlace(CreatePlaceRequest req) {
+        Place place = Place.create(
+                null, req.getKakaoPlaceId(), req.getPlaceName(),
+                req.getThumbnailImageUrl(), req.getStreetNameAddress(),
+                req.getX(), req.getY());
+
+        return placeRepository.save(place);
+    }
+
+    public void createPlaces(CreatePlacesRequest req) {
         List<KakaoPlaceInfo> positionList = req.getPositionList();
 
         /**

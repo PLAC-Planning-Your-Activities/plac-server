@@ -39,4 +39,17 @@ public class Place extends AbstractTimeEntity {
     @Comment("장소의 위도 : latitude")
     private BigDecimal y;
 
+
+    public static Place create(String type, Long kakaoPlaceId, String placeName, String thumbnailImageUrl,
+                               String streetNameAddress, BigDecimal x, BigDecimal y) {
+        return Place.builder()
+                .type(type)
+                .kakaoPlaceId(kakaoPlaceId)
+                .placeName(placeName)
+                .thumbnailImageUrl(thumbnailImageUrl)
+                .streetNameAddress(streetNameAddress)
+                .x(x)
+                .y(y)
+                .build();
+    }
 }

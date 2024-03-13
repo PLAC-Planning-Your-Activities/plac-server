@@ -1,6 +1,6 @@
 package com.plac.domain.place.controller;
 
-import com.plac.domain.place.dto.request.CreatePlaceRequest;
+import com.plac.domain.place.dto.request.CreatePlacesRequest;
 import com.plac.domain.place.service.PlaceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +17,7 @@ public class PlaceController {
     private final PlaceService placeService;
 
     @PostMapping
-    public ResponseEntity<?> createPlaceInfo(@RequestBody CreatePlaceRequest placeRequest) throws Exception {
+    public ResponseEntity<?> createPlaceInfo(@RequestBody CreatePlacesRequest placeRequest) throws Exception {
         placeService.createPlaces(placeRequest);
         return ResponseEntity.ok().build();
     }

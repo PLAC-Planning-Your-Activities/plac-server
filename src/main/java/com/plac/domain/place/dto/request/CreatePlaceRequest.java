@@ -1,19 +1,18 @@
 package com.plac.domain.place.dto.request;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
-import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+import java.math.BigDecimal;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class CreatePlaceRequest {
-    private List<KakaoPlaceInfo> positionList;
-
-    @Builder
-    public CreatePlaceRequest(List<KakaoPlaceInfo> positionList) {
-        this.positionList = positionList;
-    }
+    private Long kakaoPlaceId;
+    private String placeName;
+    private String thumbnailImageUrl;
+    private String streetNameAddress;
+    private BigDecimal x;
+    private BigDecimal y;
 }
