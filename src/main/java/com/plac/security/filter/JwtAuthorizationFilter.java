@@ -2,9 +2,9 @@ package com.plac.security.filter;
 
 import com.plac.domain.user.entity.RefreshToken;
 import com.plac.domain.user.entity.User;
-import com.plac.exception.user.UserPrincipalNotFoundException;
 import com.plac.domain.user.repository.RefreshTokenRepository;
 import com.plac.domain.user.repository.UserRepository;
+import com.plac.exception.common.DataNotFoundException;
 import com.plac.security.auth.AuthProperties;
 import com.plac.security.auth.CustomUserDetails;
 import com.plac.util.JwtUtil;
@@ -54,7 +54,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     );
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException, UserPrincipalNotFoundException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         if (isExcludedUrl(request)) {
             filterChain.doFilter(request, response);//이 필터 스킵. 다음꺼 실행.
@@ -87,7 +87,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
         // 토큰에 저장된 유저정보가 존재하지 않는 경우 예외처리
         Optional<User> savedUser = userRepository.findByUsernameAndProvider(claims.get("username").toString(), claims.get("provider").toString());
-        savedUser.orElseThrow(() -> new UserPrincipalNotFoundException("엑세스 토큰에 저장된 유저 정보가 존재하지 않습니다."));
+        savedUser.orElseThrow(() -> new DataNotFoundException("엑세스 토큰에 저장된 유저 정보가 존재하지 않습니다."));
 
         // 액세스토큰이 만료된 경우
         if(isAccessTokenExpired) {

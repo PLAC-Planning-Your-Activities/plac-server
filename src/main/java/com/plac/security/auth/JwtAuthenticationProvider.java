@@ -1,6 +1,5 @@
 package com.plac.security.auth;
 
-import com.plac.exception.user.WrongLoginException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -18,8 +17,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
     // 실제 인증을 담당
     @Override
-    public Authentication authenticate(Authentication authentication) throws AuthenticationException, WrongLoginException {
-        System.out.println("=== JwtAuthenticationProvider - authenticate() ====");
+    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) authentication;
 
         String username = token.getName();

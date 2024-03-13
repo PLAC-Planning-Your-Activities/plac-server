@@ -8,8 +8,7 @@ import com.plac.config.dto.Oauth2TokenResDto;
 import com.plac.domain.social_login.service.user_info.GoogleUserInfoProvider;
 import com.plac.domain.social_login.service.user_info.KakaoUserInfoProvider;
 import com.plac.domain.social_login.service.user_info.NaverUserInfoProvider;
-import com.plac.exception.social_login.ProviderNotSupportedException;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.plac.exception.common.BadRequestException;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -40,7 +39,7 @@ public class Oauth2UserInfoContext {
             Map<String, Object> userInfo = strategy.getUserInfo(tokenResponse);
             return userInfo;
         }
-        throw new ProviderNotSupportedException("Unknown Provider: " + provider);
+        throw new BadRequestException("Unknown Provider: " + provider);
     }
 
     public Oauth2UserInfo makeOauth2UserInfo(String provider, Map<String, Object> userAttributes) {
@@ -49,7 +48,7 @@ public class Oauth2UserInfoContext {
         if (userInfoProvider != null) {
             return userInfoProvider.apply(userAttributes);
         } else {
-            throw new ProviderNotSupportedException("Unknown Provider: " + provider);
+            throw new BadRequestException("Unknown Provider: " + provider);
         }
     }
 }

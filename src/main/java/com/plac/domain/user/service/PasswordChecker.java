@@ -1,6 +1,6 @@
 package com.plac.domain.user.service;
 
-import com.plac.exception.user.WeakPasswordException;
+import com.plac.exception.custom.WeakPasswordException;
 import org.springframework.stereotype.Service;
 
 @Service

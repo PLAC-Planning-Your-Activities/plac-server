@@ -15,13 +15,12 @@ import com.plac.domain.plan.repository.bookmark.BookmarkPlanRepository;
 import com.plac.domain.plan.repository.favoritePlan.FavoritePlanRepository;
 import com.plac.domain.plan.repository.plan.PlanRepository;
 import com.plac.domain.plan.repository.planPlaceMapping.PlanPlaceMappingMappingRepository;
-import com.plac.domain.plan.repository.planTagMapping.PlanTagMappingRepository;
 import com.plac.domain.plan.repository.planTag.PlanTagRepository;
+import com.plac.domain.plan.repository.planTagMapping.PlanTagMappingRepository;
 import com.plac.domain.user.entity.User;
 import com.plac.domain.user.repository.UserRepository;
-import com.plac.exception.plan.BookmarkPlanNotFoundException;
-import com.plac.exception.plan.FavoritePlanException;
-import com.plac.exception.plan.PlanNotFoundException;
+import com.plac.exception.common.BadRequestException;
+import com.plac.exception.common.DataNotFoundException;
 import com.plac.util.SecurityContextHolderUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -119,11 +118,9 @@ public class PlanService {
 
     @Transactional
     public void sharePlanToCommunity(PlanShareRequest planRequest, Long planId) {
-        Plan plan = planRepository.findById(planId)
-                .orElseThrow(() -> new PlanNotFoundException("존재하지 않는 planId 입니다.")
-        );
-        plan.changeOpenness(true);
+        Plan plan = planRepository.findById(planId).orElseThrow(() -> new DataNotFoundException());
 
+        plan.changeOpenness(true);
         createPlanTagMappings(planRequest, plan);
 
         List<String> etcTags = planRequest.getEtc();
@@ -159,9 +156,7 @@ public class PlanService {
     }
 
     public void fixPlan(PlanFixRequest planRequest, Long planId) {
-        Plan plan = planRepository.findById(planId).orElseThrow (
-                () -> new PlanNotFoundException("존재하지 않는 planId 입니다.")
-        );
+        Plan plan = planRepository.findById(planId).orElseThrow (() -> new DataNotFoundException());
 
         List<PlanPlaceMapping> planPlaceMappings = planPlaceMappingRepository.findByPlanId(planId);
 
@@ -172,9 +167,8 @@ public class PlanService {
 
     @Transactional
     public void deletePlan(Long planId) {
-        Plan plan = planRepository.findById(planId).orElseThrow(
-                () -> new PlanNotFoundException("plan not found")
-        );
+        Plan plan = planRepository.findById(planId).orElseThrow(() -> new DataNotFoundException());
+
         List<PlanPlaceMapping> planPlaceMapping = planPlaceMappingRepository.findByPlanId(planId);
 
         planRepository.delete(plan);
@@ -186,14 +180,12 @@ public class PlanService {
         Long userId = SecurityContextHolderUtil.getUserId();
         User user = userRepository.findById(userId).get();
 
-        Plan plan = planRepository.findById(planId).orElseThrow (
-                () -> new PlanNotFoundException("plan not found")
-        );
+        Plan plan = planRepository.findById(planId).orElseThrow (() -> new DataNotFoundException());
 
         Optional<FavoritePlan> favoritePlanOpt = favoritePlanRepository.findByUserIdAndPlanId(userId, planId);
 
         if (favoritePlanOpt.isPresent()) {
-            throw new FavoritePlanException("이미 좋아요를 눌렀습니다.");
+            throw new BadRequestException("이미 좋아요를 눌렀습니다.");
         }
 
         FavoritePlan favoritePlan = FavoritePlan.builder()
@@ -212,7 +204,7 @@ public class PlanService {
         Long userId = SecurityContextHolderUtil.getUserId();
 
         FavoritePlan favoritePlan = favoritePlanRepository.findByUserIdAndPlanId(userId, planId)
-                .orElseThrow(() -> new FavoritePlanException("no favorite plan")
+                .orElseThrow(() -> new BadRequestException("no favorite plan")
         );
 
         favoritePlanRepository.delete(favoritePlan);
@@ -221,9 +213,7 @@ public class PlanService {
     public void saveBookMarkPlan(Long planId) {
         User user = userRepository.findById(SecurityContextHolderUtil.getUserId()).get();
 
-        Plan plan = planRepository.findById(planId).orElseThrow (
-                () -> new PlanNotFoundException("plan not found")
-        );
+        Plan plan = planRepository.findById(planId).orElseThrow (() -> new DataNotFoundException());
 
         BookmarkPlan bookmarkPlan = BookmarkPlan.builder()
                 .user(user)
@@ -237,9 +227,8 @@ public class PlanService {
         Long userId = SecurityContextHolderUtil.getUserId();
 
         BookmarkPlan bookmarkPlan = bookmarkPlanRepository.findByUserIdAndPlanId(userId, planId)
-                .orElseThrow(
-                        ()-> new BookmarkPlanNotFoundException("bookmark-plan not found")
-                );
+                .orElseThrow(()-> new DataNotFoundException());
+
         bookmarkPlanRepository.delete(bookmarkPlan);
     }
 
@@ -319,11 +308,6 @@ public class PlanService {
             Long planId = (Long) result[0];
             planIds.add(planId);
         }
-
-        for (Long planId : planIds) {
-            System.out.println("planId = " + planId);
-        }
-
 
         List<PlansInformation> result = new ArrayList<>();
 

@@ -6,9 +6,8 @@ import com.plac.domain.user.dto.request.DeleteUserRequest;
 import com.plac.domain.user.entity.User;
 import com.plac.domain.user.repository.RefreshTokenRepository;
 import com.plac.domain.user.repository.UserRepository;
-import com.plac.exception.user.DuplUsernameException;
-import com.plac.exception.user.UserNotFoundException;
-import com.plac.exception.user.UserPrincipalNotFoundException;
+import com.plac.exception.common.ConflictException;
+import com.plac.exception.common.DataNotFoundException;
 import com.plac.util.SecurityContextHolderUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -37,18 +36,11 @@ public class UserService {
         return new CreateUserResponse(user.getId());
     }
 
-    public User findUser(Long userId) {
-        return userRepository.findById(userId).orElseThrow(
-                () -> new UserNotFoundException("user not found.")
-        );
-    }
-
     public void deleteUser() {
         String username = SecurityContextHolderUtil.getUsername();
 
         User user = userRepository.findByUsername(username).orElseThrow(
-                () -> new UserPrincipalNotFoundException("user not found.")
-        );
+                () -> new DataNotFoundException("user not found."));
 
         refreshTokenRepository.findByUserId(user.getId())
                 .ifPresent(refreshTokenRepository::delete);
@@ -58,7 +50,7 @@ public class UserService {
 
     public void deleteUser(DeleteUserRequest userRequest) {
         User user = userRepository.findById(SecurityContextHolderUtil.getUserId()).orElseThrow(
-                () -> new UserNotFoundException("uer not found!")
+                () -> new DataNotFoundException("uer not found!")
         );
 
         userRepository.delete(user);
@@ -69,7 +61,7 @@ public class UserService {
         final Optional<User> user = userRepository.findByUsername(userRequest.getUsername());
 
         if (user.isPresent()) {
-            throw new DuplUsernameException("이미 존재하는 username(이메일)입니다.");
+            throw new ConflictException("이미 존재하는 이메일입니다. 다른 이메일을 입력하세요.");
         }
     }
 
