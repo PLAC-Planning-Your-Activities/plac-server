@@ -13,6 +13,7 @@ public interface Constant {
             "/api/social-login/**",
             "/api/emails/send-verification-email",
             "/api/emails/verify-code",
+            "/api/files/images"
     };
 
     String[] USER_ROLE_PERMIT_PATHS = new String[]{
