@@ -35,7 +35,8 @@ public class PlaceDibs extends AbstractTimeEntity {
     }
 
     public static PlaceDibs create(Long kakaoPlaceId, Long userId) {
-        return PlaceDibs.builder()
+        return PlaceDibs
+                .builder()
                 .kakaoPlaceId(kakaoPlaceId)
                 .userId(userId)
                 .build();

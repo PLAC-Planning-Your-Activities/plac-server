@@ -6,5 +6,7 @@ import java.util.Optional;
 
 public interface PlaceQueryRepository {
 
+    Optional<PlaceDibs> findByKakaoPlaceId(Long kakaoPlaceId);
+
     Optional<PlaceDibs> findDibsByUserIdAndKakaoPlaceId(Long userId, Long kakaoPlaceId);
 }

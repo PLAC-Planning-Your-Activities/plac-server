@@ -19,6 +19,16 @@ public class PlaceController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/my-list")
+    public ResponseEntity<?> getMyListDibsPlaces() {
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/my-list")
+    public ResponseEntity<?> addMyListDibsPlace(Long kakaoPlaceId) {
+        return ResponseEntity.ok().build();
+    }
+
     // TODO : API 네이밍 변경 가능
     @DeleteMapping("/my-list")
     public ResponseEntity<?> deleteMyListDibsPlace(Long kakaoPlaceId) {

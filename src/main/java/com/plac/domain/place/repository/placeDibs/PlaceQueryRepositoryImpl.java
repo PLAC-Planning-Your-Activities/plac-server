@@ -19,6 +19,13 @@ public class PlaceQueryRepositoryImpl implements PlaceQueryRepository {
     }
 
     @Override
+    public Optional<PlaceDibs> findByKakaoPlaceId(Long kakaoPlaceId) {
+        return Optional.ofNullable(jpaQueryFactory.selectFrom(placeDibs)
+                .where(placeDibs.kakaoPlaceId.eq(kakaoPlaceId))
+                .fetchOne());
+    }
+
+    @Override
     public Optional<PlaceDibs> findDibsByUserIdAndKakaoPlaceId(Long userId, Long kakaoPlaceId) {
         return Optional.ofNullable(jpaQueryFactory.selectFrom(placeDibs)
                 .where(placeDibs.userId.eq(userId)
