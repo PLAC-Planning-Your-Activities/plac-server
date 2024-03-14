@@ -9,8 +9,8 @@ import lombok.Getter;
 public class PlaceDibsRequestDto {
 
     private KakaoPlaceInfo placeInfo;
-    public CreatePlaceDto toCreatePlaceDto() {
-        return new CreatePlaceDto(placeInfo.getKakaoPlaceId(), placeInfo.getPlaceName(),
+    public KakaoPlaceInfo toCreatePlaceDto() {
+        return new KakaoPlaceInfo(placeInfo.getKakaoPlaceId(), placeInfo.getPlaceName(),
                 getPlaceInfo().getThumbnailImageUrl(), placeInfo.getStreetNameAddress(), placeInfo.getX(), placeInfo.getY());
     }
 }

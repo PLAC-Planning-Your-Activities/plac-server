@@ -27,7 +27,7 @@ public class PlaceService {
     private final UserRepository userRepository;
 
     @Transactional
-    public void triggerDibsMyListPlace(CreatePlaceDto dto) {
+    public void triggerDibsMyListPlace(KakaoPlaceInfo dto) {
         final User user = userRepository.findById(SecurityContextHolderUtil.getUserId())
                 .orElseThrow(() -> new RuntimeException("로그인 사용자 없음 예외추가"));
         final long userId = user.getId();
@@ -49,11 +49,10 @@ public class PlaceService {
                 .orElseThrow(() -> new RuntimeException("로그인 사용자 없음 예외추가"));
         long userId = user.getId();
 
-        Place kakaoPlace = placeRepository.findByKakaoPlaceId(kakaoPlaceId)
-                .orElseThrow(() -> new RuntimeException("예외 추가"));
+        if (isExistedPlace(kakaoPlaceId)) throw new RuntimeException("예외 추가");
 
         PlaceDibs placeDibs = placeDibsRepository.
-                findDibsByUserIdAndKakaoPlaceId(userId, kakaoPlace.getKakaoPlaceId())
+                findDibsByUserIdAndKakaoPlaceId(userId, kakaoPlaceId)
                 .orElseThrow(() -> new RuntimeException("찜되어 있지 않음 예외 추가"));
 
         deleteDibsPlace(placeDibs);
@@ -93,12 +92,18 @@ public class PlaceService {
         placeDibsRepository.delete(placeDibs);
     }
 
-    private Place createPlace(CreatePlaceDto createPlaceDto) {
-        Place place = Place.create(
-                null, createPlaceDto.getKakaoPlaceId(), createPlaceDto.getPlaceName(),
-                createPlaceDto.getThumbnailImageUrl(), createPlaceDto.getStreetNameAddress(),
-                createPlaceDto.getX(), createPlaceDto.getY());
+    private void createPlace(KakaoPlaceInfo placeInfo) {
+        if (!isExistedPlace(placeInfo.getKakaoPlaceId())) return;
 
-        return placeRepository.save(place);
+        Place place = Place.create(
+                null, placeInfo.getKakaoPlaceId(), placeInfo.getPlaceName(),
+                placeInfo.getThumbnailImageUrl(), placeInfo.getStreetNameAddress(),
+                placeInfo.getX(), placeInfo.getY());
+
+        placeRepository.save(place);
+    }
+
+    private boolean isExistedPlace(final long kakaoPlaceId) {
+        return placeRepository.findByKakaoPlaceId(kakaoPlaceId).isEmpty();
     }
 }
