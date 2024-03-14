@@ -117,5 +117,5 @@ plac:
     region: ap-northeast-2
     bucketName: ${S3_BUCKET_NAME}
     urlPrefix: ${S3_URL}
-    memberImagePath: ${S3_MEMBER_IMAGE_PATH}
+    memberImagePath: /member
     defaultImagePath: ${S3_DEFAULT_IMAGE_PATH}
