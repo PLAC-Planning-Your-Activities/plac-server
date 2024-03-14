@@ -18,4 +18,11 @@ public class PlaceController {
         placeService.createPlaces(placeRequest);
         return ResponseEntity.ok().build();
     }
+
+    // TODO : API 네이밍 변경 가능
+    @DeleteMapping("/my-list")
+    public ResponseEntity<?> deleteMyListDibsPlace(Long kakaoPlaceId) {
+        placeService.deleteMyListPlace(kakaoPlaceId);
+        return ResponseEntity.ok().build();
+    }
 }
