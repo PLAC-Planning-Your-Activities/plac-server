@@ -6,8 +6,6 @@ public interface Oauth2UserInfo {
     String getUsername();
     String getProfileName();
     String getProfileImagePath();
-    String getProfileBirth();
-    String getPhoneNumber();
     String getGender();
     int getAge();
 }
