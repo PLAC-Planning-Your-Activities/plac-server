@@ -9,7 +9,6 @@ import com.plac.domain.user.repository.RefreshTokenRepository;
 import com.plac.domain.user.repository.UserRepository;
 import com.plac.exception.common.ConflictException;
 import com.plac.exception.common.DataNotFoundException;
-import com.plac.exception.common.UnAuthorizedException;
 import com.plac.util.SecurityContextHolderUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -104,16 +102,14 @@ public class UserService {
     }
 
     @Transactional
-    public UserInfoResponse changeProfile(Long userId, ChangeProfileRequest changeProfileRequest) {
-        if (userId != SecurityContextHolderUtil.getUserId()) {
-            throw new UnAuthorizedException();
-        }
+    public UserInfoResponse changeProfile(ChangeProfileRequest profileRequest) {
+        Long userId = SecurityContextHolderUtil.getUserId();
 
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new DataNotFoundException("user not found")
-        );
+                () -> new DataNotFoundException("user not found"));
 
-        user.changeProfile(changeProfileRequest);
+        user.changeProfile(profileRequest);
+
         return UserInfoResponse.of(user);
     }
 }
