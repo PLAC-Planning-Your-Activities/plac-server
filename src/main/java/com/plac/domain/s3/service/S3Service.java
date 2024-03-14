@@ -4,6 +4,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.plac.domain.s3.dto.response.UploadImageResponse;
+import com.plac.exception.common.DataNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -46,5 +47,15 @@ public class S3Service {
         objectMetadata.setContentType(file.getContentType());
 
         return objectMetadata;
+    }
+
+    public void deleteImage(String name) {
+        boolean isExist = amazonS3Client.doesObjectExist(bucket, name);
+
+        if (isExist) {
+            amazonS3Client.deleteObject(bucket, name);
+        } else {
+            throw new DataNotFoundException();
+        }
     }
 }
