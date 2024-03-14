@@ -116,6 +116,8 @@ plac:
     expire-minutes:
       signup: 3
       completion: 5
+  s3:
+    defaultImageUrl: ${DEFAULT_IMAGE_URL}
 
 cloud:
   aws:

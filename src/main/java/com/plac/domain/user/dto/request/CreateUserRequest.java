@@ -3,6 +3,7 @@ package com.plac.domain.user.dto.request;
 import lombok.*;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CreateUserRequest {
     private String username;
     private String password;

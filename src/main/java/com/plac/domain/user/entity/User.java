@@ -26,8 +26,6 @@ public class User extends AbstractTimeEntity {
 
     String password;
 
-    @Type(type = "uuid-char")
-    private UUID salt;
 
     private String roles;
 
@@ -69,24 +67,5 @@ public class User extends AbstractTimeEntity {
         this.profileImageUrl = req.getProfileImageUrl();
         this.gender = req.getGender();
         this.ageRange = req.getAgeGroup();
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", salt=" + salt +
-                ", roles='" + roles + '\'' +
-                ", profileName='" + profileName + '\'' +
-                ", profileImagePath='" + profileImageUrl + '\'' +
-                ", profileBirth='" + profileBirth + '\'' +
-                ", age=" + age +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                ", createdAt=" + super.getCreatedAt() +
-                ", updatedAt=" + super.getUpdatedAt() +
-                ", provider='" + provider + '\'' +
-                '}';
     }
 }
