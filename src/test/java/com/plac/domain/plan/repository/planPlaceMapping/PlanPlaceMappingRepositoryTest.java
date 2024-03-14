@@ -2,7 +2,7 @@ package com.plac.domain.plan.repository.planPlaceMapping;
 
 import com.config.TestQueryDSLConfiguration;
 import com.plac.domain.place.entity.Place;
-import com.plac.domain.place.repository.PlaceRepository;
+import com.plac.domain.place.repository.place.PlaceRepository;
 import com.plac.domain.plan.entity.Plan;
 import com.plac.domain.plan.entity.PlanPlaceMapping;
 import com.plac.domain.plan.repository.plan.PlanRepository;

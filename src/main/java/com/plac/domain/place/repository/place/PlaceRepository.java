@@ -1,4 +1,4 @@
-package com.plac.domain.place.repository;
+package com.plac.domain.place.repository.place;
 
 import com.plac.domain.place.entity.Place;
 import org.springframework.data.jpa.repository.JpaRepository;
