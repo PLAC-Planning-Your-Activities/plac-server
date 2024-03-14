@@ -3,7 +3,7 @@ name: Feature request
 about: Suggest an idea for this project
 title: "{이곳에는 해야할 업무의 제목을 한 문장으로 적어주세요.}"
 labels: ''
-assignees: Jungsu-lilly
+assignees:
 
 ---
 
