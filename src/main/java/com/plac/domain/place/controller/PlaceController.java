@@ -1,6 +1,7 @@
 package com.plac.domain.place.controller;
 
 import com.plac.domain.place.dto.request.CreatePlacesRequest;
+import com.plac.domain.place.dto.request.KakaoPlaceInfo;
 import com.plac.domain.place.service.PlaceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,17 +20,18 @@ public class PlaceController {
         return ResponseEntity.ok().build();
     }
 
+    // TODO : API 네이밍 변경 가능, 조회 추가 작업
     @GetMapping("/my-list")
     public ResponseEntity<?> getMyListDibsPlaces() {
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/my-list")
-    public ResponseEntity<?> addMyListDibsPlace(Long kakaoPlaceId) {
+    public ResponseEntity<?> addMyListDibsPlace(KakaoPlaceInfo request) {
+        placeService.triggerDibsMyListPlace(request);
         return ResponseEntity.ok().build();
     }
 
-    // TODO : API 네이밍 변경 가능
     @DeleteMapping("/my-list")
     public ResponseEntity<?> deleteMyListDibsPlace(Long kakaoPlaceId) {
         placeService.deleteMyListPlace(kakaoPlaceId);
