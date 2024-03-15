@@ -1,6 +1,10 @@
 package com.plac.domain.place.repository.place;
 
 import com.config.TestQueryDSLConfiguration;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.plac.domain.place.dto.response.GetMyListPlacesResponseDto;
 import com.plac.domain.place.entity.Place;
 import com.plac.domain.place.entity.PlaceDibs;
 import com.plac.domain.place.repository.placeDibs.PlaceDibsRepository;
@@ -13,14 +17,13 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ActiveProfiles("test")
 @DataJpaTest
 @Import({
-//        PlaceRepository.class,
-//        PlaceQueryRepository.class,
         PlaceQueryRepositoryImpl.class,
         TestQueryDSLConfiguration.class
 })
@@ -34,7 +37,7 @@ class PlaceQueryRepositoryImplTest {
     private PlaceRepository placeRepository;
 
     @Test
-    void test() {
+    void test()  {
         // given
         List<Place> places = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
@@ -71,8 +74,12 @@ class PlaceQueryRepositoryImplTest {
         placeDibsRepository.saveAll(user2Dibs);
 
         // when
-        List<Place> resultUser1 = placeRepository.findPlaceDibsByUserId(userId);
-        List<Place> resultUser2 = placeRepository.findPlaceDibsByUserId(userId2);
+        List<GetMyListPlacesResponseDto> resultUser1 = placeRepository.findPlaceDibsByUserId(userId).stream()
+                .map(GetMyListPlacesResponseDto::new)
+                .collect(Collectors.toList());
+        List<GetMyListPlacesResponseDto> resultUser2 = placeRepository.findPlaceDibsByUserId(userId2).stream()
+                .map(GetMyListPlacesResponseDto::new)
+                .collect(Collectors.toList());
 
         // then
         assertThat(resultUser1.size()).isEqualTo(10);
