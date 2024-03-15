@@ -4,7 +4,7 @@ import com.plac.domain.place.entity.PlaceDibs;
 
 import java.util.Optional;
 
-public interface PlaceQueryRepository {
+public interface PlaceDibsQueryRepository {
 
     Optional<PlaceDibs> findByKakaoPlaceId(Long kakaoPlaceId);
 
