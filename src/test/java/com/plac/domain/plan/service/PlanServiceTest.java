@@ -4,7 +4,7 @@ import com.plac.domain.destination.entity.Destination;
 import com.plac.domain.destination.repository.DestinationRepository;
 import com.plac.domain.place.dto.response.PlaceInfo;
 import com.plac.domain.place.entity.Place;
-import com.plac.domain.place.repository.PlaceRepository;
+import com.plac.domain.place.repository.place.PlaceRepository;
 import com.plac.domain.plan.dto.request.PlanCreateRequest;
 import com.plac.domain.plan.dto.response.PlanCreateResponse;
 import com.plac.domain.plan.entity.PlanPlaceMapping;

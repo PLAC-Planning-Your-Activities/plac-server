@@ -9,11 +9,11 @@ import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CreatePlaceRequest {
+public class CreatePlacesRequest {
     private List<KakaoPlaceInfo> positionList;
 
     @Builder
-    public CreatePlaceRequest(List<KakaoPlaceInfo> positionList) {
+    public CreatePlacesRequest(List<KakaoPlaceInfo> positionList) {
         this.positionList = positionList;
     }
 }

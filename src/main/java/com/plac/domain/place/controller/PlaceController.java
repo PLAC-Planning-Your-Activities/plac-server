@@ -1,13 +1,11 @@
 package com.plac.domain.place.controller;
 
-import com.plac.domain.place.dto.request.CreatePlaceRequest;
+import com.plac.domain.place.dto.request.CreatePlacesRequest;
+import com.plac.domain.place.dto.request.KakaoPlaceInfo;
 import com.plac.domain.place.service.PlaceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,8 +15,26 @@ public class PlaceController {
     private final PlaceService placeService;
 
     @PostMapping
-    public ResponseEntity<?> createPlaceInfo(@RequestBody CreatePlaceRequest placeRequest) throws Exception {
-        placeService.createNewPlace(placeRequest);
+    public ResponseEntity<?> createPlaceInfo(@RequestBody CreatePlacesRequest placeRequest) throws Exception {
+        placeService.createPlaces(placeRequest);
+        return ResponseEntity.ok().build();
+    }
+
+    // TODO : API 네이밍 변경 가능, 조회 추가 작업
+    @GetMapping("/my-list")
+    public ResponseEntity<?> getMyListDibsPlaces() {
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/my-list")
+    public ResponseEntity<?> addMyListDibsPlace(KakaoPlaceInfo request) {
+        placeService.triggerDibsMyListPlace(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/my-list")
+    public ResponseEntity<?> deleteMyListDibsPlace(Long kakaoPlaceId) {
+        placeService.deleteMyListPlace(kakaoPlaceId);
         return ResponseEntity.ok().build();
     }
 }
