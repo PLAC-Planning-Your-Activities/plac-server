@@ -1,7 +1,6 @@
 package com.plac.domain.place.repository.placeDibs;
 
 import com.plac.domain.place.entity.PlaceDibs;
-import com.plac.domain.place.entity.QPlaceDibs;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
 
@@ -10,11 +9,11 @@ import java.util.Optional;
 import static com.plac.domain.place.entity.QPlaceDibs.placeDibs;
 
 @Repository
-public class PlaceQueryRepositoryImpl implements PlaceQueryRepository {
+public class PlaceDibsQueryRepositoryImpl implements PlaceDibsQueryRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public PlaceQueryRepositoryImpl(JPAQueryFactory jpaQueryFactory) {
+    public PlaceDibsQueryRepositoryImpl(JPAQueryFactory jpaQueryFactory) {
         this.jpaQueryFactory = jpaQueryFactory;
     }
 

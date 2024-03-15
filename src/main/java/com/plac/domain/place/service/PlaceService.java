@@ -2,12 +2,11 @@ package com.plac.domain.place.service;
 
 import com.plac.domain.place.dto.request.CreatePlacesRequest;
 import com.plac.domain.place.dto.request.KakaoPlaceInfo;
-import com.plac.domain.place.dto.request.PlaceDibsRequestDto;
+import com.plac.domain.place.dto.response.GetMyListPlacesResponseDto;
 import com.plac.domain.place.entity.Place;
 import com.plac.domain.place.entity.PlaceDibs;
 import com.plac.domain.place.repository.place.PlaceRepository;
 import com.plac.domain.place.repository.placeDibs.PlaceDibsRepository;
-import com.plac.domain.place.service.dto.CreatePlaceDto;
 import com.plac.domain.user.entity.User;
 import com.plac.domain.user.repository.UserRepository;
 import com.plac.util.SecurityContextHolderUtil;
@@ -17,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +25,15 @@ public class PlaceService {
     private final PlaceRepository placeRepository;
     private final PlaceDibsRepository placeDibsRepository;
     private final UserRepository userRepository;
+
+    public List<GetMyListPlacesResponseDto> getMyListPlaces() {
+        final User user = userRepository.findById(SecurityContextHolderUtil.getUserId())
+                .orElseThrow(() -> new RuntimeException("로그인 사용자 없음 예외추가"));
+        final long userId = user.getId();
+        return placeRepository.findPlaceDibsByUserId(userId).stream()
+                .map(GetMyListPlacesResponseDto::new)
+                .collect(Collectors.toList());
+    }
 
     @Transactional
     public void triggerDibsMyListPlace(KakaoPlaceInfo dto) {

@@ -9,7 +9,6 @@ import com.plac.domain.user.dto.request.CreateUserRequest;
 import com.plac.domain.user.entity.User;
 import com.plac.domain.user.service.UserService;
 import com.plac.security.auth.CustomUserDetails;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.springframework.beans.factory.annotation.Autowired;
