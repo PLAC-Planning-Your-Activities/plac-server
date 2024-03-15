@@ -31,13 +31,13 @@ public class PlaceController {
     }
 
     @PostMapping("/my-list")
-    public ResponseEntity<?> addMyListDibsPlace(KakaoPlaceInfo request) {
+    public ResponseEntity<Void> addMyListDibsPlace(KakaoPlaceInfo request) {
         placeService.triggerDibsMyListPlace(request);
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/my-list")
-    public ResponseEntity<?> deleteMyListDibsPlace(Long kakaoPlaceId) {
+    @DeleteMapping("/my-list/{kakaoPlaceId}")
+    public ResponseEntity<Void> deleteMyListDibsPlace(@PathVariable Long kakaoPlaceId) {
         placeService.deleteMyListPlace(kakaoPlaceId);
         return ResponseEntity.ok().build();
     }
