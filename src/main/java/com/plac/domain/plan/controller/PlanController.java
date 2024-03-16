@@ -3,6 +3,7 @@ package com.plac.domain.plan.controller;
 import com.plac.domain.plan.dto.request.PlanCreateRequest;
 import com.plac.domain.plan.dto.request.PlanFixRequest;
 import com.plac.domain.plan.dto.request.PlanShareRequest;
+import com.plac.domain.plan.dto.response.GetMyListPlansResponseDto;
 import com.plac.domain.plan.dto.response.PlanCreateResponse;
 import com.plac.domain.plan.dto.response.PlansInformation;
 import com.plac.domain.plan.service.PlanService;
@@ -95,5 +96,11 @@ public class PlanController {
     public ResponseEntity<Void> addMyListDibsPlan(@PathVariable Long planId) {
         planService.triggerDibsMyListPlan(planId);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/my-list")
+    public ResponseEntity<List<GetMyListPlansResponseDto>> getMyListDibsPlan() {
+        List<GetMyListPlansResponseDto> getPlans = planService.getMyListPlans();
+        return ResponseEntity.ok(getPlans);
     }
 }

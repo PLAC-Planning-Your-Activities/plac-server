@@ -4,11 +4,11 @@ import com.plac.domain.destination.entity.Destination;
 import com.plac.domain.destination.repository.DestinationRepository;
 import com.plac.domain.place.dto.response.PlaceInfo;
 import com.plac.domain.place.entity.Place;
-import com.plac.domain.place.entity.PlaceDibs;
 import com.plac.domain.place.repository.place.PlaceRepository;
 import com.plac.domain.plan.dto.request.PlanCreateRequest;
 import com.plac.domain.plan.dto.request.PlanFixRequest;
 import com.plac.domain.plan.dto.request.PlanShareRequest;
+import com.plac.domain.plan.dto.response.GetMyListPlansResponseDto;
 import com.plac.domain.plan.dto.response.PlanCreateResponse;
 import com.plac.domain.plan.dto.response.PlansInformation;
 import com.plac.domain.plan.entity.*;
@@ -16,7 +16,7 @@ import com.plac.domain.plan.repository.bookmark.BookmarkPlanRepository;
 import com.plac.domain.plan.repository.favoritePlan.FavoritePlanRepository;
 import com.plac.domain.plan.repository.plan.PlanRepository;
 import com.plac.domain.plan.repository.planDibs.PlanDibsRepository;
-import com.plac.domain.plan.repository.planPlaceMapping.PlanPlaceMappingMappingRepository;
+import com.plac.domain.plan.repository.planPlaceMapping.PlanPlaceMappingRepository;
 import com.plac.domain.plan.repository.planTag.PlanTagRepository;
 import com.plac.domain.plan.repository.planTagMapping.PlanTagMappingRepository;
 import com.plac.domain.user.entity.User;
@@ -42,7 +42,7 @@ public class PlanService {
     private final PlaceRepository placeRepository;
     private final PlanRepository planRepository;
     private final UserRepository userRepository;
-    private final PlanPlaceMappingMappingRepository planPlaceMappingRepository;
+    private final PlanPlaceMappingRepository planPlaceMappingRepository;
     private final PlanTagRepository planTagRepository;
     private final PlanTagMappingRepository planTagMappingRepository;
     private final FavoritePlanRepository favoritePlanRepository;
@@ -387,5 +387,20 @@ public class PlanService {
 
     private void deleteDibsPlan(PlanDibs planDibs) {
         planDibsRepository.delete(planDibs);
+    }
+
+    public List<GetMyListPlansResponseDto> getMyListPlans() {
+        final User user = userRepository.findById(SecurityContextHolderUtil.getUserId())
+                .orElseThrow(() -> new RuntimeException("로그인 사용자 없음 예외추가"));
+        final long userId = user.getId();
+
+        return planRepository.findPlanDibsByUserId(userId).stream()
+                .map(plan -> {
+                    List<String> placeUrls = planPlaceMappingRepository.findPlacesByPlanId(plan.getId()).stream()
+                            .map(Place::getThumbnailImageUrl)
+                            .collect(Collectors.toList());
+                    return new GetMyListPlansResponseDto(user.getProfileName(), plan, placeUrls);
+                })
+                .collect(Collectors.toList());
     }
 }

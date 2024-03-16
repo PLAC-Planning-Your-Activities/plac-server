@@ -8,7 +8,7 @@ import com.plac.domain.place.repository.place.PlaceRepository;
 import com.plac.domain.plan.dto.request.PlanCreateRequest;
 import com.plac.domain.plan.dto.response.PlanCreateResponse;
 import com.plac.domain.plan.entity.PlanPlaceMapping;
-import com.plac.domain.plan.repository.planPlaceMapping.PlanPlaceMappingMappingRepository;
+import com.plac.domain.plan.repository.planPlaceMapping.PlanPlaceMappingRepository;
 import com.plac.domain.plan.repository.plan.PlanRepository;
 import com.plac.domain.user.dto.request.CreateUserRequest;
 import com.plac.domain.user.entity.User;
@@ -51,7 +51,7 @@ class PlanServiceTest {
     private PlanRepository planRepository;
 
     @Autowired
-    private PlanPlaceMappingMappingRepository planPlaceMappingRepository;
+    private PlanPlaceMappingRepository planPlaceMappingRepository;
 
     @Autowired
     private AuthenticationManager authenticationManager;
