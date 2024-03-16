@@ -7,4 +7,6 @@ import java.util.List;
 public interface PlanQueryRepository {
 
     List<Plan> findPlansByDestinationName(String destinationName);
+
+    List<Plan> findPlanDibsByUserId(Long userId);
 }
