@@ -85,10 +85,15 @@ public class PlanController {
         return ResponseEntity.ok().body(result);
     }
 
-
     @GetMapping("/most-favorites")
     public ResponseEntity<?> getMostPopularPlans(){
         List<PlansInformation> result = planService.getMostPopularPlans();
         return ResponseEntity.ok().body(result);
+    }
+
+    @PostMapping("/{planId}/my-list")
+    public ResponseEntity<Void> addMyListDibsPlan(@PathVariable Long planId) {
+        planService.triggerDibsMyListPlan(planId);
+        return ResponseEntity.ok().build();
     }
 }
