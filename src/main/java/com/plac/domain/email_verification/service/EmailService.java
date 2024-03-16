@@ -1,7 +1,6 @@
 package com.plac.domain.email_verification.service;
 
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -15,11 +14,14 @@ import javax.mail.internet.MimeMessage;
 @Log4j2
 public class EmailService {
 
-    @Autowired
-    private JavaMailSender emailSender;
-
     @Value("${spring.mail.username}")
     private String senderEmail;
+
+    private final JavaMailSender emailSender;
+
+    public EmailService(JavaMailSender emailSender) {
+        this.emailSender = emailSender;
+    }
 
     public void sendSimpleMessage(String to, String subject, String text) {
         MimeMessage message = emailSender.createMimeMessage();
