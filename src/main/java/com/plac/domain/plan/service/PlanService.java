@@ -4,6 +4,7 @@ import com.plac.domain.destination.entity.Destination;
 import com.plac.domain.destination.repository.DestinationRepository;
 import com.plac.domain.place.dto.response.PlaceInfo;
 import com.plac.domain.place.entity.Place;
+import com.plac.domain.place.entity.PlaceDibs;
 import com.plac.domain.place.repository.place.PlaceRepository;
 import com.plac.domain.plan.dto.request.PlanCreateRequest;
 import com.plac.domain.plan.dto.request.PlanFixRequest;
@@ -14,6 +15,7 @@ import com.plac.domain.plan.entity.*;
 import com.plac.domain.plan.repository.bookmark.BookmarkPlanRepository;
 import com.plac.domain.plan.repository.favoritePlan.FavoritePlanRepository;
 import com.plac.domain.plan.repository.plan.PlanRepository;
+import com.plac.domain.plan.repository.planDibs.PlanDibsRepository;
 import com.plac.domain.plan.repository.planPlaceMapping.PlanPlaceMappingMappingRepository;
 import com.plac.domain.plan.repository.planTag.PlanTagRepository;
 import com.plac.domain.plan.repository.planTagMapping.PlanTagMappingRepository;
@@ -46,6 +48,7 @@ public class PlanService {
     private final FavoritePlanRepository favoritePlanRepository;
     private final BookmarkPlanRepository bookmarkPlanRepository;
     private final DestinationRepository destinationRepository;
+    private final PlanDibsRepository planDibsRepository;
 
     @Transactional
     public PlanCreateResponse createPlan(PlanCreateRequest planRequest) {
@@ -360,5 +363,29 @@ public class PlanService {
 
         return result;
 
+    }
+
+    @Transactional
+    public void triggerDibsMyListPlan(Long planId) {
+        final User user = userRepository.findById(SecurityContextHolderUtil.getUserId())
+                .orElseThrow(() -> new RuntimeException("로그인 사용자 없음 예외추가"));
+        final long userId = user.getId();
+
+        Optional<PlanDibs> getDibsPlan = planDibsRepository.findDibsByUserIdAndPlanId(userId, planId);
+        if (getDibsPlan.isEmpty()) {
+            addDibsPlan(userId, planId);
+        } else {
+            PlanDibs planDibs = getDibsPlan.orElseThrow(() -> new RuntimeException("찜되어 있지 않음 예외 추가"));
+            deleteDibsPlan(planDibs);
+        }
+    }
+
+    private void addDibsPlan(Long userId, Long planId) {
+        PlanDibs created = PlanDibs.create(planId, userId);
+        planDibsRepository.save(created);
+    }
+
+    private void deleteDibsPlan(PlanDibs planDibs) {
+        planDibsRepository.delete(planDibs);
     }
 }
