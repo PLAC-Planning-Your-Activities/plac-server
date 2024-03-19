@@ -25,6 +25,11 @@ spring:
     pathmatch:
       matching-strategy: ant_path_matcher
 
+  servlet:
+    multipart:
+      max-file-size: 20MB # 최대 파일 사이즈
+      max-request-size: 20MB # 최대 요청 사이즈
+
   security:
     oauth2:
       google:
@@ -111,3 +116,17 @@ plac:
     expire-minutes:
       signup: 3
       completion: 5
+  s3:
+    defaultImageUrl: ${DEFAULT_IMAGE_URL}
+
+cloud:
+  aws:
+    credentials:
+      access-key: ${S3_ACCESS_KEY} # IAM에서 생성한 access-key
+      secret-key: ${S3_SECRET_KEY} # IAM에서 생성한 secret-key
+    region:
+      static: ap-northeast-2
+    s3:
+      bucket: ${S3_BUCKET_NAME} # 버킷 이름
+    stack:
+      auto: false

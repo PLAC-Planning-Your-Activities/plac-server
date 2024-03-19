@@ -30,19 +30,14 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/{userId}")
-    public ResponseEntity<UserInfoResponse> changeProfile(
-            @PathVariable Long userId, ChangeProfileRequest changeProfileRequest
-    ) {
-        UserInfoResponse userInfo = userService.changeProfile(userId, changeProfileRequest);
+    @PutMapping("/profile")
+    public ResponseEntity<UserInfoResponse> changeProfile(@RequestBody ChangeProfileRequest changeProfileRequest) {
+        UserInfoResponse userInfo = userService.changeProfile(changeProfileRequest);
         return ResponseEntity.ok().body(userInfo);
     }
 
-
     @GetMapping("/emails/availability")
-    public ResponseEntity<Void> checkEmailAvailability(
-            @Valid @RequestBody EmailReqDto dto
-    ) {
+    public ResponseEntity<Void> checkEmailAvailability(@Valid @RequestBody EmailReqDto dto) {
         userService.checkEmailAvailability(dto.getEmail());
         return ResponseEntity.ok().build();
     }

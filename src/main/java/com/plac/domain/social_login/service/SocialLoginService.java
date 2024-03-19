@@ -90,8 +90,6 @@ public class SocialLoginService {
                 .provider(oauth2UserInfo.getProvider())
                 .profileImageUrl(oauth2UserInfo.getProfileImagePath())
                 .profileName(oauth2UserInfo.getProfileName())
-                .profileBirth(oauth2UserInfo.getProfileBirth())
-                .phoneNumber(oauth2UserInfo.getPhoneNumber())
                 .gender(oauth2UserInfo.getGender())
                 .age(oauth2UserInfo.getAge())
                 .build();

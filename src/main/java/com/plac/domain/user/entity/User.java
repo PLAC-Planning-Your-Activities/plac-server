@@ -17,6 +17,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "user")
 public class User extends AbstractTimeEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -26,67 +27,29 @@ public class User extends AbstractTimeEntity {
 
     String password;
 
-    @Type(type = "uuid-char")
-    private UUID salt;
-
     private String roles;
 
     private String profileName;
 
     private String profileImageUrl;
 
-    private String profileBirth;
-
     private int age;
 
     private String gender;
-
-    private String phoneNumber;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     @Builder.Default
     private UserStatus status = UserStatus.ACTIVE;
 
-    @Comment("소셜 로그인시 갱신됨 (네이버, 카카오, 구글 중 하나)")
     private String provider;
 
     private int ageRange;
-
-    public User(String username, String password) {
-        this.username = username;
-        this.password = password;
-    }
-
-    public User(Long id, String username, String password) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
-    }
 
     public void changeProfile(ChangeProfileRequest req) {
         this.profileName = req.getProfileName();
         this.profileImageUrl = req.getProfileImageUrl();
         this.gender = req.getGender();
         this.ageRange = req.getAgeGroup();
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", salt=" + salt +
-                ", roles='" + roles + '\'' +
-                ", profileName='" + profileName + '\'' +
-                ", profileImagePath='" + profileImageUrl + '\'' +
-                ", profileBirth='" + profileBirth + '\'' +
-                ", age=" + age +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                ", createdAt=" + super.getCreatedAt() +
-                ", updatedAt=" + super.getUpdatedAt() +
-                ", provider='" + provider + '\'' +
-                '}';
     }
 }

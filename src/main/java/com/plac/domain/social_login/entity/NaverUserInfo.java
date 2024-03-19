@@ -26,11 +26,6 @@ public class NaverUserInfo implements Oauth2UserInfo{
     }
 
     @Override
-    public String getPhoneNumber(){
-        return (String) attributes.get("mobile");
-    }
-
-    @Override
     public String getGender() {
         return (String) attributes.get("gender");
     }
@@ -41,14 +36,7 @@ public class NaverUserInfo implements Oauth2UserInfo{
     }
 
     @Override
-    public String getProfileBirth() {
-        String birthYear = (String) attributes.get("birthyear");
-        return birthYear;
-    }
-
-    @Override
     public String getUsername() {
         return (String) attributes.get("email");
     }
-
 }

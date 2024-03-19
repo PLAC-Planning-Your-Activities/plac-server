@@ -26,18 +26,8 @@ public class GoogleUserInfo implements Oauth2UserInfo{
     }
 
     @Override
-    public String getProfileBirth() {
-        return null;
-    }
-
-    @Override
     public String getUsername() {
         return (String) attributes.get("email");
-    }
-
-    @Override
-    public String getPhoneNumber() {
-        return null;
     }
 
     @Override
@@ -49,5 +39,4 @@ public class GoogleUserInfo implements Oauth2UserInfo{
     public int getAge() {
         return 0;
     }
-
 }
