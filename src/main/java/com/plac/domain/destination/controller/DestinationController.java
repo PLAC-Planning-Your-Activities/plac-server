@@ -17,7 +17,7 @@ public class DestinationController {
 
     private final DestinationService destinationService;
 
-    @GetMapping("/popular")
+    @GetMapping("/top7")
     public ResponseEntity<?> getTop7Destinations(@RequestParam("filter") int filter) {
         List<String> result = destinationService.getTop7SearchWords(filter);
         return ResponseEntity.ok().body(result);
