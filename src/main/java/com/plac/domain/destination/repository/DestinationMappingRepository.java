@@ -1,6 +1,6 @@
 package com.plac.domain.destination.repository;
 
-import com.plac.domain.destination.entity.DestinationMapping;
+import com.plac.domain.destination.entity.UserDestination;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -8,10 +8,10 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface DestinationMappingRepository extends JpaRepository<DestinationMapping, Long> {
+public interface DestinationMappingRepository extends JpaRepository<UserDestination, Long> {
 
     @Query("SELECT destination.name, COUNT(destination) as frequency " +
-            "FROM DestinationMapping destinationMapping " +
+            "FROM UserDestination destinationMapping " +
             "JOIN destinationMapping.user user " +
             "JOIN destinationMapping.destination destination " +
             "WHERE user.ageRange = :ageRange AND user.gender = :gender " +
@@ -20,7 +20,7 @@ public interface DestinationMappingRepository extends JpaRepository<DestinationM
     List<String> findTop7DestinationsByAgeRangeAndGender(@Param("ageRange") int ageRange, @Param("gender") String gender, Pageable pageable);
 
     @Query("SELECT destination.name, COUNT(destination) as frequency " +
-            "FROM DestinationMapping destinationMapping " +
+            "FROM UserDestination destinationMapping " +
             "JOIN destinationMapping.destination destination " +
             "GROUP BY destination " +
             "ORDER BY frequency DESC")
