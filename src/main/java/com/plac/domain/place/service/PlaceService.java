@@ -26,6 +26,7 @@ public class PlaceService {
     private final PlaceDibsRepository placeDibsRepository;
     private final UserRepository userRepository;
 
+    @Transactional
     public List<GetMyListPlacesResponseDto> getMyListPlaces() {
         final User user = userRepository.findById(SecurityContextHolderUtil.getUserId())
                 .orElseThrow(() -> new RuntimeException("로그인 사용자 없음 예외추가"));

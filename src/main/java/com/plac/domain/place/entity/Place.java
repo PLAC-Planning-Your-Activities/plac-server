@@ -8,7 +8,6 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

@@ -8,6 +8,8 @@ import com.plac.domain.place.dto.response.GetMyListPlacesResponseDto;
 import com.plac.domain.place.entity.Place;
 import com.plac.domain.place.entity.PlaceDibs;
 import com.plac.domain.place.repository.placeDibs.PlaceDibsRepository;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -37,7 +39,8 @@ class PlaceQueryRepositoryImplTest {
     private PlaceRepository placeRepository;
 
     @Test
-    void test()  {
+    @DisplayName("마이리스트에 장소 찜한다.")
+    void addMyListPlace()  {
         // given
         List<Place> places = new ArrayList<>();
         for (int i = 0; i < 10; i++) {

@@ -23,7 +23,6 @@ public class PlaceQueryRepositoryImpl implements PlaceQueryRepository {
         return jpaQueryFactory.selectFrom(place)
                 .leftJoin(placeDibs)
                 .on(place.kakaoPlaceId.eq(placeDibs.kakaoPlaceId))
-                //.fetchJoin()
                 .where(placeDibs.userId.eq(userId))
                 .orderBy(place.placeName.asc())
                 .fetch();

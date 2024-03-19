@@ -28,7 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class PlanPlaceMappingRepositoryTest {
 
     @Autowired
-    private PlanPlaceMappingMappingRepository planPlaceMappingRepository;
+    private PlanPlaceMappingRepository planPlaceMappingRepository;
 
     @Autowired
     private PlanRepository planRepository;
