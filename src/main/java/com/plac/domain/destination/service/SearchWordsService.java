@@ -2,7 +2,7 @@ package com.plac.domain.destination.service;
 
 import com.plac.domain.destination.dto.request.CreateSearchWordsRequest;
 import com.plac.domain.destination.entity.SearchWords;
-import com.plac.domain.destination.entity.UserSearchWordsMapping;
+import com.plac.domain.destination.entity.UserSearchWords;
 import com.plac.domain.destination.repository.SearchWordsRepository;
 import com.plac.domain.destination.repository.UserSearchWordsMappingRepository;
 import com.plac.domain.user.entity.User;
@@ -41,12 +41,12 @@ public class SearchWordsService {
             }
             else searchWords = searchWordsOpt.get();
 
-            UserSearchWordsMapping userSearchWordsMapping = UserSearchWordsMapping.builder()
+            UserSearchWords userSearchWords = UserSearchWords.builder()
                     .user(user)
                     .searchWords(searchWords)
                     .build();
 
-            userSearchWordsMappingRepository.save(userSearchWordsMapping);
+            userSearchWordsMappingRepository.save(userSearchWords);
         }
     }
 

@@ -3,12 +3,12 @@ package com.plac.domain.user.entity;
 import com.plac.common.AbstractTimeEntity;
 import com.plac.common.mappedenum.UserStatus;
 import com.plac.domain.user.dto.request.ChangeProfileRequest;
-import lombok.*;
-import org.hibernate.annotations.Comment;
-import org.hibernate.annotations.Type;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.UUID;
 
 @Getter
 @NoArgsConstructor
@@ -45,6 +45,8 @@ public class User extends AbstractTimeEntity {
     private String provider;
 
     private int ageRange;
+
+    private boolean isGuest;
 
     public void changeProfile(ChangeProfileRequest req) {
         this.profileName = req.getProfileName();

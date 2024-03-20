@@ -1,7 +1,9 @@
 package com.plac.domain.plan.service;
 
 import com.plac.domain.destination.entity.Destination;
+import com.plac.domain.destination.entity.UserDestination;
 import com.plac.domain.destination.repository.DestinationRepository;
+import com.plac.domain.destination.repository.UserDestinationRepository;
 import com.plac.domain.place.dto.response.PlaceInfo;
 import com.plac.domain.place.entity.Place;
 import com.plac.domain.place.repository.place.PlaceRepository;
@@ -48,6 +50,7 @@ public class PlanService {
     private final FavoritePlanRepository favoritePlanRepository;
     private final BookmarkPlanRepository bookmarkPlanRepository;
     private final DestinationRepository destinationRepository;
+    private final UserDestinationRepository userDestinationRepository;
     private final PlanDibsRepository planDibsRepository;
 
     @Transactional
@@ -66,19 +69,28 @@ public class PlanService {
                 })
                 .collect(Collectors.toList());
 
-        createNewDestination(planRequest);
+        Destination destination = createNewDestination(planRequest);
+        createUserDestination(user, destination);
+
         Plan savedPlan = createNewPlan(planRequest, user, placeList);
         return new PlanCreateResponse(savedPlan.getId());
     }
 
-    private void createNewDestination(PlanCreateRequest planRequest) {
+    private void createUserDestination(User user, Destination destination) {
+        UserDestination userDestination = new UserDestination(user, destination);
+        userDestinationRepository.save(userDestination);
+    }
+
+    private Destination createNewDestination(PlanCreateRequest planRequest) {
         String destinationName = planRequest.getDestinationName();
-        destinationRepository.findByName(destinationName)
+        Destination destination = destinationRepository.findByName(destinationName)
                 .orElseGet(() -> destinationRepository.save(
                         Destination.builder()
                                 .name(destinationName)
                                 .build()
                 ));
+
+        return destination;
     }
 
     private Place createAndSavePlace(PlaceInfo placeInfo) {

@@ -23,7 +23,7 @@ public class Destination extends AbstractTimeEntity {
     private String name;
 
     @OneToMany(mappedBy = "destination")
-    List<DestinationMapping> destinationMappings = new ArrayList<>();
+    List<UserDestination> userDestinations = new ArrayList<>();
 
     @Builder
     public Destination(String name) {
