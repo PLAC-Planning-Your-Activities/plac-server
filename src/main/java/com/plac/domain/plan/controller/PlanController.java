@@ -1,5 +1,6 @@
 package com.plac.domain.plan.controller;
 
+import com.plac.domain.plan.dto.request.CommunityPlanRequest;
 import com.plac.domain.plan.dto.request.PlanCreateRequest;
 import com.plac.domain.plan.dto.request.PlanFixRequest;
 import com.plac.domain.plan.dto.request.PlanShareRequest;
@@ -78,11 +79,11 @@ public class PlanController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/destinations")
-    public ResponseEntity<?> getPlansByDestination(
-            @RequestParam(name = "destinationName", required = true) String destinationName
+    @GetMapping("/community")
+    public ResponseEntity<?> getCommunityPlans(
+            @ModelAttribute CommunityPlanRequest planRequest
     ){
-        List<PlansInformation> result = planService.getPlansByDestinations(destinationName);
+        List<PlansInformation> result = planService.getCommunityPlans(planRequest);
         return ResponseEntity.ok().body(result);
     }
 

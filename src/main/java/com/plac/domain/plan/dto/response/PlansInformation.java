@@ -8,13 +8,13 @@ import java.util.List;
 @Getter
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class PlansInformation {
     private String userProfileName;
+    private String profileImageUrl;
     private long minuteDifferences;
     private String planName;
-    private List<PlaceInfo> placeInfoList;
     private int favoriteCount;
     private int bookmarkCount;
-    private List<String> tagList;
+    private List<PlaceInfo> placeInfoList;
 }
