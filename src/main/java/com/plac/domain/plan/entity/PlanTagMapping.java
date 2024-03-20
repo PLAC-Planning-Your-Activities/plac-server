@@ -21,11 +21,13 @@ public class PlanTagMapping extends AbstractTimeEntity {
     @JoinColumn(name = "plan_id")
     private Plan plan;
 
-    private Long planTagId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "plan_tag_id")
+    private PlanTag planTag;
 
     @Builder
-    public PlanTagMapping(Plan plan, Long planTagId) {
+    public PlanTagMapping(Plan plan, PlanTag planTag) {
         this.plan = plan;
-        this.planTagId = planTagId;
+        this.planTag = planTag;
     }
 }
