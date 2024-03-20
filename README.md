@@ -2,4 +2,4 @@
 
 
 ### ERD
-![Plac (1)](https://github.com/PLAC-Planning-Your-Activities/plac-server/assets/56336436/a750fbb9-fdd3-4154-b2dd-5e1db4ca2f2a)
+![Plac (2)](https://github.com/PLAC-Planning-Your-Activities/plac-server/assets/56336436/ca581732-93b6-4617-8448-5d2c1b89ca08)
