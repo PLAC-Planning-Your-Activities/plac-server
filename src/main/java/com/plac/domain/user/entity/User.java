@@ -46,7 +46,7 @@ public class User extends AbstractTimeEntity {
 
     private int ageRange;
 
-    private boolean testAccount;
+    private boolean isGuest;
 
     public void changeProfile(ChangeProfileRequest req) {
         this.profileName = req.getProfileName();

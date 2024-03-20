@@ -1,7 +1,9 @@
 package com.plac.util;
 
 import com.plac.domain.user.entity.User;
+import com.plac.exception.common.UnAuthorizedException;
 import com.plac.security.auth.AuthProperties;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -10,18 +12,18 @@ import lombok.NoArgsConstructor;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import java.security.Key;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Component
 @NoArgsConstructor
 public class JwtUtil {
     private static long TOKEN_VALIDITY_IN_SECOND = 1000;
-    private static long ACCESS_TOKEN_VALIDITY_TIME = TOKEN_VALIDITY_IN_SECOND * 6;   // 6초
-    private static long REFRESH_TOKEN_VALIDITY_TIME = TOKEN_VALIDITY_IN_SECOND * 60 * 60 * 24 * 3;  // 3일
+    private static long TOKEN_VALIDITY_IN_MINUTE = TOKEN_VALIDITY_IN_SECOND * 60;
+    private static long ACCESS_TOKEN_VALIDITY_TIME = TOKEN_VALIDITY_IN_MINUTE * 15;   // 15분
+    private static long REFRESH_TOKEN_VALIDITY_TIME = TOKEN_VALIDITY_IN_MINUTE * 60 * 12;  // 12시간
 
     public static String createAccessToken(User user, UUID refreshTokenId) {
         return Jwts.builder()
@@ -76,5 +78,26 @@ public class JwtUtil {
         Map<String, Object> map = new HashMap<>();
         map.put("username", user.getUsername());
         return map;
+    }
+
+    public static String getAccessTokenFromCookie(HttpServletRequest request) {
+        Cookie cookie;
+        try {
+            cookie = Arrays.stream(request.getCookies())
+                    .filter(r -> r.getName().equals("plac_token"))
+                    .findAny()
+                    .orElse(null);
+        } catch (NullPointerException e) {
+            throw new UnAuthorizedException();
+        }
+        return cookie.getValue();
+    }
+
+    public static Claims getClaimFromAccessToken(String accessToken) {
+        return Jwts.parserBuilder()
+                .setSigningKey(AuthProperties.getAccessSecret())
+                .build()
+                .parseClaimsJws(accessToken)
+                .getBody();
     }
 }
