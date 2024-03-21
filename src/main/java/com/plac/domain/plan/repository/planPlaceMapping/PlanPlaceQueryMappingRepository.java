@@ -10,4 +10,6 @@ public interface PlanPlaceQueryMappingRepository {
     List<PlanPlaceMapping> findByPlanId(Long planId);
 
     List<Place> findPlacesByPlanId(Long planId);
+
+    List<Long> findPlanIdsByPlaceName(List<Long> planIdList, String placeName);
 }

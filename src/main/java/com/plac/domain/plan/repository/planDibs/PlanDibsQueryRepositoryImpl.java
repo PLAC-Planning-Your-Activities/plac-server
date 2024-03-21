@@ -4,6 +4,7 @@ import com.plac.domain.plan.entity.PlanDibs;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import static com.plac.domain.plan.entity.QPlanDibs.planDibs;
@@ -26,4 +27,12 @@ public class PlanDibsQueryRepositoryImpl implements PlanDibsQueryRepository {
                         .fetchOne()
         );
     }
+
+    @Override
+    public List<PlanDibs> findDibsByPlanId(Long planId) {
+        return jpaQueryFactory.selectFrom(planDibs)
+                .where(planDibs.planId.eq(planId))
+                .fetch();
+    }
+
 }
