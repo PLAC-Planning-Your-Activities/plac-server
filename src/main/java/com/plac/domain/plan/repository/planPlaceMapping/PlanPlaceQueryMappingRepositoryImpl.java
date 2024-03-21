@@ -1,7 +1,6 @@
 package com.plac.domain.plan.repository.planPlaceMapping;
 
 import com.plac.domain.place.entity.Place;
-import com.plac.domain.place.entity.QPlace;
 import com.plac.domain.plan.entity.PlanPlaceMapping;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
@@ -34,4 +33,15 @@ public class PlanPlaceQueryMappingRepositoryImpl implements PlanPlaceQueryMappin
                 .on(planPlaceMapping.place.id.eq(planId))
                 .fetch();
     }
+
+    @Override
+    public List<Long> findPlanIdsByPlaceName(List<Long> planIdList, String placeName) {
+        return jpaQueryFactory.select(planPlaceMapping.plan.id)
+                .from(planPlaceMapping)
+                .join(planPlaceMapping.place, place)
+                .where(planPlaceMapping.plan.id.in(planIdList)
+                        .and(place.placeName.eq(placeName)))
+                .fetch();
+    }
+
 }

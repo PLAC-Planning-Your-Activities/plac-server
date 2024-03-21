@@ -1,24 +1,15 @@
 package com.plac.domain.plan.repository.plan;
 
 import com.plac.domain.plan.entity.Plan;
-import com.querydsl.core.types.Order;
-import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static com.plac.domain.place.entity.QPlace.place;
 import static com.plac.domain.plan.entity.QBookmarkPlan.bookmarkPlan;
 import static com.plac.domain.plan.entity.QPlan.plan;
 import static com.plac.domain.plan.entity.QPlanDibs.planDibs;
-import static com.plac.domain.plan.entity.QPlanPlaceMapping.planPlaceMapping;
-import static com.plac.domain.plan.entity.QPlanTag.planTag;
-import static com.plac.domain.plan.entity.QPlanTagMapping.planTagMapping;
-import static com.plac.domain.user.entity.QUser.user;
 
 @Repository
 public class PlanQueryRepositoryImpl implements PlanQueryRepository {
@@ -46,46 +37,76 @@ public class PlanQueryRepositoryImpl implements PlanQueryRepository {
                 .fetch();
     }
 
-    public List<Plan> findFilteredPlan(String destinationName, String placeName, String sortBy, int ageRange,
-                                       String gender, List<String> tags, long tagCount, Pageable pageable) {
-        JPAQuery<Plan> query = jpaQueryFactory.selectFrom(plan)
-                .join(plan.user, user)
-                .leftJoin(planPlaceMapping).on(plan.id.eq(planPlaceMapping.plan.id))
-                .leftJoin(planPlaceMapping.place, place)
-                .leftJoin(planDibs).on(plan.id.eq(planDibs.planId))
-                .leftJoin(bookmarkPlan).on(plan.id.eq(bookmarkPlan.plan.id))
-                .leftJoin(planTagMapping).on(plan.id.eq(planTagMapping.plan.id))
-                .leftJoin(planTagMapping.planTag, planTag);
-
-        BooleanExpression whereCondition = plan.destinationName.eq(destinationName)
-                .and(user.ageRange.eq(ageRange))
-                .and(user.gender.eq(gender));
-
-        if (placeName != null && !placeName.isEmpty()) {
-            whereCondition = whereCondition.and(place.placeName.like(placeName));
-        }
-
-        if (tags != null && !tags.isEmpty()) {
-            whereCondition = whereCondition.and(planTag.tagName.in(tags))
-                    .and(planTagMapping.planTag.id.countDistinct().eq(tagCount));
-        }
-
-        query.where(whereCondition);
-
-        OrderSpecifier<?> orderBy = new OrderSpecifier<>(Order.DESC, plan.createdAt);
-        if ("인기순".equals(sortBy)) {
-            orderBy = new OrderSpecifier<>(Order.DESC, planDibs.count());
-        } else if ("저장순".equals(sortBy)) {
-            orderBy = new OrderSpecifier<>(Order.DESC, bookmarkPlan.count());
-        }
-
-        // Apply paging, fetch
-        List<Plan> results = query.orderBy(orderBy)
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
-
-        return results;
+    @Override
+    public List<Plan> findFilteredPlan(String destinationName, String placeName, String sortBy, Integer ageRange, String gender, List<String> tags, long tagCount, Pageable pageable) {
+        return null;
     }
 
+    @Override
+    public List<Long> findPlanIdsByDestinationName(String destinationName) {
+        return jpaQueryFactory.select(plan.id)
+                .from(plan)
+                .where(plan.destinationName.eq(destinationName))
+                .orderBy(plan.createdAt.desc())
+                .fetch();
+    }
+
+    @Override
+    public List<Long> findPlanIdsByUserAgeRange(List<Long> planIdList, int ageRange) {
+        return jpaQueryFactory.select(plan.id)
+                .from(plan)
+                .join(plan.user)
+                .where(plan.id.in(planIdList)
+                        .and(plan.user.ageRange.eq(ageRange)))
+                .fetch();
+    }
+
+    @Override
+    public List<Long> findPlanIdsByUserGender(List<Long> planIdList, String gender) {
+        return jpaQueryFactory.select(plan.id)
+                .from(plan)
+                .join(plan.user)
+                .where(plan.id.in(planIdList)
+                        .and(plan.user.gender.eq(gender)))
+                .fetch();
+    }
+
+    @Override
+    public List<Plan> findPlansIn(List<Long> planIdList) {
+        return jpaQueryFactory.select(plan)
+                .from(plan)
+                .where(plan.id.in(planIdList))
+                .fetch();
+    }
+
+    @Override
+    public List<Long> findPlanIdsByPlanDibsDesc(List<Long> planIdList) {
+        return jpaQueryFactory.select(plan.id)
+                .from(plan)
+                .leftJoin(planDibs).on(plan.id.eq(planDibs.planId))
+                .where(plan.id.in(planIdList))
+                .groupBy(plan.id)
+                .orderBy(planDibs.planId.count().desc())
+                .fetch();
+    }
+
+    @Override
+    public List<Long> findPlanIdsByBookmarkPlanDesc(List<Long> planIdList) {
+        return jpaQueryFactory.select(plan.id)
+                .from(plan)
+                .leftJoin(bookmarkPlan).on(plan.id.eq(bookmarkPlan.plan.id))
+                .where(plan.id.in(planIdList))
+                .groupBy(plan.id)
+                .orderBy(bookmarkPlan.plan.id.count().desc())
+                .fetch();
+    }
+
+    @Override
+    public List<Long> findPlanIdsByCreatedAtDesc(List<Long> planIdList) {
+        return jpaQueryFactory.select(plan.id)
+                .from(plan)
+                .where(plan.id.in(planIdList))
+                .orderBy(plan.createdAt.desc())
+                .fetch();
+    }
 }
