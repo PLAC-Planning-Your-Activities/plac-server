@@ -2,19 +2,18 @@ package com.plac.domain.plan.dto.request;
 
 import lombok.*;
 
-import java.util.List;
-
 @Getter
 @Setter
 @AllArgsConstructor
+@ToString
 public class CommunityPlanRequest {
 
     @NonNull
-    private String destinationName;
-    private String placeName;
+    private String destination;
+    private String place;
     @NonNull
     private String sortBy;
-    private String ageRange;
+    private Integer userAgeRange;
     private String gender;
-    private List<String> tagList;
+    private String tags;
 }
