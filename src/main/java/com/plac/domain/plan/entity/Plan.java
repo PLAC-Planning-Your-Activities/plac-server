@@ -2,10 +2,7 @@ package com.plac.domain.plan.entity;
 
 import com.plac.common.AbstractTimeEntity;
 import com.plac.domain.user.entity.User;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -15,6 +12,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString
 public class Plan extends AbstractTimeEntity {
 
     @Id
@@ -27,10 +25,10 @@ public class Plan extends AbstractTimeEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "plan", orphanRemoval = true)
+    @OneToMany(mappedBy = "plan", orphanRemoval = true, fetch = FetchType.LAZY)
     List<PlanPlaceMapping> planPlaceMappings = new ArrayList<>();
 
-    @OneToMany(mappedBy = "plan", orphanRemoval = true)
+    @OneToMany(mappedBy = "plan", orphanRemoval = true, fetch = FetchType.LAZY)
     List<PlanTagMapping> planTagMappings = new ArrayList<>();
 
     @NotNull

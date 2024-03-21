@@ -7,12 +7,13 @@ import com.plac.domain.destination.repository.UserDestinationRepository;
 import com.plac.domain.place.dto.response.PlaceInfo;
 import com.plac.domain.place.entity.Place;
 import com.plac.domain.place.repository.place.PlaceRepository;
+import com.plac.domain.plan.dto.PlansInformation;
+import com.plac.domain.plan.dto.request.CommunityPlanRequest;
 import com.plac.domain.plan.dto.request.PlanCreateRequest;
 import com.plac.domain.plan.dto.request.PlanFixRequest;
 import com.plac.domain.plan.dto.request.PlanShareRequest;
 import com.plac.domain.plan.dto.response.GetMyListPlansResponseDto;
 import com.plac.domain.plan.dto.response.PlanCreateResponse;
-import com.plac.domain.plan.dto.response.PlansInformation;
 import com.plac.domain.plan.entity.*;
 import com.plac.domain.plan.repository.bookmark.BookmarkPlanRepository;
 import com.plac.domain.plan.repository.favoritePlan.FavoritePlanRepository;
@@ -27,6 +28,7 @@ import com.plac.exception.common.BadRequestException;
 import com.plac.exception.common.DataNotFoundException;
 import com.plac.util.SecurityContextHolderUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +41,7 @@ import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class PlanService {
 
     private final PlaceRepository placeRepository;
@@ -149,10 +152,7 @@ public class PlanService {
                             planTagRepository.save(PlanTag.builder().tagName(etcTag).build())
                     );
 
-            PlanTagMapping planTagMapping = PlanTagMapping.builder()
-                    .plan(plan)
-                    .planTagId(planTag.getId())
-                    .build();
+            PlanTagMapping planTagMapping = new PlanTagMapping(plan, planTag);
 
             planTagMappingRepository.save(planTagMapping);
         }
@@ -162,10 +162,8 @@ public class PlanService {
         List<Long> tagIdlist = planRequest.getTagIds();
 
         for (Long tagId : tagIdlist) {
-            PlanTagMapping planTagMapping = PlanTagMapping.builder()
-                    .plan(plan)
-                    .planTagId(tagId)
-                    .build();
+            PlanTag planTag = planTagRepository.findById(tagId).get();
+            PlanTagMapping planTagMapping = new PlanTagMapping(plan, planTag);
             planTagMappingRepository.save(planTagMapping);
         }
     }
@@ -189,8 +187,6 @@ public class PlanService {
         planRepository.delete(plan);
     }
 
-    /**
-     * 추후 캐시로 성능 개선해보기!!*/
     public void makeFavoritePlan(Long planId) {
         Long userId = SecurityContextHolderUtil.getUserId();
         User user = userRepository.findById(userId).get();
@@ -227,14 +223,9 @@ public class PlanService {
 
     public void saveBookMarkPlan(Long planId) {
         User user = userRepository.findById(SecurityContextHolderUtil.getUserId()).get();
-
         Plan plan = planRepository.findById(planId).orElseThrow (() -> new DataNotFoundException());
 
-        BookmarkPlan bookmarkPlan = BookmarkPlan.builder()
-                .user(user)
-                .plan(plan)
-                .build();
-
+        BookmarkPlan bookmarkPlan = new BookmarkPlan(plan, user);
         bookmarkPlanRepository.save(bookmarkPlan);
     }
 
@@ -247,69 +238,84 @@ public class PlanService {
         bookmarkPlanRepository.delete(bookmarkPlan);
     }
 
-    public List<PlansInformation> getPlansByDestinations(String destinationName) {
-
-        Long userId = SecurityContextHolderUtil.getUserId();
-        User user = userRepository.findById(userId).get();
-
-        String userProfileName = user.getProfileName();
-
-        List<Plan> plans = planRepository.findPlansByDestinationName(destinationName);
-
+    // TODO: 리팩토링, 쿼리 개선
+    public List<PlansInformation> getCommunityPlans(CommunityPlanRequest planRequest) {
+        List<Long> planIdList = null;
         List<PlansInformation> result = new ArrayList<>();
 
-        for (Plan plan : plans) {
-            // 두 LocalDateTime 객체 간의 시간 차이 계산
-            Duration duration = Duration.between(plan.getUpdatedAt(), LocalDateTime.now());
-            long minutesDifference = duration.toMinutes();
+        String sortBy = planRequest.getSortBy();
+        planIdList = planRepository.findPlanIdsByDestinationName(planRequest.getDestination());
 
-            String planName = plan.getName();
+        if (planIdList.isEmpty()) return new ArrayList<>();
 
-            List<PlanPlaceMapping> planPlaceMappings = plan.getPlanPlaceMappings();
-            List<PlaceInfo> placeInfoList = new ArrayList<>();
-
-            for (PlanPlaceMapping planPlaceMapping : planPlaceMappings) {
-                Place place = planPlaceMapping.getPlace();
-                PlaceInfo buildPlaceInfo = PlaceInfo.of(place);
-                placeInfoList.add(buildPlaceInfo);
+        if (planRequest.getPlace() != null && !planIdList.isEmpty()) {
+            planIdList = planPlaceMappingRepository.findPlanIdsByPlaceName(planIdList, planRequest.getPlace());
+        }
+        if (planRequest.getUserAgeRange() != null && !planIdList.isEmpty()) {
+            planIdList = planRepository.findPlanIdsByUserAgeRange(planIdList, planRequest.getUserAgeRange());
+        }
+        if (planRequest.getGender() != null && !planIdList.isEmpty()) {
+            planIdList = planRepository.findPlanIdsByUserGender(planIdList, planRequest.getGender());
+        }
+        if (planRequest.getTags() != null && !planIdList.isEmpty()) {
+            String[] split = planRequest.getTags().split(",");
+            planIdList = planTagRepository.findPlanIdsWithAllTags(planIdList, Arrays.asList(split), split.length);
+        }
+        if (!planIdList.isEmpty()) {
+            switch (sortBy) {
+                case "최신순":
+                    planIdList = planRepository.findPlanIdsByCreatedAtDesc(planIdList);
+                    break;
+                case "저장순":
+                    planIdList = planRepository.findPlanIdsByBookmarkPlanDesc(planIdList);
+                    break;
+                case "인기순":
+                    planIdList = planRepository.findPlanIdsByPlanDibsDesc(planIdList);
+                    break;
             }
-            // PlaceInfo 객체를 seq 오름차순으로 정렬
-            Collections.sort(placeInfoList, Comparator.comparingInt(PlaceInfo::getSeq));
-
-            List<FavoritePlan> favoritePlans = favoritePlanRepository.findByPlanId(plan.getId());
-            int favoriteCount = favoritePlans.size();
-
-            List<BookmarkPlan> bookmarkPlans = bookmarkPlanRepository.findBookmarksPlansByPlanId(plan.getId());
-            int bookmarkCount = bookmarkPlans.size();
-
-            List<PlanTagMapping> planTagMappingList = planTagMappingRepository.findTagsByPlanId(plan.getId());
-
-            List<String> tagList = new ArrayList<>();
-
-            for (PlanTagMapping planTagMapping : planTagMappingList) {
-                Long planTagId = planTagMapping.getPlanTagId();
-                PlanTag planTag = planTagRepository.findById(planTagId).get();
-
-                String tagName = planTag.getTagName();
-                tagList.add(tagName);
-            }
-
-            PlansInformation temp = PlansInformation.builder()
-                    .userProfileName(userProfileName)
-                    .minuteDifferences(minutesDifference)
-                    .planName(planName)
-                    .placeInfoList(placeInfoList)
-                    .favoriteCount(favoriteCount)
-                    .bookmarkCount(bookmarkCount)
-                    .tagList(tagList)
-                    .build();
-
-            result.add(temp);
         }
 
-        Collections.sort(result, Comparator.comparingInt(PlansInformation::getFavoriteCount).reversed());
+        if (planIdList.isEmpty()) return new ArrayList<>();
 
+        List<Plan> planList = planRepository.findPlansIn(planIdList);
+
+        for (Plan plan : planList) {
+            createPlanInformation(result, plan);
+        }
         return result;
+    }
+
+    private void createPlanInformation(List<PlansInformation> result, Plan plan) {
+        User user = plan.getUser();
+
+        List<PlanDibs> planDibs = planDibsRepository.findDibsByPlanId(plan.getId());
+        List<BookmarkPlan> bookmarkPlans = bookmarkPlanRepository.findBookmarksPlansByPlanId(plan.getId());
+
+        boolean isFavorite = planDibsRepository.findDibsByUserIdAndPlanId(user.getId(), plan.getId()).isPresent();
+        boolean isBookmarked = bookmarkPlanRepository.findByUserIdAndPlanId(user.getId(), plan.getId()).isPresent();
+
+        List<Place> placeList = planPlaceMappingRepository.findPlacesByPlanId(plan.getId());
+        List<PlaceInfo> placeInfoList = new ArrayList<>();
+
+        for (Place place : placeList) {
+            PlaceInfo placeInfo = PlaceInfo.of(place);
+            placeInfoList.add(placeInfo);
+        }
+
+        PlansInformation plansInfo = PlansInformation.builder()
+                .planId(plan.getId())
+                .userProfileName(user.getProfileName())
+                .profileImageUrl(user.getProfileImageUrl())
+                .minuteDifferences(Duration.between(plan.getUpdatedAt(), LocalDateTime.now()).toMinutes())
+                .planName(plan.getName())
+                .favoriteCount(planDibs.size())
+                .bookmarkCount(bookmarkPlans.size())
+                .isFavorite(isFavorite)
+                .isBookmarked(isBookmarked)
+                .placeInfoList(placeInfoList)
+                .build();
+
+        result.add(plansInfo);
     }
 
     public List<PlansInformation> getMostPopularPlans() {
@@ -354,8 +360,7 @@ public class PlanService {
             List<String> tagList = new ArrayList<>();
 
             for (PlanTagMapping planTagMapping : planTagMappingList) {
-                Long planTagId = planTagMapping.getPlanTagId();
-                PlanTag planTag = planTagRepository.findById(planTagId).get();
+                PlanTag planTag = planTagMapping.getPlanTag();
 
                 String tagName = planTag.getTagName();
                 tagList.add(tagName);
@@ -367,7 +372,6 @@ public class PlanService {
                     .placeInfoList(placeInfoList)
                     .favoriteCount(favoriteCount)
                     .bookmarkCount(bookmarkCount)
-                    .tagList(tagList)
                     .build();
 
             result.add(temp);

@@ -6,7 +6,7 @@ import com.plac.domain.plan.dto.request.PlanFixRequest;
 import com.plac.domain.plan.dto.request.PlanShareRequest;
 import com.plac.domain.plan.dto.response.GetMyListPlansResponseDto;
 import com.plac.domain.plan.dto.response.PlanCreateResponse;
-import com.plac.domain.plan.dto.response.PlansInformation;
+import com.plac.domain.plan.dto.PlansInformation;
 import com.plac.domain.plan.service.PlanService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
