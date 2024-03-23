@@ -31,7 +31,7 @@ public class UserController {
     }
 
     @PutMapping("/profile")
-    public ResponseEntity<UserInfoResponse> changeProfile(@RequestBody ChangeProfileRequest changeProfileRequest) {
+    public ResponseEntity<UserInfoResponse> changeProfile(@Valid @RequestBody ChangeProfileRequest changeProfileRequest) {
         UserInfoResponse userInfo = userService.changeProfile(changeProfileRequest);
         return ResponseEntity.ok().body(userInfo);
     }
