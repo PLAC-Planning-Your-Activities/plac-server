@@ -34,4 +34,5 @@ public class S3Controller {
         s3Service.deleteImage(imageRequest.getName());
         return ResponseEntity.ok().build();
     }
+
 }
