@@ -1,15 +1,14 @@
 package com.plac.domain.email_verification.service;
 
 import com.plac.common.mappedenum.EmailVerificationContentType;
-import com.plac.domain.email_verification.repository.EmailVerificationRepository;
 import com.plac.domain.email_verification.entity.EmailVerification;
+import com.plac.domain.email_verification.repository.EmailVerificationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
 @Service
@@ -39,19 +38,12 @@ public class EmailVerificationService {
         );
     }
 
+    @Transactional
     public void verifySignupEmail(String email, int verificationCode) {
         EmailVerification emailVerification = emailVerificationRepository.findTopByReceiptEmailAndContentTypeOrderByCreatedAtDesc(email, EmailVerificationContentType.SIGNUP)
                 .orElseThrow(() ->new ResponseStatusException(HttpStatus.BAD_REQUEST, "인증 번호가 없습니다. 재전송하세요."));
 
         emailVerification.checkAndValidate();
         emailVerification.matchVerificationCode(verificationCode);
-        emailVerificationRepository.save(emailVerification);
-    }
-
-    public boolean isVerifiedEmail(String email) {
-        EmailVerification emailVerification = emailVerificationRepository.findTopByReceiptEmailAndContentTypeOrderByCreatedAtDesc(email, EmailVerificationContentType.SIGNUP)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "이메일 인증이 필요합니다."));
-
-        return emailVerification.isCheckedStatus() && emailVerification.getUpdatedAt().isBefore(LocalDateTime.now().plusMinutes(VERIFICATION_COMPLETION_EFFECTIVE_TIME));
     }
 }

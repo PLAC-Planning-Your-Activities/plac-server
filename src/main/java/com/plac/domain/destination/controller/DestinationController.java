@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -18,8 +17,8 @@ public class DestinationController {
     private final DestinationService destinationService;
 
     @GetMapping("/top7")
-    public ResponseEntity<?> getTop7Destinations(HttpServletRequest request) {
-        List<String> result = destinationService.getTop7Destination(request);
+    public ResponseEntity<?> getTop7Destinations() {
+        List<String> result = destinationService.getTop7Destination();
         return ResponseEntity.ok().body(result);
     }
 }
