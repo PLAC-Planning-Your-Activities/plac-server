@@ -1,11 +1,10 @@
 package com.plac.config;
 
-import com.plac.common.Constant;
 import com.plac.domain.user.repository.RefreshTokenRepository;
 import com.plac.domain.user.repository.UserRepository;
 import com.plac.security.auth.CustomUserDetailsService;
-import com.plac.security.filter.JwtAuthenticationFilter;
 import com.plac.security.auth.JwtAuthenticationProvider;
+import com.plac.security.filter.JwtAuthenticationFilter;
 import com.plac.security.filter.JwtAuthorizationFilter;
 import com.plac.security.handler.CustomLogoutHandler;
 import lombok.RequiredArgsConstructor;
@@ -56,10 +55,11 @@ public class SecurityConfig {
                 .deleteCookies("plac_token");
 
         http
-                .authorizeRequests()
-                .antMatchers(Constant.ALL_PERMIT_PATHS).permitAll()
-                .antMatchers(Constant.USER_ROLE_PERMIT_PATHS).hasRole(Constant.USER_ROLE)
-                .anyRequest().denyAll();
+                .authorizeRequests().anyRequest().permitAll();
+//                .authorizeRequests()
+//                .antMatchers(Constant.ALL_PERMIT_PATHS).permitAll()
+//                .antMatchers(Constant.USER_ROLE_PERMIT_PATHS).hasRole(Constant.USER_ROLE)
+//                .anyRequest().denyAll();
 
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         http.addFilterAfter(jwtAuthorizationFilter, JwtAuthenticationFilter.class);
