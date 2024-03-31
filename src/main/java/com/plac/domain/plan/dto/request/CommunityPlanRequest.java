@@ -13,7 +13,7 @@ public class CommunityPlanRequest {
     private String place;
     @NonNull
     private String sortBy;
-    private Integer userAgeRange;
+    private Integer ageRange;
     private String gender;
     private String tags;
 }

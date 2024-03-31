@@ -248,16 +248,16 @@ public class PlanService {
 
         if (planIdList.isEmpty()) return new ArrayList<>();
 
-        if (planRequest.getPlace() != null && !planIdList.isEmpty()) {
+        if (!planRequest.getPlace().isEmpty()) {
             planIdList = planPlaceMappingRepository.findPlanIdsByPlaceName(planIdList, planRequest.getPlace());
         }
-        if (planRequest.getUserAgeRange() != null && !planIdList.isEmpty()) {
-            planIdList = planRepository.findPlanIdsByUserAgeRange(planIdList, planRequest.getUserAgeRange());
+        if (planRequest.getAgeRange() != null && !planIdList.isEmpty()) {
+            planIdList = planRepository.findPlanIdsByUserAgeRange(planIdList, planRequest.getAgeRange());
         }
-        if (planRequest.getGender() != null && !planIdList.isEmpty()) {
+        if (!planRequest.getGender().isEmpty() && !planIdList.isEmpty()) {
             planIdList = planRepository.findPlanIdsByUserGender(planIdList, planRequest.getGender());
         }
-        if (planRequest.getTags() != null && !planIdList.isEmpty()) {
+        if (!planRequest.getTags().isEmpty() && !planIdList.isEmpty()) {
             String[] split = planRequest.getTags().split(",");
             planIdList = planTagRepository.findPlanIdsWithAllTags(planIdList, Arrays.asList(split), split.length);
         }
@@ -297,6 +297,14 @@ public class PlanService {
         List<Place> placeList = planPlaceMappingRepository.findPlacesByPlanId(plan.getId());
         List<PlaceInfo> placeInfoList = new ArrayList<>();
 
+        List<String> tagList = new ArrayList<>();
+        List<PlanTagMapping> planTagMappings = planTagMappingRepository.findTagsByPlanId(plan.getId());
+
+        for (PlanTagMapping planTag : planTagMappings) {
+            String tagName = planTag.getPlanTag().getTagName();
+            tagList.add(tagName);
+        }
+
         for (Place place : placeList) {
             PlaceInfo placeInfo = PlaceInfo.of(place);
             placeInfoList.add(placeInfo);
@@ -313,6 +321,7 @@ public class PlanService {
                 .isFavorite(isFavorite)
                 .isBookmarked(isBookmarked)
                 .placeInfoList(placeInfoList)
+                .tagList(tagList)
                 .build();
 
         result.add(plansInfo);
@@ -352,8 +361,8 @@ public class PlanService {
             List<FavoritePlan> favoritePlans = favoritePlanRepository.findByPlanId(plan.getId());
             int favoriteCount = favoritePlans.size();
 
-            List<BookmarkPlan> bookmarkPlans = bookmarkPlanRepository.findBookmarksPlansByPlanId(plan.getId());
-            int bookmarkCount = bookmarkPlans.size();
+            List<PlanDibs> planDibs = planDibsRepository.findDibsByPlanId(plan.getId());
+            int bookmarkCount = planDibs.size();
 
             List<PlanTagMapping> planTagMappingList = planTagMappingRepository.findTagsByPlanId(plan.getId());
 
@@ -367,8 +376,11 @@ public class PlanService {
             }
 
             PlansInformation temp = PlansInformation.builder()
+                    .planId(planId)
                     .userProfileName(user.getProfileName())
+                    .profileImageUrl(user.getProfileImageUrl())
                     .planName(planName)
+                    .minuteDifferences(Duration.between(plan.getUpdatedAt(), LocalDateTime.now()).toMinutes())
                     .placeInfoList(placeInfoList)
                     .favoriteCount(favoriteCount)
                     .bookmarkCount(bookmarkCount)

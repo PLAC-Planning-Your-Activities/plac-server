@@ -19,5 +19,6 @@ public class PlansInformation {
     private long bookmarkCount;
     private boolean isFavorite;
     private boolean isBookmarked;
+    private List<String> tagList;
     private List<PlaceInfo> placeInfoList;
 }
