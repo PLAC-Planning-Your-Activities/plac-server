@@ -1,12 +1,12 @@
 package com.plac.domain.plan.controller;
 
+import com.plac.domain.plan.dto.PlansInformation;
 import com.plac.domain.plan.dto.request.CommunityPlanRequest;
 import com.plac.domain.plan.dto.request.PlanCreateRequest;
 import com.plac.domain.plan.dto.request.PlanFixRequest;
 import com.plac.domain.plan.dto.request.PlanShareRequest;
 import com.plac.domain.plan.dto.response.GetMyListPlansResponseDto;
 import com.plac.domain.plan.dto.response.PlanCreateResponse;
-import com.plac.domain.plan.dto.PlansInformation;
 import com.plac.domain.plan.service.PlanService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -52,7 +52,9 @@ public class PlanController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/like/{planId}")
+    /**
+     * 플랜 좋아요 누르기 */
+    @PostMapping("/{planId}/likes")
     public ResponseEntity<?> createFavoritePlan(
             @PathVariable("planId") Long planId
     ){
@@ -60,23 +62,24 @@ public class PlanController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/dislike/{planId}")
+    @DeleteMapping("/{planId}/likes")
     public ResponseEntity<?> clearFavoritePlan(@PathVariable("planId") Long planId) {
         planService.clearFavoritePlan(planId);
         return ResponseEntity.ok().build();
     }
 
-    // 플랜 저장하기 (마이페이지에서 확인 가능)
-    @PostMapping("/bookmarks/{planId}")
-    public ResponseEntity<?> createBookMarkPlan(@PathVariable("planId") Long planId){
-        planService.saveBookMarkPlan(planId);
+    /**
+     * 플랜 마이리스트 저장 */
+    @PostMapping("/{planId}/my-list")
+    public ResponseEntity<Void> addMyListDibsPlan(@PathVariable Long planId) {
+        planService.triggerDibsMyListPlan(planId);
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/bookmarks/{planId}")
-    public ResponseEntity<?> deleteBookMarkPlan(@PathVariable("planId") Long planId){
-        planService.deleteBookMarkPlan(planId);
-        return ResponseEntity.ok().build();
+    @GetMapping("/my-list")
+    public ResponseEntity<List<GetMyListPlansResponseDto>> getMyListDibsPlan() {
+        List<GetMyListPlansResponseDto> getPlans = planService.getMyListPlans();
+        return ResponseEntity.ok(getPlans);
     }
 
     @GetMapping("/community")
@@ -91,17 +94,5 @@ public class PlanController {
     public ResponseEntity<?> getMostPopularPlans(){
         List<PlansInformation> result = planService.getMostPopularPlans();
         return ResponseEntity.ok().body(result);
-    }
-
-    @PostMapping("/{planId}/my-list")
-    public ResponseEntity<Void> addMyListDibsPlan(@PathVariable Long planId) {
-        planService.triggerDibsMyListPlan(planId);
-        return ResponseEntity.ok().build();
-    }
-
-    @GetMapping("/my-list")
-    public ResponseEntity<List<GetMyListPlansResponseDto>> getMyListDibsPlan() {
-        List<GetMyListPlansResponseDto> getPlans = planService.getMyListPlans();
-        return ResponseEntity.ok(getPlans);
     }
 }

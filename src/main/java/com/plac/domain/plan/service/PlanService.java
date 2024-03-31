@@ -288,11 +288,11 @@ public class PlanService {
     private void createPlanInformation(List<PlansInformation> result, Plan plan) {
         User user = plan.getUser();
 
-        List<PlanDibs> planDibs = planDibsRepository.findDibsByPlanId(plan.getId());
-        List<BookmarkPlan> bookmarkPlans = bookmarkPlanRepository.findBookmarksPlansByPlanId(plan.getId());
+        List<FavoritePlan> favoritePlans = favoritePlanRepository.findByPlanId(plan.getId());
+        List<PlanDibs> bookmarkPlans = planDibsRepository.findDibsByPlanId(plan.getId());
 
-        boolean isFavorite = planDibsRepository.findDibsByUserIdAndPlanId(user.getId(), plan.getId()).isPresent();
-        boolean isBookmarked = bookmarkPlanRepository.findByUserIdAndPlanId(user.getId(), plan.getId()).isPresent();
+        boolean isFavorite = favoritePlanRepository.findByUserIdAndPlanId(user.getId(), plan.getId()).isPresent();
+        boolean isBookmarked = planDibsRepository.findDibsByUserIdAndPlanId(user.getId(), plan.getId()).isPresent();
 
         List<Place> placeList = planPlaceMappingRepository.findPlacesByPlanId(plan.getId());
         List<PlaceInfo> placeInfoList = new ArrayList<>();
@@ -308,7 +308,7 @@ public class PlanService {
                 .profileImageUrl(user.getProfileImageUrl())
                 .minuteDifferences(Duration.between(plan.getUpdatedAt(), LocalDateTime.now()).toMinutes())
                 .planName(plan.getName())
-                .favoriteCount(planDibs.size())
+                .favoriteCount(favoritePlans.size())
                 .bookmarkCount(bookmarkPlans.size())
                 .isFavorite(isFavorite)
                 .isBookmarked(isBookmarked)
