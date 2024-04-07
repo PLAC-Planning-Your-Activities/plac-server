@@ -6,6 +6,8 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.plac.domain.social_login.dto.SocialLoginRequest;
 import com.plac.domain.social_login.dto.SocialLoginResponse;
 import com.plac.domain.social_login.service.SocialLoginService;
+import com.plac.domain.user.dto.response.UserInfoResponse;
+import com.plac.domain.user.entity.User;
 import com.plac.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -29,18 +31,28 @@ public class SocialLoginController {
     @PostMapping
     public void signIn(HttpServletResponse response, @RequestBody SocialLoginRequest socialLoginRequest) throws Exception {
         SocialLoginResponse socialLoginResponse = socialLoginService.signIn(socialLoginRequest);
-        ResponseCookie responseCookie = JwtUtil.makeResponseCookie(socialLoginResponse.getAccess_token());
+        User userEntity = socialLoginResponse.getUser();
 
+        ObjectMapper om = setResponseCookie(response, socialLoginResponse);
+
+        if (userEntity.getAge() == 0 && userEntity.getGender().equals("M")) {
+            response.setStatus(HttpStatus.ACCEPTED.value());
+        } else response.setStatus(HttpStatus.OK.value());
+
+        UserInfoResponse userInfo = UserInfoResponse.of(userEntity);
+        om.writeValue(response.getOutputStream(), userInfo);
+    }
+
+    private ObjectMapper setResponseCookie(HttpServletResponse response, SocialLoginResponse socialLoginResponse) {
+        ResponseCookie responseCookie = JwtUtil.makeResponseCookie(socialLoginResponse.getAccess_token());
         ObjectMapper om = settingObjectMapper();
         response.setContentType(MediaType.APPLICATION_JSON.toString());
 
         response.addHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
-        response.setStatus(HttpStatus.OK.value());
-
-        om.writeValue(response.getOutputStream(), "social login success!");
+        return om;
     }
 
-    private static ObjectMapper settingObjectMapper() {
+    private ObjectMapper settingObjectMapper() {
         ObjectMapper om = new ObjectMapper();
         om.registerModule(new JavaTimeModule());
         om.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);

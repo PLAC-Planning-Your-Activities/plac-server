@@ -37,6 +37,7 @@ public class Oauth2UserInfoContext {
         Oauth2UserInfoProviderStrategy strategy = strategies.get(provider);
         if(strategy != null){
             Map<String, Object> userInfo = strategy.getUserInfo(tokenResponse);
+            System.out.println("userInfo = " + userInfo);
             return userInfo;
         }
         throw new BadRequestException("Unknown Provider: " + provider);

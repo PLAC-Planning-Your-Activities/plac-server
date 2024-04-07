@@ -5,6 +5,7 @@ import lombok.*;
 import javax.validation.constraints.Email;
 
 @Getter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class CreateUserRequest {
