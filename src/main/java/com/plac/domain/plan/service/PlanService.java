@@ -252,7 +252,7 @@ public class PlanService {
             planIdList = planPlaceMappingRepository.findPlanIdsByPlaceName(planIdList, planRequest.getPlace());
         }
         if (planRequest.getAgeRange() != null && !planIdList.isEmpty()) {
-            planIdList = planRepository.findPlanIdsByUserAgeRange(planIdList, planRequest.getAgeRange());
+            planIdList = planRepository.findPlanIdsByUserAgeGroup(planIdList, planRequest.getAgeRange());
         }
         if (!planRequest.getGender().isEmpty() && !planIdList.isEmpty()) {
             planIdList = planRepository.findPlanIdsByUserGender(planIdList, planRequest.getGender());

@@ -52,12 +52,12 @@ public class PlanQueryRepositoryImpl implements PlanQueryRepository {
     }
 
     @Override
-    public List<Long> findPlanIdsByUserAgeRange(List<Long> planIdList, int ageRange) {
+    public List<Long> findPlanIdsByUserAgeGroup(List<Long> planIdList, int ageGroup) {
         return jpaQueryFactory.select(plan.id)
                 .from(plan)
                 .join(plan.user)
                 .where(plan.id.in(planIdList)
-                        .and(plan.user.ageRange.eq(ageRange)))
+                        .and(plan.user.ageGroup.eq(ageGroup)))
                 .fetch();
     }
 

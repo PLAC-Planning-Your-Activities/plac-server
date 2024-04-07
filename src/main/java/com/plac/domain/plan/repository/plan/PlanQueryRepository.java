@@ -16,7 +16,7 @@ public interface PlanQueryRepository {
 
     List<Long> findPlanIdsByDestinationName(String destinationName);
 
-    List<Long> findPlanIdsByUserAgeRange(List<Long> planIdList, int ageRange);
+    List<Long> findPlanIdsByUserAgeGroup(List<Long> planIdList, int ageRange);
 
     List<Long> findPlanIdsByUserGender(List<Long> planIdList, String gender);
 
