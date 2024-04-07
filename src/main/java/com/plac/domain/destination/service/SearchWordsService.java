@@ -57,8 +57,8 @@ public class SearchWordsService {
         Pageable topSix = PageRequest.of(0, 6);
 
         if(filter == 1) {
-            List<String> searchWordsNameList = userSearchWordsMappingRepository.findTop6SearchWordsByAgeRangeAndGender(
-                    user.getAgeRange(), user.getGender(), topSix);
+            List<String> searchWordsNameList = userSearchWordsMappingRepository.findTop6SearchWordsByAgeGroupAndGender(
+                    user.getAgeGroup(), user.getGender(), topSix);
             return searchWordsNameList;
         }
 

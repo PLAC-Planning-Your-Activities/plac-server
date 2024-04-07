@@ -31,6 +31,9 @@ public class UserService {
     @Value("${plac.s3.defaultImageUrl}")
     private String defaultImageUrl;
 
+    @Value("${plac.s3.hostUrl}")
+    private String s3HostUrl;
+
     public CreateUserResponse signUp(CreateUserRequest userRequest) {
         checkDuplUser(userRequest);
         passwordChecker.checkWeakPassword(userRequest.getPassword());
@@ -54,43 +57,30 @@ public class UserService {
     }
 
     private void checkDuplUser(CreateUserRequest userRequest) {
-        final Optional<User> user = userRepository.findByUsername(userRequest.getUsername());
+        userRepository.findByUsername(userRequest.getUsername())
+                .ifPresent(u -> {
+                    throw new ConflictException("이미 존재하는 이메일입니다. 다른 이메일을 입력하세요.");
+                });
 
-        if (user.isPresent()) {
-            throw new ConflictException("이미 존재하는 이메일입니다. 다른 이메일을 입력하세요.");
-        }
+        userRepository.findByProfileName(userRequest.getProfileName())
+                .ifPresent( u -> {
+                    throw new ConflictException("이미 존재하는 닉네임입니다. 다른 닉네임을 설정해주세요.");
+                });
     }
 
     private User createNormalUserInfo(CreateUserRequest userRequest, String password) {
-        int ageRange = getAgeRange(userRequest);
-
         String encodedPassword = encoder.encode(password);
 
         return User.builder()
                 .username(userRequest.getUsername())
                 .password(encodedPassword)
-                .age(userRequest.getAge())
-                .ageRange(ageRange)
+                .ageGroup(userRequest.getAgeGroup())
                 .gender(userRequest.getGender())
                 .profileName(userRequest.getProfileName())
                 .profileImageUrl(defaultImageUrl)
                 .provider("normal")
                 .roles("ROLE_USER")
                 .build();
-    }
-
-    private static int getAgeRange(CreateUserRequest userRequest) {
-        int age = userRequest.getAge();
-        int ageRange = -1;
-
-        if (age <= 19){
-            ageRange = 0;
-        }else if (age <= 24) ageRange = 1;
-        else if (age <= 29) ageRange = 2;
-        else if (age <= 34) ageRange = 3;
-        else if (age <= 39) ageRange = 4;
-        else if (age >= 40) ageRange = 5;
-        return ageRange;
     }
 
     public void checkEmailAvailability(String email) {

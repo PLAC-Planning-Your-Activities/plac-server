@@ -35,7 +35,7 @@ public class SocialLoginController {
 
         ObjectMapper om = setResponseCookie(response, socialLoginResponse);
 
-        if (userEntity.getAge() == 0 && userEntity.getGender().equals("M")) {
+        if (userEntity.getAgeGroup() == -1 && userEntity.getGender().equals("M")) {
             response.setStatus(HttpStatus.ACCEPTED.value());
         } else response.setStatus(HttpStatus.OK.value());
 

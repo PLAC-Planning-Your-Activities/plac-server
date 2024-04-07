@@ -13,10 +13,10 @@ public interface UserDestinationRepository extends JpaRepository<UserDestination
     @Query("SELECT destination.name FROM UserDestination userDestination " +
             "JOIN userDestination.user user " +
             "JOIN userDestination.destination destination " +
-            "WHERE user.ageRange = :ageRange AND user.gender = :gender " +
+            "WHERE user.ageGroup = :ageGroup AND user.gender = :gender " +
             "GROUP BY destination.name " +
             "ORDER BY COUNT(destination) DESC")
-    List<String> findTop7DestinationsByAgeRangeAndGender(@Param("ageRange") int ageRange, @Param("gender") String gender, Pageable pageable);
+    List<String> findTop7DestinationsByAgeGroupAndGender(@Param("ageGroup") int ageGroup, @Param("gender") String gender, Pageable pageable);
 
     @Query("SELECT destination.name, COUNT(destination) as frequency " +
             "FROM UserDestination destinationMapping " +

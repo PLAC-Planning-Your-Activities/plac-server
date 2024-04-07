@@ -13,7 +13,7 @@ public class UserInfoResponse {
     String username;
     String profileName;
     String profileImageUrl;
-    int age;
+    int ageGroup;
     String gender;
 
     public static UserInfoResponse of(User user) {
@@ -22,7 +22,7 @@ public class UserInfoResponse {
                 .username(user.getUsername())
                 .profileName(user.getProfileName())
                 .profileImageUrl(user.getProfileImageUrl())
-                .age(user.getAge())
+                .ageGroup(user.getAgeGroup())
                 .gender(user.getGender())
                 .build();
     }

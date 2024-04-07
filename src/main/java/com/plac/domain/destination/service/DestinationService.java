@@ -20,7 +20,7 @@ public class DestinationService {
         User user = SecurityContextHolderUtil.getUser();
 
         Pageable topSeven = PageRequest.of(0, 7);
-        List<String> result = userDestinationRepository.findTop7DestinationsByAgeRangeAndGender(user.getAgeRange(), user.getGender(), topSeven);
+        List<String> result = userDestinationRepository.findTop7DestinationsByAgeGroupAndGender(user.getAgeGroup(), user.getGender(), topSeven);
 
         return result;
     }

@@ -114,6 +114,7 @@ plac:
       signup: 3
       completion: 5
   s3:
+    hostUrl: ${S3_HOST_URL}
     defaultImageUrl: ${DEFAULT_IMAGE_URL}
 
 cloud:

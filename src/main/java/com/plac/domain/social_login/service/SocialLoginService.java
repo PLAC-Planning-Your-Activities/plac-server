@@ -100,22 +100,20 @@ public class SocialLoginService {
 
     private User setAgeAndGender(User user, int age, String gender) {
         if (age == 0 || gender == null) {
-            user.setAge(0);
-            user.setAgeRange(0);
+            user.setAgeGroup(-1);
             user.setGender("M");
             return user;
         }
-        user.setAge(age);
+        int ageGroup = -1;
 
-        int ageRange = -1;
-        if (age <= 19) ageRange = 0;
-        else if (age <= 24) ageRange = 1;
-        else if (age <= 29) ageRange = 2;
-        else if (age <= 34) ageRange = 3;
-        else if (age <= 39) ageRange = 4;
-        else if (age <= 44) ageRange = 5;
-        user.setAgeRange(ageRange);
+        if (age <= 19) ageGroup = 0;
+        else if (age <= 24) ageGroup = 1;
+        else if (age <= 29) ageGroup = 2;
+        else if (age <= 34) ageGroup = 3;
+        else if (age <= 39) ageGroup = 4;
+        else if (age <= 44) ageGroup = 5;
 
+        user.setAgeGroup(ageGroup);
         return user;
     }
 }

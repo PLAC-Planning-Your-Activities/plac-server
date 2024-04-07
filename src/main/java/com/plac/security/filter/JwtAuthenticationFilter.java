@@ -70,7 +70,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .username(user.getUsername())
                 .profileName(user.getProfileName())
                 .profileImageUrl(user.getProfileImageUrl())
-                .age(user.getAge())
+                .ageGroup(user.getAgeGroup())
                 .gender(user.getGender())
                 .build();
 

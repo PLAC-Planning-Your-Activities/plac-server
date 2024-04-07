@@ -31,7 +31,7 @@ public class User extends AbstractTimeEntity {
     private String profileImageUrl;
 
     @Setter
-    private int age;
+    private int ageGroup;
 
     @Setter
     private String gender;
@@ -43,15 +43,12 @@ public class User extends AbstractTimeEntity {
 
     private String provider;
 
-    @Setter
-    private int ageRange;
-
     private boolean isGuest;
 
     public void changeProfile(ChangeProfileRequest req) {
         this.profileName = req.getProfileName();
         this.profileImageUrl = req.getProfileImageUrl();
         this.gender = req.getGender();
-        this.ageRange = req.getAgeGroup();
+        this.ageGroup = req.getAgeGroup();
     }
 }

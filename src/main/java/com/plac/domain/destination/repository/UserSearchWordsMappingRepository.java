@@ -14,10 +14,10 @@ public interface UserSearchWordsMappingRepository extends JpaRepository<UserSear
             "FROM UserSearchWords searchWordsMapping " +
             "JOIN searchWordsMapping.user user " +
             "JOIN searchWordsMapping.searchWords searchWords " +
-            "WHERE user.ageRange = :ageRange AND user.gender = :gender " +
+            "WHERE user.ageGroup = :ageGroup AND user.gender = :gender " +
             "GROUP BY searchWords.name " +
             "ORDER BY frequency DESC")
-    List<String> findTop6SearchWordsByAgeRangeAndGender(@Param("ageRange") int ageRange, @Param("gender") String gender, Pageable pageable);
+    List<String> findTop6SearchWordsByAgeGroupAndGender(@Param("ageGroup") int ageGroup, @Param("gender") String gender, Pageable pageable);
 
     @Query("SELECT searchWords.name, COUNT(searchWords) as frequency " +
             "FROM UserSearchWords searchWordsMapping " +

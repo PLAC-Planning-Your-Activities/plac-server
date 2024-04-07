@@ -1,6 +1,5 @@
 package com.plac.domain.s3.service;
 
-import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.plac.domain.s3.dto.response.UploadImageResponse;
@@ -23,6 +22,9 @@ public class S3Service {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
+    @Value("${plac.s3.hostUrl}")
+    private String s3HostUrl;
+
     @Transactional
     public UploadImageResponse uploadImage(MultipartFile image, String path) throws IOException {
         String fileName = this.getFileName(image, path);
@@ -30,7 +32,7 @@ public class S3Service {
 
         amazonS3Client.putObject(bucket, fileName, image.getInputStream(), objectMetadata);
 
-        return new UploadImageResponse(fileName);
+        return new UploadImageResponse(s3HostUrl + fileName);
     }
 
     private String getFileName(MultipartFile image, String imagePath) {

@@ -3,6 +3,8 @@ package com.plac.domain.user.dto.request;
 import lombok.*;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 
 @Getter
 @Builder
@@ -13,6 +15,9 @@ public class CreateUserRequest {
     private String username;
     private String password;
     private String profileName;
-    private int age;
+
+    @Min(value = 0, message = "ageGroup은 0 이상이어야 합니다.")
+    @Max(value = 5, message = "ageGroup은 5 이하여야 합니다.")
+    private int ageGroup;
     private String gender;
 }
