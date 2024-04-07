@@ -83,7 +83,9 @@ public class SocialLoginService {
         String password = UUID.randomUUID().toString();
         String encodedPassword = passwordEncoder.encode(password);
 
-        return User.builder()
+        int age = oauth2UserInfo.getAge();
+
+        User user = User.builder()
                 .username(oauth2UserInfo.getUsername())
                 .password(encodedPassword)
                 .roles("ROLE_USER")
@@ -91,7 +93,31 @@ public class SocialLoginService {
                 .profileImageUrl(oauth2UserInfo.getProfileImagePath())
                 .profileName(oauth2UserInfo.getProfileName())
                 .gender(oauth2UserInfo.getGender())
-                .age(oauth2UserInfo.getAge())
                 .build();
+
+        // TODO: OAuth 동의항목 심사 후, 고치기
+        setAgeAndGender(age, user);
+
+        return user;
+    }
+
+    private static void setAgeAndGender(int age, User user) {
+        if (age == 0) {
+            user.setAge(24);
+            user.setAgeRange(1);
+        } else {
+            user.setAge(age);
+            int ageRange = -1;
+            if (age <= 19) ageRange = 0;
+            else if (age <= 24) ageRange = 1;
+            else if (age <= 29) ageRange = 2;
+            else if (age <= 34) ageRange = 3;
+            else if (age <= 39) ageRange = 4;
+            else if (age <= 44) ageRange = 5;
+            user.setAgeRange(ageRange);
+        }
+        if (user.getGender() == null) {
+            user.setGender("F");
+        }
     }
 }

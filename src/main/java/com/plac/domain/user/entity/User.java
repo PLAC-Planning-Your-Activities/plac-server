@@ -3,10 +3,7 @@ package com.plac.domain.user.entity;
 import com.plac.common.AbstractTimeEntity;
 import com.plac.common.mappedenum.UserStatus;
 import com.plac.domain.user.dto.request.ChangeProfileRequest;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -33,8 +30,10 @@ public class User extends AbstractTimeEntity {
 
     private String profileImageUrl;
 
+    @Setter
     private int age;
 
+    @Setter
     private String gender;
 
     @Enumerated(EnumType.STRING)
@@ -44,6 +43,7 @@ public class User extends AbstractTimeEntity {
 
     private String provider;
 
+    @Setter
     private int ageRange;
 
     private boolean isGuest;

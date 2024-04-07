@@ -3,9 +3,11 @@ package com.plac.domain.social_login.dto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 public class Oauth2TokenResDto {
     String access_token;

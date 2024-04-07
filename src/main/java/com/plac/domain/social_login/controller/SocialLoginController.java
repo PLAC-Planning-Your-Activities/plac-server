@@ -37,7 +37,7 @@ public class SocialLoginController {
         response.addHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
         response.setStatus(HttpStatus.OK.value());
 
-        om.writeValue(response.getOutputStream(), null);
+        om.writeValue(response.getOutputStream(), "social login success!");
     }
 
     private static ObjectMapper settingObjectMapper() {
