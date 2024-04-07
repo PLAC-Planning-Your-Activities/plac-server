@@ -4,10 +4,8 @@ import com.config.TestQueryDSLConfiguration;
 import com.plac.domain.plan.entity.Plan;
 import com.plac.domain.plan.entity.PlanTag;
 import com.plac.domain.plan.entity.PlanTagMapping;
-import com.plac.domain.plan.repository.bookmark.BookmarkPlanQueryRepositoryImpl;
 import com.plac.domain.plan.repository.plan.PlanRepository;
 import com.plac.domain.plan.repository.planTag.PlanTagRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +17,6 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @ActiveProfiles("test")
 @DataJpaTest
@@ -57,7 +54,7 @@ class PlanTagMappingRepositoryTest {
         for (int i = 0; i < 3; i++) {
             PlanTagMapping ptm = PlanTagMapping.builder()
                     .plan(plan)
-                    .planTagId(tag.getId())
+                    .planTag(tag)
                     .build();
             planTagMappingRepository.save(ptm);
         }
@@ -68,7 +65,7 @@ class PlanTagMappingRepositoryTest {
 
         // then
         assertThat(result).hasSize(3);
-        assertThat(result.get(0).getPlanTagId()).isEqualTo(1L);
+        assertThat(result.get(0).getPlanTag().getId()).isEqualTo(1L);
         assertThat(result.get(0).getPlan().getId()).isEqualTo(1L);
     }
 }
