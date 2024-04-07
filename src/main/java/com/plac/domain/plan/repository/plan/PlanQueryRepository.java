@@ -26,5 +26,5 @@ public interface PlanQueryRepository {
 
     List<Long> findPlanIdsByPlanDibsDesc(List<Long> planIdList);
 
-    List<Long> findPlanIdsByBookmarkPlanDesc(List<Long> planIdList);
+    List<Long> findPlanIdsByFavoritePlanDesc(List<Long> planIdList);
 }

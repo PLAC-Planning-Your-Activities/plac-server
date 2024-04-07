@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static com.plac.domain.plan.entity.QBookmarkPlan.bookmarkPlan;
+import static com.plac.domain.plan.entity.QFavoritePlan.favoritePlan;
 import static com.plac.domain.plan.entity.QPlan.plan;
 import static com.plac.domain.plan.entity.QPlanDibs.planDibs;
 
@@ -83,7 +83,7 @@ public class PlanQueryRepositoryImpl implements PlanQueryRepository {
     public List<Long> findPlanIdsByPlanDibsDesc(List<Long> planIdList) {
         return jpaQueryFactory.select(plan.id)
                 .from(plan)
-                .leftJoin(planDibs).on(plan.id.eq(planDibs.planId))
+                .join(planDibs).on(plan.id.eq(planDibs.planId))
                 .where(plan.id.in(planIdList))
                 .groupBy(plan.id)
                 .orderBy(planDibs.planId.count().desc())
@@ -91,13 +91,13 @@ public class PlanQueryRepositoryImpl implements PlanQueryRepository {
     }
 
     @Override
-    public List<Long> findPlanIdsByBookmarkPlanDesc(List<Long> planIdList) {
+    public List<Long> findPlanIdsByFavoritePlanDesc(List<Long> planIdList) {
         return jpaQueryFactory.select(plan.id)
                 .from(plan)
-                .leftJoin(bookmarkPlan).on(plan.id.eq(bookmarkPlan.plan.id))
+                .leftJoin(favoritePlan).on(plan.id.eq(favoritePlan.plan.id))
                 .where(plan.id.in(planIdList))
                 .groupBy(plan.id)
-                .orderBy(bookmarkPlan.plan.id.count().desc())
+                .orderBy(favoritePlan.plan.id.count().desc())
                 .fetch();
     }
 

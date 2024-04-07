@@ -37,6 +37,14 @@ public class PlanController {
         return ResponseEntity.ok().build();
     }
 
+    @DeleteMapping("/community/{planId}")
+    public ResponseEntity<?> deleteMySharedPlan (
+            @PathVariable("planId") Long planId
+    ){
+        planService.deleteMySharedPlan(planId);
+        return ResponseEntity.ok().build();
+    }
+
     @PatchMapping
     public ResponseEntity<?> fixPlan(
             @PathVariable("planId") Long planId,

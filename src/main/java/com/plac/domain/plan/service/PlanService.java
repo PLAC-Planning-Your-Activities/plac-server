@@ -17,6 +17,7 @@ import com.plac.domain.plan.dto.response.PlanCreateResponse;
 import com.plac.domain.plan.entity.*;
 import com.plac.domain.plan.repository.bookmark.BookmarkPlanRepository;
 import com.plac.domain.plan.repository.favoritePlan.FavoritePlanRepository;
+import com.plac.domain.plan.repository.plan.PlanQueryRepositoryImpl;
 import com.plac.domain.plan.repository.plan.PlanRepository;
 import com.plac.domain.plan.repository.planDibs.PlanDibsRepository;
 import com.plac.domain.plan.repository.planPlaceMapping.PlanPlaceMappingRepository;
@@ -46,6 +47,7 @@ public class PlanService {
 
     private final PlaceRepository placeRepository;
     private final PlanRepository planRepository;
+    private final PlanQueryRepositoryImpl planQueryRepository;
     private final UserRepository userRepository;
     private final PlanPlaceMappingRepository planPlaceMappingRepository;
     private final PlanTagRepository planTagRepository;
@@ -181,9 +183,6 @@ public class PlanService {
     @Transactional
     public void deletePlan(Long planId) {
         Plan plan = planRepository.findById(planId).orElseThrow(() -> new DataNotFoundException());
-
-        List<PlanPlaceMapping> planPlaceMapping = planPlaceMappingRepository.findByPlanId(planId);
-
         planRepository.delete(plan);
     }
 
@@ -251,8 +250,9 @@ public class PlanService {
         if (!planRequest.getPlace().isEmpty()) {
             planIdList = planPlaceMappingRepository.findPlanIdsByPlaceName(planIdList, planRequest.getPlace());
         }
-        if (planRequest.getAgeRange() != null && !planIdList.isEmpty()) {
-            planIdList = planRepository.findPlanIdsByUserAgeGroup(planIdList, planRequest.getAgeRange());
+        if (planRequest.getAgeGroup() != null && !planIdList.isEmpty()) {
+            System.out.println("planRequest.getAgeGroup() = " + planRequest.getAgeGroup());
+            planIdList = planRepository.findPlanIdsByUserAgeGroup(planIdList, planRequest.getAgeGroup());
         }
         if (!planRequest.getGender().isEmpty() && !planIdList.isEmpty()) {
             planIdList = planRepository.findPlanIdsByUserGender(planIdList, planRequest.getGender());
@@ -264,28 +264,29 @@ public class PlanService {
         if (!planIdList.isEmpty()) {
             switch (sortBy) {
                 case "최신순":
-                    planIdList = planRepository.findPlanIdsByCreatedAtDesc(planIdList);
+                    planIdList = planQueryRepository.findPlanIdsByCreatedAtDesc(planIdList);
                     break;
                 case "저장순":
-                    planIdList = planRepository.findPlanIdsByBookmarkPlanDesc(planIdList);
+                    planIdList = planQueryRepository.findPlanIdsByPlanDibsDesc(planIdList);
                     break;
                 case "인기순":
-                    planIdList = planRepository.findPlanIdsByPlanDibsDesc(planIdList);
+                    planIdList = planQueryRepository.findPlanIdsByFavoritePlanDesc(planIdList);
                     break;
             }
         }
-
+        for (Long planId : planIdList) {
+            System.out.println(planId);
+        }
         if (planIdList.isEmpty()) return new ArrayList<>();
 
-        List<Plan> planList = planRepository.findPlansIn(planIdList);
-
-        for (Plan plan : planList) {
-            createPlanInformation(result, plan);
+        for (long planId : planIdList) {
+            createPlanInformation(result, planId);
         }
         return result;
     }
 
-    private void createPlanInformation(List<PlansInformation> result, Plan plan) {
+    private void createPlanInformation(List<PlansInformation> result, long planId) {
+        Plan plan = planRepository.findById(planId).get();
         User user = plan.getUser();
 
         List<FavoritePlan> favoritePlans = favoritePlanRepository.findByPlanId(plan.getId());
@@ -430,5 +431,9 @@ public class PlanService {
                     return new GetMyListPlansResponseDto(user.getProfileName(), plan, placeUrls);
                 })
                 .collect(Collectors.toList());
+    }
+
+    public void deleteMySharedPlan(Long planId) {
+
     }
 }
