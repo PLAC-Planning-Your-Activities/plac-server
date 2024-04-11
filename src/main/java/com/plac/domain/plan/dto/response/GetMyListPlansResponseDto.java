@@ -1,6 +1,7 @@
 package com.plac.domain.plan.dto.response;
 
 import com.plac.domain.plan.entity.Plan;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,6 +11,7 @@ import java.util.List;
 
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class GetMyListPlansResponseDto {
     private String userProfileName;
     private Long planId;

@@ -31,9 +31,8 @@ public class PlanQueryRepositoryImpl implements PlanQueryRepository {
     public List<Plan> findPlanDibsByUserId(Long userId) {
         return jpaQueryFactory.selectFrom(plan)
                 .leftJoin(planDibs)
-                .on((plan.id.eq(planDibs.planId)))
+                .on(plan.id.eq(planDibs.planId))
                 .where(planDibs.userId.eq(userId))
-                .orderBy(planDibs.createdAt.desc())
                 .fetch();
     }
 
