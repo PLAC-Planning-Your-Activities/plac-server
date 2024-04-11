@@ -84,9 +84,15 @@ public class PlanController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/my-list/{planId}/details")
+    public ResponseEntity<Void> getMyListDibsPlanOfPlaces(@PathVariable Long planId) {
+        planService.findMyListPlanOfPlaceByPlan(planId);
+        return ResponseEntity.ok();
+    }
+
     @GetMapping("/my-list")
     public ResponseEntity<List<GetMyListPlansResponseDto>> getMyListDibsPlan() {
-        List<GetMyListPlansResponseDto> getPlans = planService.getMyListPlans();
+        List<GetMyListPlansResponseDto> getPlans = planService.findMyListPlans();
         return ResponseEntity.ok(getPlans);
     }
 

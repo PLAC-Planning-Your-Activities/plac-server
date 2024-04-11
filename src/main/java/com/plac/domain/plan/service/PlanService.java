@@ -394,6 +394,8 @@ public class PlanService {
 
     }
 
+
+
     @Transactional
     public void triggerDibsMyListPlan(Long planId) {
         final User user = userRepository.findById(SecurityContextHolderUtil.getUserId())
@@ -418,7 +420,7 @@ public class PlanService {
         planDibsRepository.delete(planDibs);
     }
 
-    public List<GetMyListPlansResponseDto> getMyListPlans() {
+    public List<GetMyListPlansResponseDto> findMyListPlans() {
         final User user = userRepository.findById(SecurityContextHolderUtil.getUserId())
                 .orElseThrow(() -> new RuntimeException("로그인 사용자 없음 예외추가"));
         final long userId = user.getId();
