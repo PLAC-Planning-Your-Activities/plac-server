@@ -13,10 +13,12 @@ import com.plac.domain.plan.dto.request.PlanCreateRequest;
 import com.plac.domain.plan.dto.request.PlanFixRequest;
 import com.plac.domain.plan.dto.request.PlanShareRequest;
 import com.plac.domain.plan.dto.response.GetMyListPlansResponseDto;
+import com.plac.domain.plan.dto.response.GetPlanPlaceResponseDto;
 import com.plac.domain.plan.dto.response.PlanCreateResponse;
 import com.plac.domain.plan.entity.*;
 import com.plac.domain.plan.repository.bookmark.BookmarkPlanRepository;
 import com.plac.domain.plan.repository.favoritePlan.FavoritePlanRepository;
+import com.plac.domain.plan.repository.plan.PlanQueryRepository;
 import com.plac.domain.plan.repository.plan.PlanQueryRepositoryImpl;
 import com.plac.domain.plan.repository.plan.PlanRepository;
 import com.plac.domain.plan.repository.planDibs.PlanDibsRepository;
@@ -47,7 +49,6 @@ public class PlanService {
 
     private final PlaceRepository placeRepository;
     private final PlanRepository planRepository;
-    private final PlanQueryRepositoryImpl planQueryRepository;
     private final UserRepository userRepository;
     private final PlanPlaceMappingRepository planPlaceMappingRepository;
     private final PlanTagRepository planTagRepository;
@@ -264,13 +265,13 @@ public class PlanService {
         if (!planIdList.isEmpty()) {
             switch (sortBy) {
                 case "최신순":
-                    planIdList = planQueryRepository.findPlanIdsByCreatedAtDesc(planIdList);
+                    planIdList = planRepository.findPlanIdsByCreatedAtDesc(planIdList);
                     break;
                 case "저장순":
-                    planIdList = planQueryRepository.findPlanIdsByPlanDibsDesc(planIdList);
+                    planIdList = planRepository.findPlanIdsByPlanDibsDesc(planIdList);
                     break;
                 case "인기순":
-                    planIdList = planQueryRepository.findPlanIdsByFavoritePlanDesc(planIdList);
+                    planIdList = planRepository.findPlanIdsByFavoritePlanDesc(planIdList);
                     break;
             }
         }
@@ -394,7 +395,10 @@ public class PlanService {
 
     }
 
-
+    @Transactional
+    public List<GetPlanPlaceResponseDto> findMyListPlanPlaceByPlan(Long planId) {
+        return planRepository.findPlaceDetailsByPlanId(planId);
+    }
 
     @Transactional
     public void triggerDibsMyListPlan(Long planId) {

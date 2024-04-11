@@ -1,5 +1,6 @@
 package com.plac.domain.plan.repository.plan;
 
+import com.plac.domain.plan.dto.response.GetPlanPlaceResponseDto;
 import com.plac.domain.plan.entity.Plan;
 import org.springframework.data.domain.Pageable;
 
@@ -27,4 +28,6 @@ public interface PlanQueryRepository {
     List<Long> findPlanIdsByPlanDibsDesc(List<Long> planIdList);
 
     List<Long> findPlanIdsByFavoritePlanDesc(List<Long> planIdList);
+
+    public List<GetPlanPlaceResponseDto> findPlaceDetailsByPlanId(Long planId);
 }
