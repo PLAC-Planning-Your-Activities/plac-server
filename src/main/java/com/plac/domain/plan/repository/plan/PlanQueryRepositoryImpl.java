@@ -1,15 +1,22 @@
 package com.plac.domain.plan.repository.plan;
 
+import com.plac.domain.place.entity.Place;
+import com.plac.domain.plan.dto.response.GetPlanPlaceResponseDto;
 import com.plac.domain.plan.entity.Plan;
+import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+import static com.plac.domain.place.entity.QPlace.place;
 import static com.plac.domain.plan.entity.QFavoritePlan.favoritePlan;
 import static com.plac.domain.plan.entity.QPlan.plan;
 import static com.plac.domain.plan.entity.QPlanDibs.planDibs;
+import static com.plac.domain.plan.entity.QPlanPlaceMapping.planPlaceMapping;
 
 @Repository
 public class PlanQueryRepositoryImpl implements PlanQueryRepository {

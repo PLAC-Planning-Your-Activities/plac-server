@@ -6,6 +6,7 @@ import com.plac.domain.plan.dto.request.PlanCreateRequest;
 import com.plac.domain.plan.dto.request.PlanFixRequest;
 import com.plac.domain.plan.dto.request.PlanShareRequest;
 import com.plac.domain.plan.dto.response.GetMyListPlansResponseDto;
+import com.plac.domain.plan.dto.response.GetPlanPlaceResponseDto;
 import com.plac.domain.plan.dto.response.PlanCreateResponse;
 import com.plac.domain.plan.service.PlanService;
 import lombok.RequiredArgsConstructor;
@@ -85,15 +86,15 @@ public class PlanController {
     }
 
     @GetMapping("/my-list/{planId}/details")
-    public ResponseEntity<Void> getMyListDibsPlanOfPlaces(@PathVariable Long planId) {
-        planService.findMyListPlanOfPlaceByPlan(planId);
-        return ResponseEntity.ok();
+    public ResponseEntity<List<GetPlanPlaceResponseDto>> getMyListDibsPlanOfPlaces(@PathVariable Long planId) {
+        List<GetPlanPlaceResponseDto> response = planService.findMyListPlanPlaceByPlan(planId);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/my-list")
     public ResponseEntity<List<GetMyListPlansResponseDto>> getMyListDibsPlan() {
-        List<GetMyListPlansResponseDto> getPlans = planService.findMyListPlans();
-        return ResponseEntity.ok(getPlans);
+        List<GetMyListPlansResponseDto> response = planService.findMyListPlans();
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/community")
