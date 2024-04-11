@@ -44,6 +44,30 @@ public class PlanQueryRepositoryImpl implements PlanQueryRepository {
     }
 
     @Override
+    public List<GetPlanPlaceResponseDto> findPlaceDetailsByPlanId(Long planId) {
+        List<Tuple> qr = jpaQueryFactory.select(
+                        place.type,
+                        place.placeName,
+                        place.thumbnailImageUrl,
+                        place.streetNameAddress)
+                .from(place)
+                .leftJoin(planPlaceMapping)
+                .on(place.id.eq(planPlaceMapping.place.id))
+                .where(planPlaceMapping.plan.id.eq(planId))
+                .fetch();
+
+        return qr.stream().map(
+                tuple ->
+                        new GetPlanPlaceResponseDto(
+                                tuple.get(place.type),
+                                tuple.get(place.placeName),
+                                tuple.get(place.thumbnailImageUrl),
+                                tuple.get(place.streetNameAddress)
+                        )
+        ).collect(Collectors.toList());
+    }
+
+    @Override
     public List<Plan> findFilteredPlan(String destinationName, String placeName, String sortBy, Integer ageRange, String gender, List<String> tags, long tagCount, Pageable pageable) {
         return null;
     }
