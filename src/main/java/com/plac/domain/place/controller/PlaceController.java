@@ -31,7 +31,7 @@ public class PlaceController {
     }
 
     @PostMapping("/my-list")
-    public ResponseEntity<Void> addMyListDibsPlace(KakaoPlaceInfo request) {
+    public ResponseEntity<Void> addMyListDibsPlace(@RequestBody KakaoPlaceInfo request) {
         placeService.triggerDibsMyListPlace(request);
         return ResponseEntity.ok().build();
     }
