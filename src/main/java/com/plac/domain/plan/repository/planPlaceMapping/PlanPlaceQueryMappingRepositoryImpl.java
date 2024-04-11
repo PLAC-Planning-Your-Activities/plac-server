@@ -30,7 +30,8 @@ public class PlanPlaceQueryMappingRepositoryImpl implements PlanPlaceQueryMappin
     public List<Place> findPlacesByPlanId(Long planId) {
         return jpaQueryFactory.selectFrom(place)
                 .leftJoin(planPlaceMapping)
-                .on(planPlaceMapping.place.id.eq(planId))
+                .on(place.id.eq(planPlaceMapping.place.id))
+                .where(planPlaceMapping.plan.id.eq(planId))
                 .fetch();
     }
 
